@@ -1,2 +1,2 @@
 # reviewlfm
-Article about LFMs in kernel and state-spacw formalism.
+Article about LFMs in kernel and state-space formalism.
