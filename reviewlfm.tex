@@ -508,6 +508,13 @@ and assume that we measure the function $f(t)$ via noisy measurements at discret
 \end{split}
 \end{equation}
 %
+The differential equation can, for example, model the behavior of a mechanical, electrical, or chemical system and the latent function $u(t)$ is an unknown input (or force) acting on the system. The latent function $u(t)$ above is modeled as a non-parametric Gaussian process model \cite{Rasmussen+Williams:2006} with a given covariance function $k(t - t')$ and the aim is to infer both the function $f(t)$ and the latent force model $u(t)$ from noisy observations $y_k$ of the differential equation solution $f(t)$ only ($\epsilon_k$ above denotes a Gaussian noise).
+
+Because the above model defines a stochastic linear time-invariant (LTI) system with Gaussian input, there are many equivalent ways to represent it mathematically. In particular, here we consider the following kinds of representations: (a) a linear differential equation with constant coefficients as above, (b) as a convolution operation with an impulse response, (c) a frequency domain tranfer function model or (d) as a state-space model. However, a difference to typical stochastic LTI systems encountered in signal processing, the Gaussian input signal is not a white noise process. This difference is crucial here, because replacing the white noise with a more general Gaussian process (i.e., colored noise) allows for interpretation of the input signal as a non-parametric statistical model and hence methods from machine learning can be applied to the problem as such.
+
+
+{\em Notation:} $n$ is the number of data points, $p$ is the input ($\mathbf{x}$) dimension, $d$ is the vector output dimensionality, $s$ for order of ODE, $k$ is the discrete time index, if we have space and time, $n = n_x \, n_t$ for data points in time and space (for a grid).
+
 Another example:
 %
 \begin{equation}
@@ -517,6 +524,8 @@ Another example:
   y_k &= f(x_k,t_k) + \epsilon_k,
 \end{split}
 \end{equation}
+
+\simo{Probably the Poisson equation here already}
 
 \simo{Both write, Simo could start}
 
@@ -604,21 +613,6 @@ being $\mathbf{I}\in\mathbb{R}^{n\times n}$ the identity matrix.
 
 %\simo{Basic GP regression here: Mauricio writes}
 
-\subsection{Basic Latent Force Model}
-%
-A canonical example of a linear latent force model (LFM) \cite{Alvarez+Lawrence:2009,Alvarez+Luengo+Lawrence:2013} is the following:
-%
-\begin{eqnarray}
-  &u(t) \sim \mathcal{GP}(0,k(t - t')), \label{eq:lgp1} \\
-  &a_n \, \frac{df^{n}(t)}{dt^{n}} + \cdots
-  + a_1 \, \frac{df(t)}{dt} + a_0 = u(t), \label{eq:difeq1} \\
-  &y_k = f(t_k) + \epsilon_k, \label{eq:meas1}
-\end{eqnarray}
-%
-which contains three parts: a Gaussian process part \eqref{eq:lgp1}, a differential equation part \eqref{eq:difeq1}, and a measurement model \eqref{eq:meas1}. The differential equation can, for example, model the behavior of a mechanical, electrical, or chemical system and the latent function $u(t)$ is an unknown input (or force) acting on the system. The latent function $u(t)$ above is modeled as a non-parametric Gaussian process model \cite{Rasmussen+Williams:2006} with a given covariance function $k(t - t')$ and the aim is to infer both the function $f(t)$ and the latent force model $u(t)$ from noisy observations $y_k$ of the differential equation solution $f(t)$ only ($\epsilon_k$ above denotes a Gaussian noise).
-
-Because the above model defines a stochastic linear time-invariant (LTI) system with Gaussian input, there are many equivalent ways to represent it mathematically. In particular, here we consider the following kinds of representations: (a) a linear differential equation with constant coefficients as above, (b) as a convolution operation with an impulse response, (c) a frequency domain tranfer function model or (d) as a state-space model. However, a difference to typical stochastic LTI systems encountered in signal processing, the Gaussian input signal is not a white noise process. This difference is crucial here, because replacing the white noise with a more general Gaussian process (i.e., colored noise) allows for interpretation of the input signal as a non-parametric statistical model and hence methods from machine learning can be applied to the problem as such.
-
 %I think in this section we should mention the basic idea taught in signal processing courses of LTI systems driven by
 %an stochastic process. We would mention that there are different ways in which you could specify the LTI system and their output, namely,
 %through a differential equation, through the convolution operation which implies knowing the inverse operator for you
@@ -631,6 +625,17 @@ Because the above model defines a stochastic linear time-invariant (LTI) system 
 \subsection{GP Regression Solution to Basic LFM Inference}\label{sec:gp:regression:lfm}
 %
 %\simo{Mauricio writes but Simo will then contribute}
+
+A canonical example of a linear latent force model (LFM) \cite{Alvarez+Lawrence:2009,Alvarez+Luengo+Lawrence:2013} is the following:
+%
+\begin{eqnarray}
+  &u(t) \sim \mathcal{GP}(0,k(t - t')), \label{eq:lgp1} \\
+  &a_n \, \frac{df^{n}(t)}{dt^{n}} + \cdots
+  + a_1 \, \frac{df(t)}{dt} + a_0 = u(t), \label{eq:difeq1} \\
+  &y_k = f(t_k) + \epsilon_k, \label{eq:meas1}
+\end{eqnarray}
+%
+which contains three parts: a Gaussian process part \eqref{eq:lgp1}, a differential equation part \eqref{eq:difeq1}, and a measurement model \eqref{eq:meas1}. 
 
 Equation \eqref{eq:difeq1} can written as $L{f(t)}=u(t)$, where $L$ is a linear
 differential operator of the form $L\equiv a_n \, \frac{d}{dt^{n}} + \cdots
@@ -777,6 +782,8 @@ for a test input $\mathbf{x}^*$, both for the output process $f(\mathbf{x})$, an
 
 \simo{Generalization to any linear PDE}
 
+\simo{Especially non-time-based models such as the Poisson equation.}
+
 \subsection{Non-linear Models}
 
 When the input force is modelled as a non-linear transformation of a Gaussian process \cite{Lawrence:gpsim2007a,
@@ -799,13 +806,12 @@ differential equation has not been published before}.
 
 \section{Latent Force Models as Stochastic State-Space Models}
 
-\subsection{Kalman filtering and smoothing}
-
-\simo{Simo writes}
-
 \subsection{GPs in state-space form}
 
 \simo{Simo writes}
+
+\simo{Kalman filtering and smoothing}
+
 
 \subsection{LFMs in state-space form}
 %
@@ -872,6 +878,8 @@ and we can pick up the covariance function of $f(t)$ from the matrix via
 \end{equation}
 %
 This representation still has the same problem as the impulse response approach in the previous section that we need to compute the integrals in \eqref{eq:vfcov} somehow. If closed form solution is not available, then the computations become heavy.
+
+\simo{Combine with the next section}
 
 \subsection{LFMs via augmented state-space}
 %
@@ -1054,6 +1062,9 @@ regression context}
 \label{fig_sim}
 \end{figure}
 
+\subsection{A PDE Model II}
+
+\simo{Mauricio writes the Poisson example here.}
 
 \subsection{A Periodic Model}
 
