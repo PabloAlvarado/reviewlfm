@@ -369,6 +369,8 @@
 % (Unless specifically asked to do so by the journal or conference you plan
 % to submit to, of course. )
 
+\usepackage{soul}
+
 \newcommand{\mauricio}[1]{{\color{blue}#1}}
 
 \newcommand{\simo}[1]{{\color{red}#1}}
@@ -396,9 +398,9 @@
 % was not built to handle multiple paragraphs
 %
 
-\author{Mauricio~A.~\'Alvarez,
+\author{Mauricio~A.~\'Alvarez, \simo{$\rightleftarrows$}
          Simo~S\"arkk\"a,
-         and~Neil~D.~Lawrence.% <-this % stops a space
+         \simo{and~Neil~D.~Lawrence (?)}% <-this % stops a space
 \IEEEcompsocitemizethanks{\IEEEcompsocthanksitem Mauricio A. \'Alvarez is with the Department of Electrical Engineering,
 Universidad Tecnol\'ogica de Pereira, Colombia, 660003.\protect\\
 % note need leading \protect in front of \\ to get a newline within \thanks as
@@ -492,7 +494,7 @@ Differential equations, Latent force models, state space representations.
 
 %\IEEEPARstart{I}{n} machine learning, there has been a recent interest to combine non-parametric statistical models with first-principles physical differential equation models. The motivation to do that is that although non-parametric statistical models such as Gaussian processes \cite{Rasmussen+Williams:2006} are well-suited for expressing very loose assumptions on the modeled functions (such as smoothness and length scale), encoding physical knowledge into them is hard. In many applications, we are faced with problems in which we have plenty of data and a physical model, and we want to use statistical inference either to estimate the parameters of those physical models or to perform inference over unknown functions or variables related to the physical model. This setup appears frequently in modern physics, biology, chemistry, geology, and many other scientific disciplines for which the description of physical phenomena is done through differential equations. To deal with these kinds of problems, we recently introduced latent force models (LFM) \cite{Alvarez+Lawrence:2009,Alvarez:2010,Alvarez+Luengo+Lawrence:2013}, which are general models that allow the incorporation of differential equations into data-driven non-parametric models -- or non-parametric models into differential equation models.
 
-\simo{{\em Notation:} $n$ is the number of data points, $p$ is the input ($\mathbf{x}$) dimension, $d$ is the vector output dimensionality, $s$ for order of ODE, $k$ is the discrete time index, if we have space and time, $n = n_x \, n_t$ for data points in time and space (for a grid).}
+\simo{{\em Notation:} $n$ is the number of data points, $p$ is the input ($\mathbf{x}$) dimension, $d$ is the vector output dimensionality, $s$ for order of ODE or state-space or half-order of spectral density denominator (these are the same things), $r$ for the half-order of spectral density numerator, $k$ is the discrete time index, if we have space and time, $n = n_x \, n_t$ for data points in time and space (for a grid).}
 
 \IEEEPARstart{C}{onsider} a second order differential equation model of the form
 %
@@ -538,7 +540,7 @@ The focus in this article is in considering the force or input $u$ as unknown an
 
 %Because the above model defines a stochastic linear time-invariant (LTI) system with Gaussian input, there are many equivalent ways to represent it mathematically. In particular, here we consider the following kinds of representations: (a) a linear differential equation with constant coefficients as above, (b) as a convolution operation with an impulse response, (c) a frequency domain transfer function model or (d) as a state-space model. However, a difference to typical stochastic LTI systems encountered in signal processing, the Gaussian input signal is not a white noise process. This difference is crucial here, because replacing the white noise with a more general Gaussian process (i.e., colored noise) allows for interpretation of the input signal as a non-parametric statistical model and hence methods from machine learning can be applied to the problem as such.
 
-LFMs can be derived from two different perspectives: the covariance function perspective \cite{Alvarez+Lawrence:2009,Alvarez+Luengo+Lawrence:2013} and the state-space perspective \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012}. The former approach can be seen as a machine learning point of view (cf. \cite{Rasmussen+Williams:2006}) to LFMs whereas the latter approach is a signal processing point of view (cf. \cite{Sarkka+Solin+Hartikainen:2013,Sarkka:2013}). Both of these approaches have their own advantages and disadvantages in terms of flexibility, ease of implementation, and computational complexity. In this paper, we analyze both of these points of view to latent force models as well as present new computational methods which aim to combine the best sides of both points of view.
+LFMs can be derived from two different perspectives: the covariance function perspective \cite{Alvarez+Lawrence:2009,Alvarez+Luengo+Lawrence:2013} and the state-space perspective \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012}. The former approach can be seen as a machine learning point of view (cf. \cite{Rasmussen+Williams:2006}) to LFMs whereas the latter approach is a signal processing point of view (cf. \cite{Sarkka+Solin+Hartikainen:2013,Sarkka:2013}). Both of these approaches have their own advantages and disadvantages in terms of flexibility, ease of implementation, and computational complexity. In this paper, we analyze both of these points of view to latent force models as well as present new computational methods which aim to combine the best sides of both points of view. 
 
 
 
@@ -811,17 +813,17 @@ can be equivalently or approximately expressed in state-space form by defining a
 %
 where $w(t)$ is a white-noise process. The advantage of this kind of model formulation is that it allows for solving the GP regression problem using Kalman filters and smoothers \cite{Sarkka:2013} in $O(n)$ time when the traditional GP takes $O(n^3)$ time (here $n$ denotes the number of measurements).
 
-The key result is that such a state-space representation exists if and only if the spectral density (the Fourier transform of $k(\tau)$) is a proper rational function:
+The key (classical) result is that such a white-noise-driven state-space representation exists if and only if the spectral density (the Fourier transform of $k(\tau)$) is a proper rational function:
 %
 \begin{equation}
 \begin{split}
-  S(\omega) &= \frac{b_0 + b_1 \, \omega^2 + \cdots + b_L \, \omega^{2L}}{a_0 + a_1 \, \omega^2 + \cdots + a_M \, \omega^{2M}}.
+  S(\omega) &= \frac{d_0 + d_1 \, \omega^2 + \cdots + d_r \, \omega^{2r}}{c_0 + c_1 \, \omega^2 + \cdots + c_s \, \omega^{2s}}.
 \end{split}
 \end{equation}
 %
 By using the spectral factorization and classical state-space realizations \cite{Sarkka+Solin+Hartikainen:2013} it is then possible to construct the matrices $\mathbf{A}_u$, $\mathbf{B}_u$, and $\mathbf{C}_u$ such that $u(t)$ has the desired covariance function. 
 
-For example, the Mat\'ern covariance functions  $k(\tau) = \sigma^2\frac{2^{1-\nu}}{\Gamma(\nu)}\left(\sqrt{2\nu}\,\frac{\tau}{\ell}\right)^\nu K_\nu\left(\sqrt{2\nu}\,\frac{\tau}{\ell}\right)$ with certain parameter values ($\nu=1/2,3/2,\ldots$) have exact state-space representations. In particular, with $\nu=3/2$ we get
+For example, the Mat\'ern covariance functions  $k(\tau) = \left( \sigma^2 \, 2^{1-\nu} / \Gamma(\nu)\right) \left(\sqrt{2\nu}\,\tau / \ell \right)^\nu K_\nu\left(\sqrt{2\nu}\,\tau / \ell \right)$ with certain parameter values ($\nu=1/2,3/2,\ldots$) have exact state-space representations. In particular, with $\nu=3/2$ we get
  %
 \begin{equation}
 \begin{split}
@@ -838,7 +840,37 @@ Although the commonly used squared exponential covariance function does not have
 
 It is also possible to extend this concept to spatio-temporal covariance functions of the form $k(\mathbf{x} - \mathbf{x}', t-t')$, which in turn gives covariance functions $k(\mathbf{x} - \mathbf{x}')$ as a special case, because we can always reinterpret one of the components of $\mathbf{x}$ as time. The methods to form these infinite-dimensional state-space representations have been considered in \cite{Sarkka+Hartikaine:2012,Sarkka+Solin+Hartikainen:2013}. 
 
-\simo{More text to come in a few moments}
+The conversion of spatio-temporal covariance function into state-space form leads to a system of the form
+%
+\begin{equation}
+\begin{split}
+  \frac{\partial\mathbf{u}(\mathbf{x},t)}{\partial t} &= \mathbf{\mathcal{A}}_u \, \mathbf{u}(\mathbf{x},t)
+  + \mathbf{B}_u \, w(\mathbf{x},t) \\
+   u(\mathbf{x},t) &= \mathbf{C}_u \, \mathbf{u}(\mathbf{x},t),
+\end{split}
+\label{eq:ssu2}
+\end{equation}
+%
+where $\mathbf{\mathcal{A}}_u$ is a matrix of linear operators (typically pseudo-differential operators) acting on the $\mathbf{x}$-variable and $w(\mathbf{x},t)$ is a time-white spatio-temporal Gaussian process. This representation can be obtained by an extension the spectral factorization based method for the temporal case. 
+
+For example, the spatio-temporal Mat\'ern covariance function with a suitable parametrization leads to the following representation \cite{Sarkka+Solin+Hartikainen:2013}:
+%
+\begin{equation}
+\begin{split}
+  \frac{\partial \mathbf{u}(\mathbf{x},t)}{\partial t} &= 
+       \underbrace{\begin{pmatrix} 
+        0 & 1 \\ 
+        \nabla^2-\lambda^2
+        & -2 \sqrt{\lambda^2-\nabla^2} 
+      \end{pmatrix}}_{\mathbf{\mathcal{A}}_u} \mathbf{u}(\mathbf{x},t)
+      + \underbrace{\begin{pmatrix} 0 \\ 1 \end{pmatrix}}_{\mathbf{B}_u} w(\mathbf{x},t), \\
+      u(\mathbf{x},t) &= \underbrace{\begin{pmatrix} 1 & 0 \end{pmatrix}}_{\mathbf{C}_u} \, \mathbf{u}(\mathbf{x},t),
+\end{split}
+\end{equation}
+%
+where $\nabla^2 = \partial^2 / \partial x_1^2 + \cdots + \partial^2 / \partial x_p^2$ and $\sqrt{\cdot}$ in the matrix $\mathbf{\mathcal{A}}_u$ denotes an operator square root.
+
+State-space realizations of spatio-temporal oscillating fields have been discussed in \cite{Solin+Sarkka:2013physrev}. The implementation of divergence-free covariance functions for magnetic field modeling have been recently presented in \cite{Solin_et_al_magnetic}.
 
 \subsection{LFMs in state-space form}
 %
@@ -947,9 +979,13 @@ Discuss
 %
 %Maybe here we should give some analysical/numerical examples, making comparisons in terms of the types of covariance function one can get in both methods, or the type of power spectrum one may get. We could also discuss the possibilities to combine with other methods in GP/Kalman areas.
 
-\section{State-space methods for covariance function-based LFMs}
+\section{Numerical methods for LFMs}
 
-\subsection{Matrix Exponential Computation of Impulse Responses}
+\subsection{PDE Methods for Covariance Function Computation}
+%
+\simo{Discuss the use of Hilbert-space methods, FEM, and finite differences to approximate the covariance function computation for LFMs both in covariance and state-space form}
+
+\subsection{Matrix and Operator Exponential Computation of Green's Functions}
 \simo{Much text missing}
 Because this system is of the first order, the impulse response can be written down explicitly in terms of the matrix exponential function $\mathbf{H}(t) = \exp(t \, \mathbf{A})$ and hence the joint covariance function of $\mathbf{f}$ is
 %
@@ -979,23 +1015,123 @@ This representation still has the same problem as the impulse response approach 
 
 \simo{If I recall right, we can use the stationarity to reduce this into a single integral, need to check}
 
-\subsection{Fourier Domain Methods}
+\simo{Extend the same idea PDEs, but with operator exponentials}
+
+\subsection{Stable State-Space Realization of $u$}
 %
-\simo{We can also simply form the spectral density of the joint system and numerically compute its inverse Fourier transform}
+In this section we discuss stable representation of the rational spectral densities needed to $u$. Recall that the first step in the construction of the state-space model is spectral factorization (see, e.g., \cite{Hartikainen+Sarkka:2010, Sarkka+Hartikainen:2012, Sarkka+Solin+Hartikainen:2013}) which means that given a rational spectral density $S(\omega)$, we find a real rational function
+%
+\begin{equation}
+\begin{split}
+ G(i \, \omega)
+ = \frac{\tilde{b}_m \, (i \, \omega)^m + \tilde{b}_{m-1} \, (i \, \omega)^{m-1} + \cdots
+   \tilde{b}_1 \, (i \, \omega) + \tilde{b}_0}
+   {(i \, \omega)^n + \tilde{a}_{n-1} \, (i \, \omega)^{n-1} + \cdots + \tilde{a}_1 \, (i \, \omega) + \tilde{a}_0}
+\end{split}
+\label{eq:trans2}
+\end{equation}
+%\begin{equation}
+%\begin{split}
+%  G(s)
+%  = \frac{\tilde{b}_m \, s^m + \tilde{b}_{m-1} \, s^{m-1} + \cdots
+%    \tilde{b}_1 \, s + \tilde{b}_0}
+%    {s^n + \tilde{a}_{n-1} \, s^{n-1} + \cdots + \tilde{a}_1 \, s + \tilde{a}_0}
+%\end{split}
+%\label{eq:trans2}
+%\end{equation}
+%
+which is analytic and non-zero in the right half plane such that
+%
+\begin{equation}
+\begin{split}
+  S(\omega) = G(i \, \omega) \, q_c \, G(-i \, \omega),
+\end{split}
+\end{equation}
+%
+where $q_c > 0$ is a constant. In practice, a viable way to find the function is by computing the roots of numerator and denominator, which appear in conjugate pairs, and construct $G(i \, omega)$ from the roots having positive imaginary parts. However, many other spectral factorization methods exist as well \cite{Ref-to-spec-fact-survey}.
 
-\simo{Another way is to approximate the joint spectral density as rational function and use specific methods for that}
+Given the function $G$ we can then use, for example, the following controllable canonical form (e.g., \cite{Glad+Ljung:2000}) to construct the state-space model (here $q_c$ becomes the spectral density of the white noise process $w(t)$):
+%
+\begin{equation}
+\begin{split}
+  \frac{d\mathbf{u}(t)}{dt}
+  &= \underbrace{\begin{pmatrix}
+       0             & 1      &        &       \\
+                     & \ddots & \ddots &       \\
+                     &         &  0    &     1 \\
+   -\tilde{a}_0 & -\tilde{a}_1 & \hdots &  -\tilde{a}_{n-1}
+  \end{pmatrix}}_{\mathbf{A}_u} \, \mathbf{u}(t) 
+  + \underbrace{\begin{pmatrix}
+      0 \\
+      \vdots \\
+      0 \\
+      1
+  \end{pmatrix}}_{\mathbf{L}_u} \,
+   w(t) \\
+   u(t) &=
+   \underbrace{\begin{pmatrix} \tilde{b}_0 & \tilde{b}_1 & \cdots & \tilde{b}_m & 0 & \cdots & 0
+   \end{pmatrix}}_{\mathbf{C}_u} \, \mathbf{u}(t),
+\end{split}
+\end{equation}
+%
+or alternatively the observable canonical form
+%
+\begin{equation}
+\begin{split}
+  \frac{d\mathbf{u}(t)}{dt}
+  &= \underbrace{\begin{pmatrix}
+       0             &        &        & -\tilde{a}_0 \\
+       1             & \ddots &        & -\tilde{a}_1 \\
+                     & \ddots &  0     & \vdots   \\
+                     &        &  1     & -\tilde{a}_{n-1} \\
+  \end{pmatrix}}_{\mathbf{A}_u} \, \mathbf{u}(t) 
+  + \underbrace{\begin{pmatrix}
+      \tilde{b}_0 \\
+      \vdots \\
+      \tilde{b}_m \\
+      0 \\
+      \vdots \\
+      0
+  \end{pmatrix}}_{\mathbf{L}_u} \,
+   w(t) \\
+   u(t) &=
+   \underbrace{\begin{pmatrix} 0 & \cdots & 0 & 1 \end{pmatrix}}_{\mathbf{C}_u} \, \mathbf{u}(t)
+\end{split}
+\end{equation}
 
-\subsection{Operator Exponential Computation of Green's Functions}
+However, it is important to point out that the direct use of this procedure might result in a numerically unstable model especially when the approximation order is high. To overcome this problem it is often advisable to use the following method. 
+Because the choice of state-variable coordinate system is arbitrary, we can define a new process via $\tilde{\mathbf{u}}(t) = \mathbf{T}^{-1} \, \mathbf{u}(t)$, where $\mathbf{T}$ is a constant invertible matrix, to get a new system
+%
+\begin{equation}
+\begin{split}
+    \frac{d\tilde{\mathbf{u}}(t)}{dt}
+    &= \mathbf{T}^{-1} \, \mathbf{A}_u \, \mathbf{T} \, \tilde{\mathbf{u}}(t)
+    + \mathbf{T}^{-1} \, \mathbf{L} \, w(t), \\
+   u(t) &= \mathbf{H} \, \mathbf{T} \, \tilde{\mathbf{u}}(t)
+\end{split}
+\end{equation}
+%
+which is equivalent to the model \eqref{eq:ssmodel} in (statistical) input-output sense. It can be observed that the numerical stability is essentially governed by the condition number of the matrix $\mathbf{A}_u$. To convert a state-space model with a badly conditioned matrix $\mathbf{A}_u$ into an equivalent model with a well-conditioned matrix we can use the well-known matrix balancing procedure
+%\cite{Parlett+Reinsch:1969,Parlett+Reinsch:1971}
+\cite{Parlett+Reinsch:1971}
+originally developed for numerically stabilizing the computation the eigenvalues of a matrix (implemented, e.g., as the ``balance'' function in Matlab). This procedure gives us a suitable matrix $\mathbf{T}$ which can be used in the transformation above to give a numerically stable state-space model.
 
-\simo{The same idea as for ODEs, but with operator exponentials}
+\subsection{Covariance Computation via State-Space Representation}
+%
+\simo{One way to compute the covariance function $k_f$ is to form the state-spate representation of the full system and then use the state-space formula for the covariance.}
 
-\simo{Will also discuss basis function expansions in computation of operator exponential}
+\subsection{Separable Covariance Functions}
+%
+\simo{Some tips and tricks for separable covariance functions.}
+
 
 
 
 \section{Hyperparameter Learning}
 %
-\simo{TODO}
+\subsection{Hyperparameter Learning in Covariance Function Based LFMs}
+
+\subsection{Hyperparameter Learning in State-Space LFMs}
 
 
 \section{Extensions}
@@ -1061,13 +1197,13 @@ that little n it's been used for the order of the differential operator}
 
 \simo{Both write}
 
+\subsection{Controlled LFMs}
+%
+\simo{We could also discuss the use of LFMs in control. The state-space representation allows for the use of classical LQ-control theory for this. As the latent forces are modeled as stationary GPs, it implies that the model will not be controllable (from the force), but certainly it will be stabilizable. }
 
-\subsection{\simo{Controlled LFMs?}}
+\subsection{\simo{\st{Periodic Latent Functions}}}
 
-
-\subsection{Periodic Latent Functions}
-
-\simo{Is this really an extension -- this is anyway a linear LFM? Let's toss this}
+\simo{Is this really an extension -- this is anyway a linear LFM? Let's leave this out.}
 
 %\simo{Both write}
 
@@ -1076,11 +1212,12 @@ that little n it's been used for the order of the differential operator}
 \mauricio{Not sure what to put here, since we haven't really done any periodic latent function applications in the GP
 regression context}
 
-\section{Examples}
+
+\section{Experimental Results}
 
 \subsection{An ODE Model}
 %
-\simo{Simple spring model with RBF and Matern. Compare the computational complexities and easiness of implementation.}
+\simo{Simple spring model with RBF. Compare the computational complexities and easiness of implementation.}
 
 \simo{Mauricio starts by explaining the setup.}
 
@@ -1113,9 +1250,25 @@ regression context}
 
 \subsection{A PDE Model II}
 
-\simo{Mauricio writes the Poisson example here.}
+\simo{Mauricio writes the Poisson 2D example here, Simo writes the corresponding state-space version. This leads to an interesting (weak) pseudo-differential equation representation of the Poisson model:}
 
-\subsection{A Periodic Model}
+\begin{equation}
+\begin{split}
+    \frac{\partial\mathbf{u}(\mathbf{x},t)}{\partial t} &= \mathbf{\mathcal{A}}_u \, \mathbf{u}(\mathbf{x},t)
+  + \mathbf{B}_u \, w(\mathbf{x},t) \\
+  \frac{\partial \mathbf{f}(\mathbf{x},t)}{\partial t} &= 
+       \begin{pmatrix} 
+        0 & 1 \\ 
+        \frac{\partial^2}{\partial x^2}
+        & -2 \sqrt{-\frac{\partial^2}{\partial x^2}} 
+      \end{pmatrix}\mathbf{u}(\mathbf{x},t)
+      + \begin{pmatrix} 0 \\ 1 \end{pmatrix} \mathbf{C}_u \, \mathbf{u}(\mathbf{x},t), \\
+      f(\mathbf{x},t) &= \begin{pmatrix} 1 & 0 \end{pmatrix} \, \mathbf{f}(\mathbf{x},t),
+\end{split}
+\end{equation}
+
+
+\subsection{\simo{\st{A Periodic Model}}}
 
 \simo{Probably leave this out}
 
