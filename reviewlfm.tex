@@ -492,6 +492,8 @@ Differential equations, Latent force models, state space representations.
 
 %\IEEEPARstart{I}{n} machine learning, there has been a recent interest to combine non-parametric statistical models with first-principles physical differential equation models. The motivation to do that is that although non-parametric statistical models such as Gaussian processes \cite{Rasmussen+Williams:2006} are well-suited for expressing very loose assumptions on the modeled functions (such as smoothness and length scale), encoding physical knowledge into them is hard. In many applications, we are faced with problems in which we have plenty of data and a physical model, and we want to use statistical inference either to estimate the parameters of those physical models or to perform inference over unknown functions or variables related to the physical model. This setup appears frequently in modern physics, biology, chemistry, geology, and many other scientific disciplines for which the description of physical phenomena is done through differential equations. To deal with these kinds of problems, we recently introduced latent force models (LFM) \cite{Alvarez+Lawrence:2009,Alvarez:2010,Alvarez+Luengo+Lawrence:2013}, which are general models that allow the incorporation of differential equations into data-driven non-parametric models -- or non-parametric models into differential equation models.
 
+\simo{{\em Notation:} $n$ is the number of data points, $p$ is the input ($\mathbf{x}$) dimension, $d$ is the vector output dimensionality, $s$ for order of ODE, $k$ is the discrete time index, if we have space and time, $n = n_x \, n_t$ for data points in time and space (for a grid).}
+
 \IEEEPARstart{C}{onsider} a second order differential equation model of the form
 %
 \begin{equation}
@@ -508,28 +510,35 @@ and assume that we measure the function $f(t)$ via noisy measurements at discret
 \end{split}
 \end{equation}
 %
-The differential equation can, for example, model the behavior of a mechanical, electrical, or chemical system and the latent function $u(t)$ is an unknown input (or force) acting on the system. The latent function $u(t)$ above is modeled as a non-parametric Gaussian process model \cite{Rasmussen+Williams:2006} with a given covariance function $k(t - t')$ and the aim is to infer both the function $f(t)$ and the latent force model $u(t)$ from noisy observations $y_k$ of the differential equation solution $f(t)$ only ($\epsilon_k$ above denotes a Gaussian noise).
+The differential equation can, for example, model the behavior of a mechanical, electrical, or chemical system. The type of problem under consideration is to infer both the function $f(t)$ and the force $u(t)$ from noisy observations $y_k$ of the differential equation solution $f(t)$ only ($\epsilon_k$ above denotes a Gaussian noise). 
 
-Because the above model defines a stochastic linear time-invariant (LTI) system with Gaussian input, there are many equivalent ways to represent it mathematically. In particular, here we consider the following kinds of representations: (a) a linear differential equation with constant coefficients as above, (b) as a convolution operation with an impulse response, (c) a frequency domain tranfer function model or (d) as a state-space model. However, a difference to typical stochastic LTI systems encountered in signal processing, the Gaussian input signal is not a white noise process. This difference is crucial here, because replacing the white noise with a more general Gaussian process (i.e., colored noise) allows for interpretation of the input signal as a non-parametric statistical model and hence methods from machine learning can be applied to the problem as such.
-
-
-{\em Notation:} $n$ is the number of data points, $p$ is the input ($\mathbf{x}$) dimension, $d$ is the vector output dimensionality, $s$ for order of ODE, $k$ is the discrete time index, if we have space and time, $n = n_x \, n_t$ for data points in time and space (for a grid).
-
-Another example:
+Another example of a model is the heat equation
 %
 \begin{equation}
 \begin{split}
-  \frac{\partial f(x,t)}{\partial t} &=
-  D \, \nabla^2 \, f(x,t) - \beta \, f(x,t) + u(x,t) \\
-  y_k &= f(x_k,t_k) + \epsilon_k,
+  \frac{\partial f(\mathbf{x},t)}{\partial t} &=
+  D \, \nabla^2 \, f(\mathbf{x},t) - \beta \, f(\mathbf{x},t) + u(\mathbf{x},t) \\
+  y_k &= f(\mathbf{x}_k,t_k) + \epsilon_k,
 \end{split}
 \end{equation}
+%
+where again the aim is to reconstruct both the force field $u(\mathbf{x},t)$ and the function $f(\mathbf{x},t)$ from the noisy observations $y_k$. Yet another example of interest is the Poisson equation
+%
+\begin{equation}
+\begin{split}
+  \nabla^2 f(\mathbf{x}) &= u(\mathbf{x}) \\
+  y_k &= f(\mathbf{x}_k) + \epsilon_k,
+\end{split}
+\end{equation}
+%
+where again the function $f$ and the force field $u$ are unknown. 
 
-\simo{Probably the Poisson equation here already}
+The focus in this article is in considering the force or input $u$ as unknown and model it as a non-parametric Gaussian process model \cite{Rasmussen+Williams:2006} with a given covariance function. This kind of models are called latent force models (LFM) \cite{Alvarez+Lawrence:2009,Alvarez:2010,Alvarez+Luengo+Lawrence:2013} in machine learning literature. The present problem is also closely related to so called input estimation problem that has previously been addressed in target tracking literature (e.g. \cite{Bar-Shalom+Li+Kirubarajan:2001}) by replacing the input or force with a white or colored noise. However, here we will specifically concentrate on the machine learning point of view which allows for encoding prior information into the driving force as well as the use of modern machine learning methods for coping with the related hyperparameter estimation problems and model extensions. We also explicitly consider partial differential equations driven by (structured) Gaussian processes.
 
-\simo{Both write, Simo could start}
 
-LFMs can be derived from two different perspectives: the covariance function perspective \cite{Alvarez+Lawrence:2009,Alvarez+Luengo+Lawrence:2013} and the state-space perspective \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012}. The former approach can be seen as a machine learning point of view (cf. \cite{Rasmussen+Williams:2006}) to LFMs whereas the latter approach is a signal processing point of view (cf. \cite{Sarkka+Solin+Hartikainen:2013,Sarkka:2013}). Both of these approaches have their own advantages and disadvantages in terms of flexibility, ease of implementation, and computational complexity. In this paper, we analyze both of these points of view to latent force models.
+%Because the above model defines a stochastic linear time-invariant (LTI) system with Gaussian input, there are many equivalent ways to represent it mathematically. In particular, here we consider the following kinds of representations: (a) a linear differential equation with constant coefficients as above, (b) as a convolution operation with an impulse response, (c) a frequency domain transfer function model or (d) as a state-space model. However, a difference to typical stochastic LTI systems encountered in signal processing, the Gaussian input signal is not a white noise process. This difference is crucial here, because replacing the white noise with a more general Gaussian process (i.e., colored noise) allows for interpretation of the input signal as a non-parametric statistical model and hence methods from machine learning can be applied to the problem as such.
+
+LFMs can be derived from two different perspectives: the covariance function perspective \cite{Alvarez+Lawrence:2009,Alvarez+Luengo+Lawrence:2013} and the state-space perspective \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012}. The former approach can be seen as a machine learning point of view (cf. \cite{Rasmussen+Williams:2006}) to LFMs whereas the latter approach is a signal processing point of view (cf. \cite{Sarkka+Solin+Hartikainen:2013,Sarkka:2013}). Both of these approaches have their own advantages and disadvantages in terms of flexibility, ease of implementation, and computational complexity. In this paper, we analyze both of these points of view to latent force models as well as present new computational methods which aim to combine the best sides of both points of view.
 
 
 
@@ -542,13 +551,9 @@ In this section, we \ldots
 \subsection{Gaussian process regression}\label{sec:gp:regression}
 %
 
-A Gaussian process is usually defined as an stochastic process with the property that any
+A Gaussian process (GP) is usually defined as an stochastic process with the property that any
 finite number of random variables taken from that process follows a multivariate Gaussian
-distribution \cite{Rasmussen+Williams:2006, Shanmugan:randomSignals:88}. Gaussian processes
-are commonly used as prior distributions over functions $f: \mathbb{R}^d\rightarrow \mathbb{R}$.
-When used for regression, the GP encodes the uncertainty we have over a function, before seeing the data. Once we
-have specified a particular relationship between the function and the data we observe, we can update our beliefs over
-the function using the Bayesian theorem, and compute the posterior distribution.
+distribution \cite{Rasmussen+Williams:2006, Shanmugan:randomSignals:88}. In machine learning \cite{Rasmussen+Williams:2006}, Gaussian processes are commonly used as prior distributions over functions $f: \mathbb{R}^d\rightarrow \mathbb{R}$. When used for regression, the GP encodes the uncertainty we have over a function, before seeing the data. Once we have specified a particular relationship between the function and the data we observe, we can update our beliefs over the function using the Bayesian theorem, and compute the posterior distribution.
 
 Consider predicting the value of an unknown function $y = f(x)$ at a certain test point $(y^*, x^*)$. The prediction
 is based on a finite set of previously seen data points or training samples
@@ -609,18 +614,18 @@ where
 \end{align*}
 being $\mathbf{I}\in\mathbb{R}^{n\times n}$ the identity matrix.
 
-\mauricio{Do we need to include figures to show how GP regression work?}
+Fig.~\ref{reg_ex} shows an example of Gaussian process regression. \simo{Explain more.}
 
-%\simo{Basic GP regression here: Mauricio writes}
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\columnwidth]{reg_ex}
+% where an .eps filename suffix will be assumed under latex,
+% and a .pdf suffix will be assumed for pdflatex; or what has been declared
+% via \DeclareGraphicsExtensions.
+\caption{GP regression example (placeholder)}
+\label{reg_ex}
+\end{figure}
 
-%I think in this section we should mention the basic idea taught in signal processing courses of LTI systems driven by
-%an stochastic process. We would mention that there are different ways in which you could specify the LTI system and their output, namely,
-%through a differential equation, through the convolution operation which implies knowing the inverse operator for you
-%differential operator, through the power spectrum (through Wiener-Khinchin), or through the state space method.\\
-
-%Perhaps, we would then talk about the different types of inputs you could use for your dynamical systems, for example, talk about Markov processes, white noise processes and Gaussian processes with general forms for the covariance function.
-
-\simo{Put some figures here}
 
 \subsection{GP Regression Solution to Basic LFM Inference}\label{sec:gp:regression:lfm}
 %
@@ -787,13 +792,13 @@ for a test input $\mathbf{x}^*$, both for the output process $f(\mathbf{x})$, an
 \section{Latent Force Models as Stochastic State-Space Models}
 
 \subsection{GPs in state-space form}
-As shown in \cite{Hartikainen+Sarkka:2010,Sarkka+Solin+Hartikainen:2013} many covariance function based models of the form
+As shown in \cite{Hartikainen+Sarkka:2010,Sarkka+Solin+Hartikainen:2013,Sarkka+Piche:2014} many covariance function based models of the form
 %
 \begin{equation}
   u(t) \sim \mathcal{GP}(0,k(t - t'))
 \end{equation}
 %
-can be equivalently or approximately expressed in state-space form by defining a state vector $\mathbf{u} = (u, du/dt,\ldots,d^{p-1}u/dt^{p-1})$ leading to a state-space model
+can be equivalently or approximately expressed in state-space form by defining a state vector such as $\mathbf{u} = (u, du/dt,\ldots,d^{p-1}u/dt^{p-1})$---note that depending on parameterization the state vector might not contain exactly the derivatives, but something related---leading to a state-space model
 %
 \begin{equation}
 \begin{split}
@@ -804,12 +809,36 @@ can be equivalently or approximately expressed in state-space form by defining a
 \label{eq:ssu}
 \end{equation}
 %
-where $w(t)$ is a white-noise process. The advantage of this model formulation is that it allows for solving the GP regression problem using Kalman filters and smoothers \cite{Sarkka:2013} in $O(T)$ time when the traditional GP takes $O(T^3)$ time.
+where $w(t)$ is a white-noise process. The advantage of this kind of model formulation is that it allows for solving the GP regression problem using Kalman filters and smoothers \cite{Sarkka:2013} in $O(n)$ time when the traditional GP takes $O(n^3)$ time (here $n$ denotes the number of measurements).
 
-\simo{Simo writes more}
+The key result is that such a state-space representation exists if and only if the spectral density (the Fourier transform of $k(\tau)$) is a proper rational function:
+%
+\begin{equation}
+\begin{split}
+  S(\omega) &= \frac{b_0 + b_1 \, \omega^2 + \cdots + b_L \, \omega^{2L}}{a_0 + a_1 \, \omega^2 + \cdots + a_M \, \omega^{2M}}.
+\end{split}
+\end{equation}
+%
+By using the spectral factorization and classical state-space realizations \cite{Sarkka+Solin+Hartikainen:2013} it is then possible to construct the matrices $\mathbf{A}_u$, $\mathbf{B}_u$, and $\mathbf{C}_u$ such that $u(t)$ has the desired covariance function. 
 
-\simo{Kalman filtering and smoothing}
+For example, the Mat\'ern covariance functions  $k(\tau) = \sigma^2\frac{2^{1-\nu}}{\Gamma(\nu)}\left(\sqrt{2\nu}\,\frac{\tau}{\ell}\right)^\nu K_\nu\left(\sqrt{2\nu}\,\frac{\tau}{\ell}\right)$ with certain parameter values ($\nu=1/2,3/2,\ldots$) have exact state-space representations. In particular, with $\nu=3/2$ we get
+ %
+\begin{equation}
+\begin{split}
+\frac{d\mathbf{u}(t)}{dt} &= \underbrace{\begin{pmatrix} 0 & 1 \\ -\lambda^2 & -2\lambda \end{pmatrix}}_{\mathbf{A}_u}
+ \, \mathbf{u}(t)
++ \underbrace{\begin{pmatrix} 0 \\ 1 \end{pmatrix}}_{\mathbf{B}_u} \, w(t), \\
+   u(t) &= \underbrace{\begin{pmatrix} 1 & 0 \end{pmatrix}}_{\mathbf{C}_u} \, \mathbf{u}(t),
+\end{split}
+\end{equation}
+%
+where $\lambda=\sqrt{2\nu}/\ell$. 
 
+Although the commonly used squared exponential covariance function does not have an exact state-space representation, it can be easily it can be approximated with such using a simple Taylor series expansions or Pad\'e approximants in Fourier domain \cite{Sarkka+Piche:2014}. State-space representations of periodic covariance functions have been considered in \cite{Solin+Sarkka:2014a}, and rational quadratic and general scale mixtures of Gaussians in \cite{Solin+Sarkka:2014b}.
+
+It is also possible to extend this concept to spatio-temporal covariance functions of the form $k(\mathbf{x} - \mathbf{x}', t-t')$, which in turn gives covariance functions $k(\mathbf{x} - \mathbf{x}')$ as a special case, because we can always reinterpret one of the components of $\mathbf{x}$ as time. The methods to form these infinite-dimensional state-space representations have been considered in \cite{Sarkka+Hartikaine:2012,Sarkka+Solin+Hartikainen:2013}. 
+
+\simo{More text to come in a few moments}
 
 \subsection{LFMs in state-space form}
 %
