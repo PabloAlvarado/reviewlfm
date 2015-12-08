@@ -784,31 +784,29 @@ for a test input $\mathbf{x}^*$, both for the output process $f(\mathbf{x})$, an
 
 \simo{Especially non-time-based models such as the Poisson equation.}
 
-\subsection{Non-linear Models}
-
-When the input force is modelled as a non-linear transformation of a Gaussian process \cite{Lawrence:gpsim2007a,
-Gao:latent08, Titsias:BMC:2012}, it is necessary to resort to an approximation in order to compute the posterior
-distribution for $u^*$ given $\mathbf{y}$, or the predictive distribution for $f^*$ given $\mathbf{y}$.
-
-The setup is again an ordinary differential equation of the form $Lf(t)=g(u(t))$, where $g(\cdot)$ is a non-linear function
-of the argument. In \cite{Lawrence:gpsim2007a, Gao:latent08}, the authors suggest the MAP-Laplace method
-\cite{Bishop:PRML06} as a way to approximate the posterior distribution for $u(t)$. The MAP-Laplace method approximates
-the posterior distribution by a
-Gaussian distribution centered at the Maximum a Posteriori (MAP) solution. The method implies functional derivatives of the
-log-likelihood for computing the gradient and the Hessian that are necessary in the optimization procedure. Functional
-derivatives for the terms involved are then computed on a grid using Riemann quadrature. In \cite{Titsias:BMC:2012}, the
-authors provide a Markov Chain Monte Carlo (MCMC) procedure to compute the posterior distribution for $u(t)$, as well
-as posterior distributions for any parameters appearing as part of the impulse response.
-
-\mauricio{We could go into more details here if we want. I was checking previous published papers and this is really
-the only non-linear model that has been proposed before, in the context of LFMs for regression. The non-linearity in the
-differential equation has not been published before}.
-
 \section{Latent Force Models as Stochastic State-Space Models}
 
 \subsection{GPs in state-space form}
+As shown in \cite{Hartikainen+Sarkka:2010,Sarkka+Solin+Hartikainen:2013} many covariance function based models of the form
+%
+\begin{equation}
+  u(t) \sim \mathcal{GP}(0,k(t - t'))
+\end{equation}
+%
+can be equivalently or approximately expressed in state-space form by defining a state vector $\mathbf{u} = (u, du/dt,\ldots,d^{p-1}u/dt^{p-1})$ leading to a state-space model
+%
+\begin{equation}
+\begin{split}
+  \frac{d\mathbf{u}(t)}{dt}
+  &= \mathbf{A}_u \, \mathbf{u}(t) + \mathbf{B}_u \, w(t) \\
+  u(t) &= \mathbf{C}_u \, \mathbf{u}(t),
+\end{split}
+\label{eq:ssu}
+\end{equation}
+%
+where $w(t)$ is a white-noise process. The advantage of this model formulation is that it allows for solving the GP regression problem using Kalman filters and smoothers \cite{Sarkka:2013} in $O(T)$ time when the traditional GP takes $O(T^3)$ time.
 
-\simo{Simo writes}
+\simo{Simo writes more}
 
 \simo{Kalman filtering and smoothing}
 
@@ -817,7 +815,7 @@ differential equation has not been published before}.
 %
 \simo{Simo writes}
 
-As pointed out in \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012} it is also possible to rewrite the differential equation \eqref{eq:difeq1} in state-space form by defining a ``state vector'' $\mathbf{f} = (f, df/dt,\ldots,d^{n-1}f/dt^{n-1})$ and writing
+It is also possible to rewrite the differential equation \eqref{eq:difeq1} in state-space form by defining a ``state vector'' $\mathbf{f} = (f, df/dt,\ldots,d^{n-1}f/dt^{n-1})$ and writing
 %
 \begin{equation}
 \begin{split}
@@ -853,56 +851,6 @@ This gives the following state-space representation for $f(t)$:
 \label{eq:ssgen}
 \end{equation}
 %
-Because this system is of the first order, the impulse response can be written down explicitly in terms of the matrix exponential function $\mathbf{H}(t) = \exp(t \, \mathbf{A})$ and hence the joint covariance function of $\mathbf{f}$ is
-%
-\begin{equation}
-\begin{split}
-  &\mathbf{K}_\mathbf{f}(t - t')
-  \\ &
-  =
-  \int_{-\infty}^{t} \int_{-\infty}^{t'}
-  \mathbf{H}(t - s) \, \mathbf{B} \, k(s - s') \,
-  \mathbf{B}^T \, \mathbf{H}^T(t' - s') \, ds \, ds',
-\end{split}
-\label{eq:vfcov}
-\end{equation}
-%
-and we can pick up the covariance function of $f(t)$ from the matrix via
-%
-\begin{equation}
-\begin{split}
-  k_f(t,t') &=
-  \mathbf{C} \, \mathbf{K}_\mathbf{f}(t - t') \, \mathbf{C}^T
-\end{split}
-\label{eq:fcov2}
-\end{equation}
-%
-This representation still has the same problem as the impulse response approach in the previous section that we need to compute the integrals in \eqref{eq:vfcov} somehow. If closed form solution is not available, then the computations become heavy.
-
-\simo{Combine with the next section}
-
-\subsection{LFMs via augmented state-space}
-%
-\simo{Simo writes}
-
-As shown in \cite{Hartikainen+Sarkka:2010,Sarkka+Solin+Hartikainen:2013} many covariance function based models of the form
-%
-\begin{equation}
-  u(t) \sim \mathcal{GP}(0,k(t - t'))
-\end{equation}
-%
-can be equivalently or approximately expressed in state-space form by defining a state vector $\mathbf{u} = (u, du/dt,\ldots,d^{p-1}u/dt^{p-1})$ leading to a state-space model
-%
-\begin{equation}
-\begin{split}
-  \frac{d\mathbf{u}(t)}{dt}
-  &= \mathbf{A}_u \, \mathbf{u}(t) + \mathbf{B}_u \, w(t) \\
-  u(t) &= \mathbf{C}_u \, \mathbf{u}(t),
-\end{split}
-\label{eq:ssu}
-\end{equation}
-%
-where $w(t)$ is a white-noise process. The advantage of this model formulation is that it allows for solving the GP regression problem using Kalman filters and smoothers \cite{Sarkka:2013} in $O(T)$ time when the traditional GP takes $O(T^3)$ time.
 
 The approach of \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012} combines the above state-space representation with the state-space representation of LFMs in the previous section. Thus we obtain a combined model
 %
@@ -966,13 +914,55 @@ Discuss
 \end{align*}
 
 
-\subsection{Non-linear models in state-space form}
-
-\simo{Simo writes}
-
 %\subsection{Discussion or comparison of both approaches}
 %
 %Maybe here we should give some analysical/numerical examples, making comparisons in terms of the types of covariance function one can get in both methods, or the type of power spectrum one may get. We could also discuss the possibilities to combine with other methods in GP/Kalman areas.
+
+\section{State-space methods for covariance function-based LFMs}
+
+\subsection{Matrix Exponential Computation of Impulse Responses}
+\simo{Much text missing}
+Because this system is of the first order, the impulse response can be written down explicitly in terms of the matrix exponential function $\mathbf{H}(t) = \exp(t \, \mathbf{A})$ and hence the joint covariance function of $\mathbf{f}$ is
+%
+\begin{equation}
+\begin{split}
+  &\mathbf{K}_\mathbf{f}(t - t')
+  \\ &
+  =
+  \int_{-\infty}^{t} \int_{-\infty}^{t'}
+  \mathbf{H}(t - s) \, \mathbf{B} \, k(s - s') \,
+  \mathbf{B}^T \, \mathbf{H}^T(t' - s') \, ds \, ds',
+\end{split}
+\label{eq:vfcov}
+\end{equation}
+%
+and we can pick up the covariance function of $f(t)$ from the matrix via
+%
+\begin{equation}
+\begin{split}
+  k_f(t,t') &=
+  \mathbf{C} \, \mathbf{K}_\mathbf{f}(t - t') \, \mathbf{C}^T
+\end{split}
+\label{eq:fcov2}
+\end{equation}
+%
+This representation still has the same problem as the impulse response approach in the previous section that we need to compute the integrals in \eqref{eq:vfcov} somehow. If closed form solution is not available, then the computations become heavy.
+
+\simo{If I recall right, we can use the stationarity to reduce this into a single integral, need to check}
+
+\subsection{Fourier Domain Methods}
+%
+\simo{We can also simply form the spectral density of the joint system and numerically compute its inverse Fourier transform}
+
+\simo{Another way is to approximate the joint spectral density as rational function and use specific methods for that}
+
+\subsection{Operator Exponential Computation of Green's Functions}
+
+\simo{The same idea as for ODEs, but with operator exponentials}
+
+\simo{Will also discuss basis function expansions in computation of operator exponential}
+
+
 
 \section{Hyperparameter Learning}
 %
@@ -989,13 +979,38 @@ the output of the first differential equation is used as the input for the secon
 where $u(t)$ is the input and $p(t)$ is the output, then for the second differential equation we have $L_2f(t) = p(t)$,
 where $L_1$ and $L_2$ are both differential operators as before. In \cite{Honkela:PNAS10}, the authors assign a
 GP prior to $u(t)$, and find the posterior for $u(t)$, and $p(t)$, which can be computed analytically when $L_1$ and $L_2$
-are both differential operators associated to a first order ODE. In \cite{Gao:latent08}, the process $u(t)$ follows
+are both differential operators associated to a first order ODE.
+
+\simo{[In wrong place:] In \cite{Gao:latent08}, the process $u(t)$ follows
 a GP that is transformed non-linearly before serving as the input for the first ODE. Posterior distributions are
 approximated using the MAP-Laplace method. For the same setup, the authors in \cite{Titsias:BMC:2012} use MCMC to
-approximate the posterior distributions for the processes involved.
+approximate the posterior distributions for the processes involved.}
 
 
 \simo{Both write}
+
+\subsection{Non-linear Models}
+
+When the input force is modelled as a non-linear transformation of a Gaussian process \cite{Lawrence:gpsim2007a,
+Gao:latent08, Titsias:BMC:2012}, it is necessary to resort to an approximation in order to compute the posterior
+distribution for $u^*$ given $\mathbf{y}$, or the predictive distribution for $f^*$ given $\mathbf{y}$.
+
+The setup is again an ordinary differential equation of the form $Lf(t)=g(u(t))$, where $g(\cdot)$ is a non-linear function
+of the argument. In \cite{Lawrence:gpsim2007a, Gao:latent08}, the authors suggest the MAP-Laplace method
+\cite{Bishop:PRML06} as a way to approximate the posterior distribution for $u(t)$. The MAP-Laplace method approximates
+the posterior distribution by a
+Gaussian distribution centered at the Maximum a Posteriori (MAP) solution. The method implies functional derivatives of the
+log-likelihood for computing the gradient and the Hessian that are necessary in the optimization procedure. Functional
+derivatives for the terms involved are then computed on a grid using Riemann quadrature. In \cite{Titsias:BMC:2012}, the
+authors provide a Markov Chain Monte Carlo (MCMC) procedure to compute the posterior distribution for $u(t)$, as well
+as posterior distributions for any parameters appearing as part of the impulse response.
+
+\mauricio{We could go into more details here if we want. I was checking previous published papers and this is really
+the only non-linear model that has been proposed before, in the context of LFMs for regression. The non-linearity in the
+differential equation has not been published before}.
+
+
+\simo{Non-linear models in state-space form here}
 
 
 \subsection{Switching LFMs}
@@ -1018,11 +1033,16 @@ that little n it's been used for the order of the differential operator}
 \simo{Both write}
 
 
+\subsection{\simo{Controlled LFMs?}}
+
+
 \subsection{Periodic Latent Functions}
 
-\simo{Both write}
+\simo{Is this really an extension -- this is anyway a linear LFM? Let's toss this}
 
-\simo{Take the covariance series expansions from paper by Arno and Simo}
+%\simo{Both write}
+
+%\simo{Take the covariance series expansions from paper by Arno and Simo}
 
 \mauricio{Not sure what to put here, since we haven't really done any periodic latent function applications in the GP
 regression context}
@@ -1067,6 +1087,8 @@ regression context}
 \simo{Mauricio writes the Poisson example here.}
 
 \subsection{A Periodic Model}
+
+\simo{Probably leave this out}
 
 \section{Conclusions}
 The conclusion goes here.
