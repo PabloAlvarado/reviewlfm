@@ -12,7 +12,7 @@ clc
 clear
 close all
 s = RandStream('mt19937ar', 'Seed', 1e4);
-RandStream.setDefaultStream(s);
+RandStream.setGlobalStream(s);
 
 % Generate Samples from the model
 N = 100; % Number of time points

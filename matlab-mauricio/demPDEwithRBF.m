@@ -6,7 +6,7 @@ clc
 clear
 close all
 s = RandStream('mt19937ar', 'Seed', 1e8);
-RandStream.setDefaultStream(s);
+RandStream.setGlobalStream(s);
 
 nterms = 5;  % Number of terms in the Fourier solutions
 

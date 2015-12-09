@@ -39,6 +39,7 @@ bool isColumnVector(const mxArray *element) {
   return (cols == 1);
 }
 
+#define MAX_COLS 10000
 
 void computeUpsilon(
     complex<double> gamma,
@@ -52,9 +53,13 @@ void computeUpsilon(
   complex<double> complexJ(0, 1);
   complex<double> complexMinusJ(0, -1);
   double dev = sqrt(sigma2);
+
+  // assert(cols <= MAX_COLS);
+  complex<double> Z2[MAX_COLS];
+  complex<double> WOFZ2[MAX_COLS];
   
-  complex<double> Z2[cols];
-  complex<double> WOFZ2[cols];
+  // complex<double> Z2[cols];
+  // complex<double> WOFZ2[cols];
   
   for(mwSize j = 0; j < cols; j++) {
     Z2[j] = t2[j] / dev + dev * gamma / 2.0;
