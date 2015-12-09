@@ -350,7 +350,7 @@
 \hyphenation{op-tical net-works semi-conduc-tor}
 
 \usepackage{color}
-\usepackage{amsfonts}
+\usepackage{amsfonts,amssymb}
 \usepackage{soul}
 
 \newcommand{\mauricio}[1]{{\color{blue}#1}}
@@ -814,7 +814,7 @@ where $\lambda=\sqrt{2\nu}/\ell$.
 
 Although the commonly used squared exponential covariance function does not have an exact state-space representation, it can be easily it can be approximated with such using a simple Taylor series expansions or Pad\'e approximants in Fourier domain \cite{Sarkka+Piche:2014}. State-space representations of periodic covariance functions have been considered in \cite{Solin+Sarkka:2014a}, and rational quadratic and general scale mixtures of Gaussians in \cite{Solin+Sarkka:2014b}.
 
-It is also possible to extend this concept to spatio-temporal covariance functions of the form $k(\mathbf{x} - \mathbf{x}', t-t')$, which in turn gives covariance functions $k(\mathbf{x} - \mathbf{x}')$ as a special case, because we can always reinterpret one of the components of $\mathbf{x}$ as time. The methods to form these infinite-dimensional state-space representations have been considered in \cite{Sarkka+Hartikaine:2012,Sarkka+Solin+Hartikainen:2013}. 
+It is also possible to extend this concept to spatio-temporal covariance functions of the form $k(\mathbf{x} - \mathbf{x}', t-t')$, which in turn gives covariance functions $k(\mathbf{x} - \mathbf{x}')$ as a special case, because we can always reinterpret one of the components of $\mathbf{x}$ as time. The methods to form these infinite-dimensional state-space representations have been considered in \cite{Sarkka+Hartikainen:2012,Sarkka+Solin+Hartikainen:2013}. 
 
 The conversion of spatio-temporal covariance function into state-space form leads to a system of the form
 %
@@ -846,13 +846,13 @@ For example, the spatio-temporal Mat\'ern covariance function with a suitable pa
 %
 where $\nabla^2 = \partial^2 / \partial x_1^2 + \cdots + \partial^2 / \partial x_p^2$ and $\sqrt{\cdot}$ in the matrix $\mathbf{\mathcal{A}}_u$ denotes an operator square root.
 
-State-space realizations of spatio-temporal oscillating fields have been discussed in \cite{Solin+Sarkka:2013physrev}. The implementation of divergence-free covariance functions for magnetic field modeling have been recently presented in \cite{Solin_et_al_magnetic}.
+State-space realizations of spatio-temporal oscillating fields have been discussed in \cite{Solin+Sarkka:2013}. The implementation of divergence-free covariance functions for magnetic field modeling have been recently presented in \cite{Solin:2015}.
+
+\simo{Should add a visualization of this idea here}
 
 \subsection{LFMs in state-space form}
 %
-\simo{Simo writes}
-
-It is also possible to rewrite the differential equation \eqref{eq:difeq1} in state-space form by defining a ``state vector'' $\mathbf{f} = (f, df/dt,\ldots,d^{n-1}f/dt^{n-1})$ and writing
+We can rewrite the basic LFM differential equation \eqref{eq:difeq1} in state-space form by defining a state vector $\mathbf{f} = (f, df/dt,\ldots,d^{n-1}f/dt^{n-1})$ and writing
 %
 \begin{equation}
 \begin{split}
@@ -862,17 +862,17 @@ It is also possible to rewrite the differential equation \eqref{eq:difeq1} in st
                      & \ddots & \ddots &       \\
                      &         &  0    &     1 \\
    -a_0 & -a_1 & \hdots &  -a_{n-1}
-  \end{pmatrix}}_{\mathbf{A}} \, \mathbf{f}(t)
+  \end{pmatrix}}_{\mathbf{A}_f} \, \mathbf{f}(t)
   + \underbrace{\begin{pmatrix}
       0 \\
       \vdots \\
       0 \\
       \frac{1}{a_n}
-  \end{pmatrix}}_{\mathbf{B}} \,
+  \end{pmatrix}}_{\mathbf{B}_f} \,
    u(t) \\
    f(t) &= \underbrace{\begin{pmatrix}
      1 & 0 & \cdots & 0
-   \end{pmatrix}}_{\mathbf{C}} \, \mathbf{f}(t)
+   \end{pmatrix}}_{\mathbf{C}_f} \, \mathbf{f}(t)
 \end{split}
 \label{eq:ss1}
 \end{equation}
@@ -882,45 +882,45 @@ This gives the following state-space representation for $f(t)$:
 \begin{equation}
 \begin{split}
   \frac{d\mathbf{f}(t)}{dt}
-  &= \mathbf{A} \, \mathbf{f}(t) + \mathbf{B} \, u(t) \\
-  f(t) &= \mathbf{C} \, \mathbf{f}(t).
+  &= \mathbf{A}_f \, \mathbf{f}(t) + \mathbf{B}_f \, u(t) \\
+  f(t) &= \mathbf{C}_f \, \mathbf{f}(t).
 \end{split}
 \label{eq:ssgen}
 \end{equation}
 %
-
-The approach of \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012} combines the above state-space representation with the state-space representation of LFMs in the previous section. Thus we obtain a combined model
+We can now combine the above state-space representation with the state-space representation of LFMs in the previous section to obtain an augmented state-space representation of the LFM \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012}. Thus we obtain a combined model
 %
 \begin{equation}
 \begin{split}
   \frac{d\mathbf{f}(t)}{dt}
-  &= \mathbf{A} \, \mathbf{f}(t)
-  + \mathbf{B} \, \mathbf{C}_u \, \mathbf{u}(t) \\
+  &= \mathbf{A}_f \, \mathbf{f}(t)
+  + \mathbf{B}_f \, \mathbf{C}_u \, \mathbf{u}(t) \\
   \frac{d\mathbf{u}(t)}{dt}
   &= \mathbf{A}_u \, \mathbf{u}(t) + \mathbf{B}_u \, w(t) \\
-  f(t) &= \mathbf{C} \, \mathbf{f}(t).
+  f(t) &= \mathbf{C}_f \, \mathbf{f}(t).
 \end{split}
+\label{eq:comb}
 \end{equation}
 %
 If we now define
 %
 \begin{equation}
 \begin{split}
-  \tilde{\mathbf{f}} &= \begin{pmatrix}
+  \mathbf{g} &= \begin{pmatrix}
 	\mathbf{f} \\ \mathbf{u}
   \end{pmatrix}, \quad
-  \tilde{\mathbf{A}}
+  \mathbf{A}
   = \begin{pmatrix}
-	\mathbf{A} & \mathbf{\mathbf{B} \, \mathbf{C}_u} \\
-	0 & \mathbf{A}
+	\mathbf{A}_f & \mathbf{\mathbf{B}_f \, \mathbf{C}_u} \\
+	0 & \mathbf{A}_u
   \end{pmatrix} \\
-  \tilde{\mathbf{B}}
+  \mathbf{B}
   &= \begin{pmatrix}
 	0 & \mathbf{B}_u
   \end{pmatrix}, \quad
-  \tilde{\mathbf{C}}
+  \mathbf{C}
   = \begin{pmatrix}
-	\mathbf{C} & 0
+	\mathbf{C}_f & 0
   \end{pmatrix}
 \end{split}
 \end{equation}
@@ -929,22 +929,128 @@ then the model can be written as a white-noise driven state-space model
 %
 \begin{equation}
 \begin{split}
-  \frac{d\tilde{\mathbf{f}}(t)}{dt}
-  &= \tilde{\mathbf{A}} \, \tilde{\mathbf{f}}(t)
-  + \tilde{\mathbf{B}} \, w(t) \\
-  f(t) &= \tilde{\mathbf{C}} \, \tilde{\mathbf{f}}(t).
+  \frac{d\mathbf{g}(t)}{dt}
+  &= \mathbf{A} \, \mathbf{g}(t)
+  + \mathbf{B} \, w(t) \\
+  f(t) &= \mathbf{C} \, \mathbf{g}(t).
 \end{split}
 \label{eq:ssaug}
 \end{equation}
 %
-The advantage of this formulation is that we can infer both the process and the latent Gaussian process via Kalman filtering and smoothing in linear time. The disadvantage is that we need to find an accurate state-space representation for our latent Gaussian process model (see \cite{Hartikainen+Sarkka:2010,Sarkka+Solin+Hartikainen:2013} for details).
+The measurements can be included into the model by replacing the second equation above by
+%
+\begin{equation}
+\begin{split}
+  y_k &= \mathbf{C} \, \mathbf{g}(t_k) + \epsilon_k.
+\end{split}
+\label{eq:ssaugkf}
+\end{equation}
+%
+The advantage of this formulation is that we can infer both the process and the latent Gaussian process via Kalman filtering and smoothing in linear time (see \cite{Hartikainen+Sarkka:2010,Sarkka+Solin+Hartikainen:2013}). The link to Kalman filtering and smoothing follows from the result that as the model above is linear, we can form an exact (error-free) discretization of the model as
+%
+\begin{equation}
+\begin{split}
+  \mathbf{g}_k
+  &= \mathbf{U}(\Delta t_k) \, \mathbf{g}_{k-1}
+  + \mathbf{q}_k \\
+  y_k &= \mathbf{C} \, \mathbf{g}_k + \epsilon_k.
+\end{split}
+\label{eq:dssaug}
+\end{equation}
+%
+where $\mathbf{g}_k \triangleq \mathbf{g}(t_k)$, $\mathbf{q}_k \sim \mathcal{N}(0,\mathbf{Q}(\Delta t_k)$, $\Delta_t = t_k - t_{k-1}$, and
+%
+\begin{equation}
+\begin{split}
+  \mathbf{U}(\Delta t_k)  &= \exp(\Delta t_k \, \mathbf{A}), \\
+  \mathbf{Q}(\Delta t_k) &= \int_0^{\Delta t_k} \exp((\Delta t_k - \tau) \, \mathbf{A}) \,
+  \mathbf{B} \, q_c  \, \mathbf{B}^T
+  \exp((\Delta t_k - \tau) \, \mathbf{A})^T \, d\tau,
+\end{split}
+\label{eq:dssaug}
+\end{equation}
+%
+where $q_c$ is the spectral density of the white noise $w(t)$. For numerical computation of the matrix exponential and the above integral there exists a wide range of numerical methods (see, e.g., \cite{Grewal+Andrews:2001,Sarkka:2006}) with ready-available implementations.
+
+The link to Kalman filtering results from the fact that the model \eqref{eq:dssaug} is a standard discrete-time linear Gaussian model and the Kalman filter and (Rauch--Tung--Striebel, RTS) smoother provide the equations for exact Bayesian inference on it (see, e.g., \cite{Sarkka:2013}). 
 
 \subsection{Partial differential equations in state-space form}
+%
+Partial differential equation models driven by Gaussian processes can also be often represented in a similar state-space form as the temporal models considered in the previous section. Consider for example the heat equation
+%
+\begin{equation}
+\begin{split}
+  \frac{\partial f(\mathbf{x},t)}{\partial t} &=
+  D \, \nabla^2 \, f(\mathbf{x},t) - \beta \, f(\mathbf{x},t) + u(\mathbf{x},t) \\
+\end{split}
+\end{equation}
+%
+Let us now assume that we are have a state-space representation of the unknown function $u(\mathbf{x},t)$ in form \eqref{eq:ssu2}. This thus leads to the system
+%
+\begin{equation}
+\begin{split}
+  \frac{\partial f(\mathbf{x},t)}{\partial t} &=
+  \underbrace{\left( D \, \nabla^2 - \beta \right)}_{\mathbf{\mathcal{A}}_f} \, f(\mathbf{x},t) + \mathbf{C}_u \, \mathbf{u}(\mathbf{x},t) \\
+  \frac{\partial\mathbf{u}(\mathbf{x},t)}{\partial t} &= \mathbf{\mathcal{A}}_u \, \mathbf{u}(\mathbf{x},t)
+  + \mathbf{B}_u \, w(\mathbf{x},t) \\
+\end{split}
+\end{equation}
+%
+where the analogy to the model \eqref{eq:comb} is apparent. For higher order derivatives on the left hand side we should define a vector of derivatives $\begin{pmatrix} f, \partial f/\partial t, \ldots \end{pmatrix}$, but for the present first order case this is unnecessary.
 
-\simo{Explain how heat equation models comes in}
+In order to obtain a single augmented model, analogously to the previous section we can define (with $\mathbf{B}_f = 1$ in this particular case)
+%
+\begin{equation}
+\begin{split}
+  \mathbf{g} &= \begin{pmatrix}
+	\mathbf{f} \\ \mathbf{u}
+  \end{pmatrix}, \quad
+  \mathbf{\mathcal{A}}
+  = \begin{pmatrix}
+	\mathbf{\mathcal{A}}_f & \mathbf{B}_f \, \mathbf{C}_u \\
+	0 & \mathbf{\mathcal{A}}_u
+  \end{pmatrix} \\
+  \mathbf{B}
+  &= \begin{pmatrix}
+	0 & \mathbf{B}_u
+  \end{pmatrix}, \quad
+  \mathbf{C}
+  = \begin{pmatrix}
+	1 & 0
+  \end{pmatrix}
+\end{split}
+\end{equation}
+%
+which leads to a model of the form
+%
+\begin{equation}
+\begin{split}
+  \frac{\partial \mathbf{g}(\mathbf{x},t)}{\partial t}
+  &= \mathbf{\mathcal{A}} \, \mathbf{g}(\mathbf{x},t)
+  + \mathbf{B} \, w(\mathbf{x},t) \\
+  y_k &= \mathbf{C} \, \mathbf{g}(t_k) + \epsilon_k.
+\end{split}
+\label{eq:ssaug2}
+\end{equation}
+%
+The discretization now proceeds analogously to the previous section, except that the matrix exponential is replaced with a operator exponential (exponential semigroup) and its time-integral:
+%
+\begin{equation}
+\begin{split}
+  \mathbf{\mathcal{U}}(\Delta t_k)  &= \exp(\Delta t_k \, \mathbf{\mathcal{A}}), \\
+  \mathbf{\mathcal{Q}}(\mathbf{x},\mathbf{x}';\Delta t_k) &= \int_0^{\Delta t_k} \exp((\Delta t_k - \tau) \, 
+  \mathbf{\mathcal{A}}) \,
+  \mathbf{B} \, q_c(\mathbf{x},\mathbf{x}')  \, \mathbf{B}^T
+  \exp((\Delta t_k - \tau) \, \mathbf{\mathcal{A}})^T \, d\tau.
+\end{split}
+\label{eq:dssaug}
+\end{equation}
+%
+Furthermore, both the spectral density $q_c(\mathbf{x},\mathbf{x}')$ and the covariance $\mathbf{\mathcal{Q}}(\mathbf{x},\mathbf{x}';\Delta t_k)$ become kernels in $\mathbf{x},\mathbf{x}'$. Note that above, we need to interpret the operator application from the right as operating onto the variable $\mathbf{x}'$ (cf. \cite{Sarkka+Hartikainen:2012}).
 
+The inference in the above model can be done with infinite-dimensional Kalman filters and RTS smoothers (see, \cite{Sarkka+Hartikainen:2012}). However, in practice we often use some kind of basis function expansion methods to project the equations onto a finite-dimensional sub-space which reduces the filters and smoothers to their finite-dimensional versions.
 
-Discuss
+Sometimes we are interested in partial differential equations without time-dependence, with a prototypical example being the Poisson equation
 %
 \begin{align*}
   \nabla^2 f(\mathbf{x}) = u(\mathbf{x})
@@ -962,8 +1068,17 @@ Discuss
 \simo{Discuss the use of Hilbert-space methods, FEM, and finite differences to approximate the covariance function computation for LFMs both in covariance and state-space form}
 
 \subsection{Matrix and Operator Exponential Computation of Green's Functions}
-\simo{Much text missing}
-Because this system is of the first order, the impulse response can be written down explicitly in terms of the matrix exponential function $\mathbf{H}(t) = \exp(t \, \mathbf{A})$ and hence the joint covariance function of $\mathbf{f}$ is
+%
+Assume that we have a basic (differential equation) based LFM which has the state-space representation
+%
+\begin{equation}
+\begin{split}
+  \frac{d\mathbf{f}(t)}{dt}
+  &= \mathbf{A}_f \, \mathbf{f}(t) + \mathbf{B}_f \, u(t) \\
+\end{split}
+\end{equation}
+%
+with the function of interest being $f(t) = \mathbf{C}_f \, \mathbf{f}(t)$. Because this system is of the first order, the impulse response can be written down explicitly in terms of the matrix exponential function $\mathbf{U}(t) = \exp(t \, \mathbf{A})$ and hence the joint covariance function of $\mathbf{f}$ is
 %
 \begin{equation}
 \begin{split}
@@ -971,8 +1086,8 @@ Because this system is of the first order, the impulse response can be written d
   \\ &
   =
   \int_{-\infty}^{t} \int_{-\infty}^{t'}
-  \mathbf{H}(t - s) \, \mathbf{B} \, k(s - s') \,
-  \mathbf{B}^T \, \mathbf{H}^T(t' - s') \, ds \, ds',
+  \mathbf{U}(t - s) \, \mathbf{B}_f \, k(s - s') \,
+  \mathbf{B}_f^T \, \mathbf{U}^T(t' - s') \, ds \, ds',
 \end{split}
 \label{eq:vfcov}
 \end{equation}
@@ -982,16 +1097,54 @@ and we can pick up the covariance function of $f(t)$ from the matrix via
 \begin{equation}
 \begin{split}
   k_f(t,t') &=
-  \mathbf{C} \, \mathbf{K}_\mathbf{f}(t - t') \, \mathbf{C}^T
+  \mathbf{C}_f \, \mathbf{K}_\mathbf{f}(t - t') \, \mathbf{C}_f^T
 \end{split}
 \label{eq:fcov2}
 \end{equation}
 %
-This representation still has the same problem as the impulse response approach in the previous section that we need to compute the integrals in \eqref{eq:vfcov} somehow. If closed form solution is not available, then the computations become heavy.
+This representation has the advantage that it is easy to numerically approximate the matrix exponential and hence the analytical computation of the impulse response becomes unnecessary. However, we still need to compute the integrals in \eqref{eq:vfcov} somehow. If closed form solution is not available (which surpricing often is), then the computations need to be done via numerical integration.
 
 \simo{If I recall right, we can use the stationarity to reduce this into a single integral, need to check}
 
-\simo{Extend the same idea PDEs, but with operator exponentials}
+For the case of spatio-temporal covariance functions we now get an analogous results, except that matrices are generalized to operators. Assume that that out LFM has the form
+%
+\begin{equation}
+\begin{split}
+  \frac{\partial \mathbf{f}(\mathbf{x},t)}{\partial t}
+  &= \mathbf{\mathcal{A}}_f \, \mathbf{f}(\mathbf{x},t) + \mathbf{B}_f \, u(\mathbf{x},t) \\
+\end{split}
+\end{equation}
+%
+where $\mathbf{\mathcal{A}}_f$ is a matrix of linear operators. Let the covariance function of $u$ be $k(\mathbf{x},\mathbf{x}';t - t')$. Then, if we define the operator exponential $\mathbf{\mathcal{U}}(t) = \exp(t \, \mathbf{\mathcal{A}})$, the covariance function of $f$ can be expressed as
+%
+\begin{equation}
+\begin{split}
+  k_f(\mathbf{x},\mathbf{x}';t-t') &=
+  \mathbf{C}_f \, \mathbf{K}_\mathbf{f}(\mathbf{x},\mathbf{x}';t-t') \, \mathbf{C}_f^T
+\end{split}
+\end{equation}
+%
+with
+%
+\begin{equation}
+\begin{split}
+  &\mathbf{K}_\mathbf{f}(\mathbf{x},\mathbf{x}';t-t')
+  \\ &
+  =
+  \int_{-\infty}^{t} \int_{-\infty}^{t'}
+  \mathbf{\mathcal{U}}(t - s) \, \mathbf{B}_f \, k(\mathbf{x},\mathbf{x}';s - s') \,
+  \mathbf{B}_f^T \, \mathbf{\mathcal{U}}^T(t' - s') \, ds \, ds',
+\end{split}
+\label{eq:vfcov}
+\end{equation}
+%
+where the operator multiplication from right is again interpreted as acting onto the variable $\mathbf{x}'$.
+
+\simo{Some more text to follow especially in relation to numerical methods in previous section.}
+
+\subsection{Separable Covariance Functions}
+%
+\simo{Some tips and tricks for separable covariance functions.}
 
 \subsection{Stable State-Space Realization of $u$}
 %
@@ -1095,11 +1248,6 @@ originally developed for numerically stabilizing the computation the eigenvalues
 \subsection{Covariance Computation via State-Space Representation}
 %
 \simo{One way to compute the covariance function $k_f$ is to form the state-spate representation of the full system and then use the state-space formula for the covariance.}
-
-\subsection{Separable Covariance Functions}
-%
-\simo{Some tips and tricks for separable covariance functions.}
-
 
 
 
