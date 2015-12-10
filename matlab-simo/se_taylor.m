@@ -3,6 +3,12 @@
 % Taylor approximation of SE. If s or ell is symbolic,
 % returns symbolic result.
 
+% This software is distributed under the GNU General Public 
+% Licence (version 2 or later); please refer to the file 
+% Licence.txt, included with the software, for details.
+
+% Copyright (C) 2014 Simo Sarkka
+
 function [B,A] = se_taylor(n,s,ell)
 
     if strcmp(class(s),'sym') || strcmp(class(ell),'sym')

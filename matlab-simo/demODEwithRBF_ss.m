@@ -17,7 +17,8 @@
     
     se_cov  = @(t) s^2 * exp(-t.^2/2/ell^2);
 
-    [Bgp,Agp] = se_taylor(order,s,ell);
+%    [Bgp,Agp] = se_taylor(order,s,ell);
+    [Bte,Ate] = se_pade(4,8,s,ell)
     [Fgp,Lgp,qgp,Hgp] = ratspec_to_ss(Bgp,Agp);
     [Fgp,Lgp,Hgp] = ss_balance(Fgp,Lgp,Hgp);
 

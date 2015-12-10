@@ -45,11 +45,12 @@
 %    ell_t = 0.1;    
     s_t = 1
     ell_t = lengthscale_time
-    order_t = 4; % Order of state-space model
+%    order_t = 4; % Order of state-space model
     
     se_cov_t = @(t) s_t^2 * exp(-t.^2/2/ell_t^2)
 
-    [Bte,Ate] = se_taylor(order_t,s_t,ell_t);
+    [Bte,Ate] = se_pade(4,8,s_t,ell_t)
+%    [Bte,Ate] = se_taylor(order_t,s_t,ell_t);
     [Fte,Lte,qte,Hte] = ratspec_to_ss(Bte,Ate);
     [Fte,Lte,Hte] = ss_balance(Fte,Lte,Hte);
 

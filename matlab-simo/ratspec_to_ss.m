@@ -1,9 +1,16 @@
-function [F,L,q,H,Pinf] = ratspec_to_ss(B,A,rtype)
 % [F,L,q,H,Pinf] = ratspec_to_ss(B,A,rtype)
 %
 % rtype = 0 means controllable canonical form and
 % rtype = 1 the observable one.
 
+% This software is distributed under the GNU General Public 
+% Licence (version 2 or later); please refer to the file 
+% Licence.txt, included with the software, for details.
+
+% Copyright (C) 2014 Simo Sarkka
+
+function [F,L,q,H,Pinf] = ratspec_to_ss(B,A,rtype)
+    
     if nargin < 3
         rtype = 0;
     end
