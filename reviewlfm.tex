@@ -842,6 +842,7 @@ For example, the spatio-temporal Mat\'ern covariance function with a suitable pa
       + \underbrace{\begin{pmatrix} 0 \\ 1 \end{pmatrix}}_{\mathbf{B}_u} w(\mathbf{x},t), \\
       u(\mathbf{x},t) &= \underbrace{\begin{pmatrix} 1 & 0 \end{pmatrix}}_{\mathbf{C}_u} \, \mathbf{u}(\mathbf{x},t),
 \end{split}
+\label{2dmatern_ss}
 \end{equation}
 %
 where $\nabla^2 = \partial^2 / \partial x_1^2 + \cdots + \partial^2 / \partial x_p^2$ and $\sqrt{\cdot}$ in the matrix $\mathbf{\mathcal{A}}_u$ denotes an operator square root.
@@ -964,8 +965,8 @@ where $\mathbf{g}_k \triangleq \mathbf{g}(t_k)$, $\mathbf{q}_k \sim \mathcal{N}(
 \begin{split}
   \mathbf{U}(\Delta t_k)  &= \exp(\Delta t_k \, \mathbf{A}), \\
   \mathbf{Q}(\Delta t_k) &= \int_0^{\Delta t_k} \exp((\Delta t_k - \tau) \, \mathbf{A}) \,
-  \mathbf{B} \, q_c  \, \mathbf{B}^T
-  \exp((\Delta t_k - \tau) \, \mathbf{A})^T \, d\tau,
+  \mathbf{B} \, q_c  \, \mathbf{B}^T \\
+  &\qquad \quad \times \exp((\Delta t_k - \tau) \, \mathbf{A})^T \, d\tau,
 \end{split}
 \label{eq:dssaug}
 \end{equation}
@@ -1038,25 +1039,95 @@ The discretization now proceeds analogously to the previous section, except that
 \begin{equation}
 \begin{split}
   \mathbf{\mathcal{U}}(\Delta t_k)  &= \exp(\Delta t_k \, \mathbf{\mathcal{A}}), \\
-  \mathbf{\mathcal{Q}}(\mathbf{x},\mathbf{x}';\Delta t_k) &= \int_0^{\Delta t_k} \exp((\Delta t_k - \tau) \, 
+  \mathbf{Q}(\mathbf{x},\mathbf{x}';\Delta t_k) &= \int_0^{\Delta t_k} \exp((\Delta t_k - \tau) \, 
   \mathbf{\mathcal{A}}) \,
-  \mathbf{B} \, q_c(\mathbf{x},\mathbf{x}')  \, \mathbf{B}^T
-  \exp((\Delta t_k - \tau) \, \mathbf{\mathcal{A}})^T \, d\tau.
+  \mathbf{B} \, q_c(\mathbf{x},\mathbf{x}')  \, \mathbf{B}^T \\
+  &\qquad \quad \times \exp((\Delta t_k - \tau) \, \mathbf{\mathcal{A}})^T \, d\tau.
 \end{split}
 \label{eq:dssaug}
 \end{equation}
 %
-Furthermore, both the spectral density $q_c(\mathbf{x},\mathbf{x}')$ and the covariance $\mathbf{\mathcal{Q}}(\mathbf{x},\mathbf{x}';\Delta t_k)$ become kernels in $\mathbf{x},\mathbf{x}'$. Note that above, we need to interpret the operator application from the right as operating onto the variable $\mathbf{x}'$ (cf. \cite{Sarkka+Hartikainen:2012}).
+Furthermore, both the spectral density $q_c(\mathbf{x},\mathbf{x}')$ and the covariance $\mathbf{Q}(\mathbf{x},\mathbf{x}';\Delta t_k)$ become kernels in $\mathbf{x},\mathbf{x}'$. Note that above, we need to interpret the operator application from the right as operating onto the variable $\mathbf{x}'$ (cf. \cite{Sarkka+Hartikainen:2012}).
 
 The inference in the above model can be done with infinite-dimensional Kalman filters and RTS smoothers (see, \cite{Sarkka+Hartikainen:2012}). However, in practice we often use some kind of basis function expansion methods to project the equations onto a finite-dimensional sub-space which reduces the filters and smoothers to their finite-dimensional versions.
 
 Sometimes we are interested in partial differential equations without time-dependence, with a prototypical example being the Poisson equation
 %
-\begin{align*}
+\begin{equation}
+\begin{split}
   \nabla^2 f(\mathbf{x}) = u(\mathbf{x})
-\end{align*}
+\end{split}
+\end{equation}
+%
+Although there is no time-variable, we can redefine one of the spatial variables as time $\mathbf{x} \triangleq (\mathbf{x},t)$ which thus leads to the equation
+%
+\begin{equation}
+\begin{split}
+  \frac{\partial^2 f(\mathbf{x},t)}{\partial t^2} + \nabla^2 f(\mathbf{x},t) = u(\mathbf{x},t)
+\end{split}
+\label{ipoisson}
+\end{equation}
+%
+However, this kind of equations without builtin physical time-dependence need to more care than physically time dependent equations as will be illustrated in the following.
 
+It would now be tempting to move the term $\nabla^2 f(\mathbf{x},t)$ to the right hand side and form a state-space form via defining the state as $(\mathbf{f},\partial f/\partial t)$. However, this will not lead to a valid state-space model, because the corresponding operator matrix will not correspond to a time-stable system (cf. \cite{Sarkka+Solin+Hartikainen:2013}). This can be easiest seen by taking the spatial Fourier transform of \eqref{ipoisson} which gives
+%
+\begin{equation}
+\begin{split}
+  \frac{\partial^2 \tilde{u}(i \boldmath{\omega}_x,t)}{\partial t^2}
+  = \| \boldmath{\omega}_x \|^2 \tilde{u}(i \boldmath{\omega}_x,t) + \tilde{u}(i \boldmath{\omega}_x,t)
+\end{split}
+\end{equation}
+%
+which can be seen to correspond to a unstable system.
 
+In order to form a valid state-space model, let us take time-space Fourier transform of \eqref{ipoisson} which gives
+%
+\begin{equation}
+\begin{split}
+  (i \omega_t)^2 \, F(i \boldmath{\omega}_x,i \omega_t)
+  + \| i \boldmath{\omega}_x \|^2 F(i \boldmath{\omega}_x,i \omega_t)= U(i \boldmath{\omega}_x,i \omega_t)
+\end{split}
+\end{equation}
+%
+%
+which implies that the spectral density of $f$ has the form
+%
+\begin{equation}
+\begin{split}
+  S_f(\boldmath{\omega}_x,\omega_t)
+  &= \frac{S_u(\boldmath{\omega}_x,\omega_t)}{\left( (\omega_t)^2 \ + \| \boldmath{\omega}_x \|^2 \right)^2}
+\end{split}
+\end{equation}
+%
+which can be refactored with respect to $\omega_t$ to give the stable, statistically equivalent system
+%
+\begin{equation}
+\begin{split}
+  \frac{\partial^2 f(\mathbf{x},t)}{\partial t^2}
+  + 2 \sqrt{-\nabla^2} \, \frac{\partial f(\mathbf{x},t)}{\partial t} - \nabla^2 f(\mathbf{x},t) = u(\mathbf{x},t)
+\end{split}
+\label{spoisson}
+\end{equation}
+%
+which has the state-space representation
+%
+\begin{equation}
+\begin{split}
+  \frac{\partial \mathbf{f}(\mathbf{x},t)}{\partial t} &= 
+       \underbrace{\begin{pmatrix} 
+        0 & 1 \\ 
+        \nabla^2
+        & -2 \sqrt{-\nabla^2} 
+      \end{pmatrix}}_{\mathbf{\mathcal{A}}_f} \mathbf{f}(\mathbf{x},t)
+      + \underbrace{\begin{pmatrix} 0 \\ 1 \end{pmatrix}}_{\mathbf{B}_f} u(\mathbf{x},t), \\
+      f(\mathbf{x},t) &= \underbrace{\begin{pmatrix} 1 & 0 \end{pmatrix}}_{\mathbf{C}_f} \, \mathbf{f}(\mathbf{x},t).
+\end{split}
+\end{equation}
+%
+This model is now time-stable and can be augmented with a state-space model for $u$ in order to yield a state-space representation for the full LFM model.
+
+%
 %\subsection{Discussion or comparison of both approaches}
 %
 %Maybe here we should give some analysical/numerical examples, making comparisons in terms of the types of covariance function one can get in both methods, or the type of power spectrum one may get. We could also discuss the possibilities to combine with other methods in GP/Kalman areas.
@@ -1065,6 +1136,24 @@ Sometimes we are interested in partial differential equations without time-depen
 
 \subsection{PDE Methods for Covariance Function Computation}
 %
+One commonly used method for approximate solution of partial differential equations (PDEs) is the Galerkin's method which approximates the solution on a finite-dimensional space spanned by certain basis functions $\{ \phi_i(\mathbf{x})~i=1,2,\ldots,N \}$. With a suitable selection of basis functions it (in its weak formulation) leads to widely-used methods such as finite element method (FEM). As an example, let us consider the Gaussian process driven Poisson equation
+%
+\begin{equation}
+\begin{split}
+  \nabla^2 f(\mathbf{x}) = u(\mathbf{x})
+\end{split}
+\end{equation}
+%
+Let us now assume, for example, that we are working in a compact subspace $\Omega \subset \mathbb{R}^p$ and define a Hilbert space with an inner product $\langle \cdot, \cdot \rangle$ such that $\{ \phi_i(\mathbf{x})~i=1,2,\ldots,N \}$ are orthonormal with respect to the inner product. We can now approximate $f$ and $u$ via the series expansions
+%
+\begin{equation}
+\begin{split}
+   f(\mathbf{x}) &= \sum_{i=1}^N f_i \, \phi_i(\mathbf{x}) \\
+   u(\mathbf{x}) &= \sum_{i=1}^N u_i \, \phi_i(\mathbf{x}) \\   
+\end{split}
+\end{equation}
+
+
 \simo{Discuss the use of Hilbert-space methods, FEM, and finite differences to approximate the covariance function computation for LFMs both in covariance and state-space form}
 
 \subsection{Matrix and Operator Exponential Computation of Green's Functions}
