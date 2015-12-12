@@ -8,10 +8,11 @@
     s = RandStream('mt19937ar', 'Seed', 1e8);
     RandStream.setGlobalStream(s);
 
-    decay = 0.5;  % Parameters \lambda in the equation
+    decay = 0.2;  % Parameters \lambda in the equation
     diffusion = 1e-3; % Diffusion constant
     sensitivity = 1; % Sensitivity parameter
-    pos = [0.3 0.3]; % Heat source position
+    pos1 = [0.7 0.7]; % Heat source position start
+    pos2 = [-1.5 -1.5]; % Heat source position end
     amp = 1;         % Heat source amplitude
     sd = 0.1;  % Measurement noise variance
 
@@ -75,7 +76,7 @@
     tt = 0:dt:15;
     
     a1_t = 1 ./ (1 + exp(5*(1-tt)));
-    a2_t = 1 ./ (1 + exp(5*(tt-tt(end)+3)));
+    a2_t = 1 ./ (1 + exp(5*(tt-tt(end)+7)));
     a_t = amp * a1_t .* a2_t;
 
     clf;
@@ -83,7 +84,6 @@
     plot(tt,a_t)
 
     z = 0.2;
-    u_x = 1 ./ ((xx1-pos(1)).^2 + (xx2-pos(2)).^2 + z^2);
     subplot(2,2,2);
     pcolor(xx1,xx2,u_x);
     colorbar;
@@ -93,6 +93,9 @@
     UUT   = zeros(size(xx1,1),size(xx1,2),length(tt));
     
     for k=1:size(UUT_c,2)
+        s = k/size(UUT_c,2);
+        pos = (1-s)*pos1 + s*pos2;
+        u_x = 1 ./ ((xx1-pos(1)).^2 + (xx2-pos(2)).^2 + z^2);
         UUT(:,:,k) = a_t(k) * u_x;
     end
     
@@ -127,7 +130,7 @@
     % Animate the whole input
     %
     clf;
-    mx = max(max(u_x));
+    mx = max(UUT(:));
     for k=1:size(UUT,3)
         pcolor(xx1,xx2,UUT(:,:,k))
         caxis([0 mx]);

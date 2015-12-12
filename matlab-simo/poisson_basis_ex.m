@@ -10,7 +10,7 @@
     %%
     % Just use a subset of basis functions 
     %
-    n = 100;
+    n = 50
     fun2 = fun(:,:,1:n);
     lap_e2 = lap_e(1:n);
 

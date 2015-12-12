@@ -16,6 +16,7 @@
 
     se_cov_t = @(t) s_t^2 * exp(-t.^2/2/ell_t^2)
 
+%    [Bte,Ate] = se_taylor(4,s_t,ell_t)
     [Bte,Ate] = se_pade(4,8,s_t,ell_t)
     [Fte,Lte,qte,Hte] = ratspec_to_ss(Bte,Ate);
     [Fte,Lte,Hte] = ss_balance(Fte,Lte,Hte);
@@ -42,12 +43,12 @@
     % Form a series approximation to the spatial covariance
     %
     s_x = 20
-    ell_x = ell_t
+    ell_x = 0.2
 
     se_cov_x = @(x,y) s_x^2 * exp(-(x-y).^2/2/ell_x^2)
     se_spec_x = @(w) s_x^2 * sqrt(2*pi) * ell_x * exp(-ell_x^2 * w.^2/2);
 
-    N = 20; % How many series terms
+    N = 50; % How many series terms
     [eigenfun,eigenval,NN] = domain_cartesian(N,1,LL(2));
     lap_e = eigenval(NN);
 
@@ -86,6 +87,22 @@
     grid on;    
 
     %%
+    % Precompute eigenfunctions
+    %
+    fun2 = zeros(length(xlist),size(NN,1));
+
+    for k=1:size(NN,1)
+        nn = NN(k,:);
+        for i=1:length(xlist)
+            fun2(i,k) = eigenfun(nn,xlist(i));
+        end
+    end
+    
+    clf;
+    pcolor(fun2);
+    shading flat;
+    
+    %%
     % Form the joint state-space model
     %
 
@@ -121,7 +138,7 @@
     Pgp = lyap(Fgp,Lgp*Qc*Lgp');
     
     % State-space model for the PDE
-    % dvf/dt = [0 1; nabla^2  -2 sqrt(-nabla^2)] vf + [0;1] u
+    % dvf/dt = [0 1; nabla^2  -2 sqrt(-nabla^2)] vf + [0;-1] u
     Fpd = zeros(2*N);
     Lpd = kron(eye(N),[0;1]);
     
@@ -131,9 +148,9 @@
         Fpd(2*i,2*i)   = -2*sqrt(lap_e(i));
     end
 
-    Hpdc = kron(eye(N),[0 1]); % Gives plain coefficients
-    Hpd  = kron(E,[0 1]);      % Projects into measurement points
-    Hpdp = kron(Ep,[0 1]);     % Projects into prediction points
+    Hpdc = kron(eye(N),[1 0]); % Gives plain coefficients
+    Hpd  = kron(E,[1 0]);      % Projects into measurement points
+    Hpdp = kron(Ep,[1 0]);     % Projects into prediction points
      
     % Form the joint state-space model
 %    sigma2 = 0.1;
@@ -190,6 +207,42 @@
     spy(Hup);
     
     %%
+    % Check that the forward model works
+    %
+    uu_c2 = zeros(size(NN,1),length(tlist));
+    uu_p2 = zeros(size(uu));
+    for k=1:length(tlist)
+        for i=1:size(NN,1)
+            uu_c2(i,k) = myinner(uu(k,:)',fun2(:,i));
+            uu_p2(k,:) = uu_p(k,:) + uu_c2(i,k) * fun2(:,i)';
+        end
+    end
+
+    Apd = expm(Fpd*dt);
+    %Bpd = Lpd*dt;
+    tmp = expm([Fpd Lpd; zeros(size(Lpd')) zeros(size(Lpd,2))]*dt);
+    n = size(Fpd,1);
+    Bpd = tmp(1:n,n+1:end);
+    
+    m = zeros(size(Fpd,1),1);
+    ff_fwd = zeros(size(uu));
+    for k=1:size(uu,1)
+        m = Apd*m + Bpd*uu_c2(:,k);
+        ff_fwd(k,:) = (Hpdp*m)';
+    end
+    
+    clf;
+    subplot(1,2,1);
+    pcolor(ff_p)
+    shading flat;
+    colorbar;
+    
+    subplot(1,2,2);
+    pcolor(ff_fwd)
+    shading flat;
+    colorbar;
+    
+    %%
     % Kalman filter
     %
     clf;
@@ -207,12 +260,10 @@
     MM = zeros(size(m,1),length(tlist));
     PP = zeros(size(P,1),size(P,2),length(tlist));
     
-    plot_list = length(tlist);
-    
     fprintf('Running Kalman filter...\n');
 
     tic;
-    plot_list = 1:length(tlist);
+    plot_list = 1:10:length(tlist);
 
     for k=1:length(tlist)
         
@@ -303,7 +354,7 @@
     ks_x_mu(:,end) = Hp*ms;
     ks_u_mu(:,end) = Hup*ms;
     
-    plot_list = 1:size(MM,2);
+    plot_list = 1:10:size(MM,2);
     
     fprintf('Running smoother...\n');
 
