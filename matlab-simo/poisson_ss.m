@@ -224,23 +224,30 @@
     n = size(Fpd,1);
     Bpd = tmp(1:n,n+1:end);
     
+    clf;
     m = zeros(size(Fpd,1),1);
     ff_fwd = zeros(size(uu));
     for k=1:size(uu,1)
         m = Apd*m + Bpd*uu_c2(:,k);
         ff_fwd(k,:) = (Hpdp*m)';
+
+        subplot(1,2,1);
+        pcolor(ff_p)
+        shading flat;
+        colorbar;
+        ac = caxis;
+
+        subplot(1,2,2);
+        pcolor(ff_fwd)
+        shading flat;
+        colorbar;
+%        caxis(ac);
+        
+        drawnow;
+
+%        pause(0.01);
+    
     end
-    
-    clf;
-    subplot(1,2,1);
-    pcolor(ff_p)
-    shading flat;
-    colorbar;
-    
-    subplot(1,2,2);
-    pcolor(ff_fwd)
-    shading flat;
-    colorbar;
     
     %%
     % Kalman filter
