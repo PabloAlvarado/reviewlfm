@@ -84,10 +84,6 @@
     plot(tt,a_t)
 
     z = 0.2;
-    subplot(2,2,2);
-    pcolor(xx1,xx2,u_x);
-    colorbar;
-    shading interp;
     
     UUT_c = zeros(size(fun,3),length(tt));
     UUT   = zeros(size(xx1,1),size(xx1,2),length(tt));
@@ -98,6 +94,11 @@
         u_x = 1 ./ ((xx1-pos(1)).^2 + (xx2-pos(2)).^2 + z^2);
         UUT(:,:,k) = a_t(k) * u_x;
     end
+    
+    subplot(2,2,2);
+    pcolor(xx1,xx2,u_x);
+    colorbar;
+    shading interp;
     
     UUT_p = zeros(size(UUT));
     for k=1:size(UUT_c,2)

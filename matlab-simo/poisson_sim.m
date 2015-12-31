@@ -26,11 +26,12 @@
 
     for k=1:size(NN,1)
         nn = NN(k,:);
-        for i=1:size(xx1,1)
-            for j=1:size(xx1,2)
-                fun(i,j,k) = eigenfun(nn,[xx1(i,j) xx2(i,j)]);
-            end
-        end
+        fun(:,:,k) = reshape(eigenfun(nn,[xx1(:) xx2(:)]),size(xx1));
+%        for i=1:size(xx1,1)
+%            for j=1:size(xx1,2)
+%                fun(i,j,k) = reshape(eigenfun(nn,[xx1(:) xx2(:)]),size(xx1));
+%            end
+%        end
     end
 
     clf;

@@ -474,15 +474,15 @@ Differential equations, Latent force models, state space representations.
 
 \simo{{\em Notation:} $n$ is the number of data points, $p$ is the input ($\mathbf{x}$) dimension, $d$ is the vector output dimensionality, $s$ for order of ODE or state-space or half-order of spectral density denominator (these are the same things), $r$ for the half-order of spectral density numerator, $k$ is the discrete time index, if we have space and time, $n = n_x \, n_t$ for data points in time and space (for a grid).}
 
-\IEEEPARstart{C}{onsider} a second order differential equation model of the form
+\IEEEPARstart{C}{onsider} a second order differential equation model of a physical system of the form
 %
 \begin{equation}
 \begin{split}
-  \frac{d^{2}f(t)}{dt^{2}} + \lambda \, \frac{df(t)}{dt} + \gamma \, f(t) = u(t),
+  \frac{d^{2}f(t)}{dt^{2}} + \lambda \, \frac{df(t)}{dt} + \gamma \, f(t) = u(t) + c(t),
 \end{split}
 \end{equation}
 %
-and assume that we measure the function $f(t)$ via noisy measurements at discrete instants of time $t_1,t_2,\ldots$:
+where $u(t)$ and $f(t)$ are unknown an $c(t)$ is a control function (known or to be optimized). Further assume that we measure the function $f(t)$ via noisy measurements at discrete instants of time $t_1,t_2,\ldots$:
 %
 \begin{equation}
 \begin{split}
@@ -490,19 +490,26 @@ and assume that we measure the function $f(t)$ via noisy measurements at discret
 \end{split}
 \end{equation}
 %
-The differential equation can, for example, model the behavior of a mechanical, electrical, or chemical system. The type of problem under consideration is to infer both the function $f(t)$ and the force $u(t)$ from noisy observations $y_k$ of the differential equation solution $f(t)$ only ($\epsilon_k$ above denotes a Gaussian noise). 
+The aim of this article is to consider the unknown force or input $u$ as unknown and model it as a non-parametric Gaussian process model \cite{Rasmussen+Williams:2006} with a given covariance function in order to estimate, or in machine learning terms, learn $f$ and $u$. This kind of models are called latent force models (LFM) \cite{Alvarez+Lawrence:2009,Alvarez:2010,Alvarez+Luengo+Lawrence:2013} in machine learning literature.
 
-Another example of a model is the heat equation
+The present problem is also closely related to so called input estimation problem that has previously been addressed in target tracking literature (e.g. \cite{Bar-Shalom+Li+Kirubarajan:2001}) by replacing the input or force with a white or colored noise. However, here we will specifically concentrate on the machine learning point of view which allows for encoding prior information into the driving force as well as the use of modern machine learning methods for coping with the related hyperparameter estimation problems and model extensions.
+
+We also explicitly consider partial differential equations driven by (structured) Gaussian processes. An example of this kind of model is the heat equation
 %
 \begin{equation}
 \begin{split}
   \frac{\partial f(\mathbf{x},t)}{\partial t} &=
-  D \, \nabla^2 \, f(\mathbf{x},t) - \beta \, f(\mathbf{x},t) + u(\mathbf{x},t) \\
+  D \, \nabla^2 \, f(\mathbf{x},t) - \beta \, f(\mathbf{x},t) \\
+  &\qquad + u(\mathbf{x},t) + c(\mathbf{x},t) \\
   y_k &= f(\mathbf{x}_k,t_k) + \epsilon_k,
 \end{split}
 \end{equation}
 %
-where again the aim is to reconstruct both the force field $u(\mathbf{x},t)$ and the function $f(\mathbf{x},t)$ from the noisy observations $y_k$. Yet another example of interest is the Poisson equation
+where again the aim is to learn both the force field $u(\mathbf{x},t)$ and the function $f(\mathbf{x},t)$ from the noisy observations $y_k$.
+
+In both types of the model above we also consider the associated stochastic control problem: how can we simultaneously learn the functions $f$ and $u$, and design an optimal stochastic controller $c$ which uses the learning outcome optimally. It turns out that this problem can be recasted as a classical stochastic control problem in an augmented state-space provided that we convert the Gaussian process input model into an equivalent stochastic state-space representation \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012}.
+
+Another example of problem of interest is the Poisson equation
 %
 \begin{equation}
 \begin{split}
@@ -511,16 +518,11 @@ where again the aim is to reconstruct both the force field $u(\mathbf{x},t)$ and
 \end{split}
 \end{equation}
 %
-where again the function $f$ and the force field $u$ are unknown. 
+where again the function $f$ and the force field $u$ are unknown. In this case there is no associated control problem, but learning the force field in this kind of models is of interest in many applications.
 
-The focus in this article is in considering the force or input $u$ as unknown and model it as a non-parametric Gaussian process model \cite{Rasmussen+Williams:2006} with a given covariance function. This kind of models are called latent force models (LFM) \cite{Alvarez+Lawrence:2009,Alvarez:2010,Alvarez+Luengo+Lawrence:2013} in machine learning literature. The present problem is also closely related to so called input estimation problem that has previously been addressed in target tracking literature (e.g. \cite{Bar-Shalom+Li+Kirubarajan:2001}) by replacing the input or force with a white or colored noise. However, here we will specifically concentrate on the machine learning point of view which allows for encoding prior information into the driving force as well as the use of modern machine learning methods for coping with the related hyperparameter estimation problems and model extensions. We also explicitly consider partial differential equations driven by (structured) Gaussian processes.
+%LFMs can be derived from two different perspectives: the covariance function perspective \cite{Alvarez+Lawrence:2009,Alvarez+Luengo+Lawrence:2013} and the state-space perspective \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012}. The former approach can be seen as a machine learning point of view (cf. \cite{Rasmussen+Williams:2006}) to LFMs whereas the latter approach is a signal processing point of view (cf. \cite{Sarkka+Solin+Hartikainen:2013,Sarkka:2013}). Both of these approaches have their own advantages and disadvantages in terms of flexibility, ease of implementation, and computational complexity. In this paper, we analyze both of these points of view to latent force models as well as present new computational methods which aim to combine the best sides of both points of view. 
 
-
-%Because the above model defines a stochastic linear time-invariant (LTI) system with Gaussian input, there are many equivalent ways to represent it mathematically. In particular, here we consider the following kinds of representations: (a) a linear differential equation with constant coefficients as above, (b) as a convolution operation with an impulse response, (c) a frequency domain transfer function model or (d) as a state-space model. However, a difference to typical stochastic LTI systems encountered in signal processing, the Gaussian input signal is not a white noise process. This difference is crucial here, because replacing the white noise with a more general Gaussian process (i.e., colored noise) allows for interpretation of the input signal as a non-parametric statistical model and hence methods from machine learning can be applied to the problem as such.
-
-LFMs can be derived from two different perspectives: the covariance function perspective \cite{Alvarez+Lawrence:2009,Alvarez+Luengo+Lawrence:2013} and the state-space perspective \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012}. The former approach can be seen as a machine learning point of view (cf. \cite{Rasmussen+Williams:2006}) to LFMs whereas the latter approach is a signal processing point of view (cf. \cite{Sarkka+Solin+Hartikainen:2013,Sarkka:2013}). Both of these approaches have their own advantages and disadvantages in terms of flexibility, ease of implementation, and computational complexity. In this paper, we analyze both of these points of view to latent force models as well as present new computational methods which aim to combine the best sides of both points of view. 
-
-
+\simo{Explain here what has been done before and what is actually new here.}
 
 %\section{Combining Linear Differential Equations with Gaussian Process Regression Models}
 
@@ -731,7 +733,7 @@ f(\mathbf{x}) & = \int_{\mathcal{X}} G(\mathbf{x}, \mathbf{z})\,
 \end{align*}
 %
 where $\mathcal{X}$ is the input domain of integration, and $g(\mathbf{x})$ is the solution due to the boundary
-conditions. For simplicity in the presentation, we assume that the boundary conditions are zero, but the boundary conditions could also be incorporated. In this case the Green's function $G(\mathbf{x}, \mathbf{z})$, with suitable boundary conditions, can be written in closed form. The explicit expression is given in Appendix X. \simo{Put the solution to appendix}.
+conditions. For simplicity in the presentation, we assume that the boundary conditions are zero, but the boundary conditions could also be incorporated. In this case the Green's function $G(\mathbf{x}, \mathbf{z})$, with suitable boundary conditions, can be written in closed form. The explicit expression is given in Appendix X. \simo{Put the solution to appendix---or better, cite a reference.}
 
 For the GP regression view of latent force models, we put a GP prior over $u(\mathbf{x})$,
 \begin{align*}
@@ -755,12 +757,12 @@ k_{f,u}(\mathbf{x},\mathbf{x}') & = \int_{\mathcal{X}} G(\mathbf{x}, \mathbf{z})
 %\label{eq:fucov}
 \end{align}
 Based on a set of noisy training samples, $\mathcal{D}=\{\mathbf{x}_k, y_k\}_{k=1}^n$, we can
-use the GP regression equations in sections \ref{sec:gp:regression} and \ref{sec:gp:regression:lfm}, to make predictions
+use the GP regression equations in Sections \ref{sec:gp:regression} and \ref{sec:gp:regression:lfm}, to make predictions
 for a test input $\mathbf{x}^*$, both for the output process $f(\mathbf{x})$, and the input process $u(\mathbf{x})$.
 
-As an example of spatio-temporal PDE, the basic heat equation is given as
+As an example of spatio-temporal PDE, the heat equation is given as
 \begin{align*}
-  \frac{\partial f(\mathbf{x},t)}{\partial t} &= \nabla^2 f(\mathbf{x},t) + u(\mathbf{x},t).
+  \frac{\partial f(\mathbf{x},t)}{\partial t} &= D \, \nabla^2 f(\mathbf{x},t) - \beta \, f(\mathbf{x},t) + u(\mathbf{x},t).
 \end{align*}
 %
 Let us now assume that we have an initial value problem (i.e., a Cauchy problem) with zero initial condition $f(\mathbf{x},t_0) = 0$ at a fixed $t_0$ together with certain boundary conditions on the boundary of a domain $\mathcal{X}$. 
@@ -771,7 +773,7 @@ f(\mathbf{x},t) & = \int_{t_0}^t \int_{\mathcal{X}} G(\mathbf{x}, t;  \mathbf{z}
                 u(\mathbf{z},s)\,d\mathbf{z}\,ds
 \end{align*}
 %
-and again it can be written in closed form (see Appendix Y \simo{Add the appendix}).
+and again the Green's function $G$ it can be written in closed form (see Appendix Y \simo{Add the appendix or cite a reference}).
 
 In this case the Green's function is also the kernel of so called operator exponential (exponential semigroup) of the Laplacian operator:
 %
@@ -785,22 +787,32 @@ The covariance functions of the process can now be expressed in terms of the Gre
 \begin{split}
   &k_{f,f}(\mathbf{x}, t; \mathbf{x}', t') \\
   &=
-  \int_{t_0}^{t'} \int_{\mathcal{X}} \int_{t_0}^{t}  \int_{\mathcal{X}}
-  G(\mathbf{x}, t; \mathbf{z}, s) \, G(\mathbf{x}', t'; \mathbf{z}', s') \,
-  k(\mathbf{z}, s; \mathbf{z}', s') \, d\mathbf{z} \, ds \, d\mathbf{z}' \, ds'
+  \int_{t_0}^{t'} \int_{\mathcal{X}} \int_{t_0}^{t}  \int_{\mathcal{X}} 
+  G(\mathbf{x}, t; \mathbf{z}, s) \,
+  G(\mathbf{x}', t'; \mathbf{z}', s') \\ 
+   &\qquad \qquad \qquad \times
+  k(\mathbf{z}, s; \mathbf{z}', s') \, d\mathbf{z} \, ds \, d\mathbf{z}' \, ds' \\
+  &k_{f,u}(\mathbf{x}, t; \mathbf{x}', t') \\
+  &=
+  \int_{t_0}^{t}  \int_{\mathcal{X}} 
+  G(\mathbf{x}, t; \mathbf{z}, s) \,
+  k(\mathbf{z}, s; \mathbf{x}', t') \, d\mathbf{z} \, ds 
 \end{split}
 \notag
 \end{equation}
 %
-or equivalently, in terms of the operator exponential
+The above approach conveniently generalizes to Gaussian process driven partial (or pseudo-differential) equations of the form (cf. \cite{Sarkka:2011})
+\begin{align*}
+  \mathcal{D} f(\mathbf{x},t) = u(\mathbf{x},t),
+\end{align*}
 %
+where $\mathcal{D}$ is a (pseudo) differential operator.
 
+Once we have derived the covariance functions, we can use the Gaussian process regression equations as in Sections \ref{sec:gp:regression} and \ref{sec:gp:regression:lfm} for learning and prediction of functions $f$ and $u$.
 
-\simo{Should visualize something on Heat equation here}
+\subsection{Hyperparameter Learning in LFMs}
 
-\simo{Generalization to any linear PDE}
-
-\simo{Especially non-time-based models such as the Poisson equation.}
+\simo{Mauricio writes}
 
 \section{Latent Force Models as Stochastic State-Space Models}
 
@@ -959,6 +971,7 @@ If we now define
 	\mathbf{C}_f & 0
   \end{pmatrix}
 \end{split}
+\label{eq:ssaugmats}
 \end{equation}
 %
 then the model can be written as a white-noise driven state-space model
@@ -1166,42 +1179,127 @@ However, it turns out that although we can indeed estimate the process $f$ easil
 
 \subsection{Detectability of Latent Force Models}
 
-\simo{Show that latent force models are not observable but are detectable}
+\simo{Show/argue that latent force models are not observable but are detectable}
 
-%
-%\subsection{Discussion or comparison of both approaches}
-%
-%Maybe here we should give some analysical/numerical examples, making comparisons in terms of the types of covariance function one can get in both methods, or the type of power spectrum one may get. We could also discuss the possibilities to combine with other methods in GP/Kalman areas.
-
-\section{Hyperparameter Learning}
-%
-\subsection{Hyperparameter Learning in Covariance Function Based LFMs}
-
-\subsection{Hyperparameter Learning in State-Space LFMs}
-
-
-
-\subsection{Covariance Computation via State-Space Representation}
-%
-\simo{One way to compute the covariance function $k_f$ is to form the state-spate representation of the full system and then use the state-space formula for the covariance.}
 
 \section{Stochastic Control of Latent Force Models}
 %
 \simo{We could also discuss the use of LFMs in control. The state-space representation allows for the use of classical LQ-control theory for this. As the latent forces are modeled as stationary GPs, it implies that the model will not be controllable (from the force), but certainly it will be stabilizable. }
 
-\subsection{Controlled LFMs}
+\subsection{Controlled Basic LFMs}
+%
+Let us consider a controlled version of the state-space model with a Gaussian process input \eqref{eq:ssgen}:
+\begin{equation}
+\begin{split}
+  \frac{d\mathbf{f}(t)}{dt}
+  &= \mathbf{A}_f \, \mathbf{f}(t) + \mathbf{B}_f \, u(t) + \mathbf{M}_f \, \mathbf{c}(t) \\
+\end{split}
+\end{equation}
+%
+Also recall that any basic LFM of the form \eqref{eq:difeq1} with a control signal can be written in a state-space form as above.
+
+We now could, for example, aim to minimize the quadratic cost
+%
+\begin{equation}
+\begin{split}
+  \mathcal{J}[\mathbf{c}] &= \frac{1}{2} \mathrm{E} \Big[
+    \mathbf{f}(T)^T \, \boldsymbol{\Phi} \, \mathbf{f}(T) \\
+   &+ \int_0^T
+   (\mathbf{f}^T(t) \, \mathbf{X}(t) \, \mathbf{f}(t)
+  + \mathbf{c}^T(t) \, \mathbf{U}(t) \, \mathbf{c}(t)) \, dt \Big].
+\end{split}
+\end{equation}
+%
+A straightforward approach to optimal control in this model would be to use the separation principle of linear estimation and control which amounts to designing the optimal controller for the case $u(t) = 0$ and use it in cascade with a Kalman filter. This indeed is the optimal solution in the case of white $u(t)$, but not in our case.
+
+The correct approach in this case, which also utilizes the learning outcome of the Gaussian process regression is to use the augmented state space model with the control signal. In this case it is given as (see \eqref{eq:ssaug})
+
+\begin{equation}
+\begin{split}
+  \frac{d\mathbf{g}(t)}{dt}
+  &= \mathbf{A} \, \mathbf{g}(t)
+  + \mathbf{B} \, w(t) + \mathbf{M} \, \mathbf{c}(t),
+\end{split}
+\end{equation}
+%
+with the measurement model \eqref{eq:ssaugkf}, where $ \mathbf{M} = \begin{pmatrix} \mathbf{M}_u \\ 0 \end{pmatrix}$ and the matrices $\mathbf{A}$ and $\mathbf{B}$ are defined in \eqref{eq:ssaugmats}. What we now should do is to design a controller for the above model with $w(t) = 0$ and run it in cascade with a Kalman filter processing the measurements in the model \eqref{eq:ssaugkf}. This yields to a controller which jointly learns the functions $f$ and $u$ and optimizes the control with respect to the cost criterion. In this case the control objective also needs to rewritten in form
+%
+\begin{equation}
+\begin{split}
+  \mathcal{J}[\mathbf{c}] &= \frac{1}{2} \mathrm{E} \Big[
+    \mathbf{g}(T)^T \, \mathbf{C}^T \, \boldsymbol{\Phi} \, \mathbf{C} \, \mathbf{g}(T) \\
+   &+ \int_0^T
+   (\mathbf{g}^T(t) \, \mathbf{C}^T \, \mathbf{X}(t) \, \mathbf{C} \, \mathbf{g}(t)
+  + \mathbf{c}^T(t) \, \mathbf{U}(t) \, \mathbf{c}(t)) \, dt \Big],
+\end{split}
+\end{equation}
+%
+where $\mathbf{C}$ is defined in \eqref{eq:ssaugmats}.
+
+The design of the optimal linear quadratic controller for the resulting model can be done by using the classical Riccati-equation-based approaches \cite{LQ}. Namely, the optimal control takes the form
+%
+\begin{equation}
+\begin{split}
+  \mathbf{c}(t) = -\mathbf{U}^{-1}(t) \, \mathbf{M}^T \, \mathbf{K}(t) \, \hat{\mathbf{g}}(t),
+\end{split}
+\end{equation}
+%
+where $\hat{\mathbf{g}}(t)$ is the Kalman filter estimate of $\mathbf{g}(t)$ and the matrix $\mathbf{K}(t)$ solves the backward Riccati differential equation
+%
+\begin{equation}
+\begin{split}
+  \frac{d\mathbf{K}(t)}{dt} &=
+    -\mathbf{A}^T \, \mathbf{K}(t) - \mathbf{K}(t) \, \mathbf{A} \\
+  &+  \mathbf{K}(t) \, \mathbf{M} \, \mathbf{U}^{-1}(t) \,
+   \mathbf{M}^T \, \mathbf{K}(t) - \mathbf{C}^T \, \mathbf{X}(t) \, \mathbf{C}.
+\end{split}
+\end{equation}
+%
+with the boundary condition $\mathbf{K}(T) =  \mathbf{C}^T \, \boldsymbol{\Phi} \, \mathbf{C}$.
+
+The use of more general cost functions than the quadratic cost is considerably more complicated than using a quadratic cost, because the estimation and control no longer separate. However, a typical practical approach is to assume that this still approximately holds. Also in this case we argue that it is desirable to design the (deterministic) controller for the augmented system instead of the original system with $u(t) = 0$, because this design is able to fully use the learning outcome of the Gaussian process regression of the input.
+
+\subsection{Linear Quadratic Regulation of Basic LFMs}
+%
+In the LFM case, namely because we have restricted our consideration to time-invariant models, a very convenient type of control problem is the infinite-time linear regulation problem which corresponds to the cost function
+%
+\begin{equation}
+\begin{split}
+  \mathcal{J}[\mathbf{c}] &= \int_0^\infty
+   (\mathbf{f}^T(t) \, \mathbf{X} \, \mathbf{f}(t)
+  + \mathbf{c}^T(t) \, \mathbf{U} \, \mathbf{c}(t)) \, dt \Big],
+\end{split}
+\end{equation}
+%
+Following the classical results, the controller now becomes
+%
+\begin{equation}
+\begin{split}
+  \mathbf{c}(t) = - \boldsymbol{\Gamma} \, \hat{\mathbf{g}}(t),
+\end{split}
+\end{equation}
+%
+where the constant gain $\boldsymbol{\Gamma} = \mathbf{U}^{-1} \, \mathbf{M}^T \, \mathbf{K}$ and the matrix $\mathbf{K}$ is the solution to the algebraic Riccati equation
+%
+\begin{equation}
+\begin{split}
+  0 &=
+    -\mathbf{A}^T \, \mathbf{K} - \mathbf{K} \, \mathbf{A} 
+  +  \mathbf{K} \, \mathbf{M} \, \mathbf{U}^{-1} \,
+   \mathbf{M}^T \, \mathbf{K} - \mathbf{C}^T \, \mathbf{X} \, \mathbf{C}.
+\end{split}
+\end{equation}
+
+\simo{Should now show that we can express the gain in terms of the gain for the original problem. Probably need to comment something in the previous section already.}
+
+\subsection{Controlled PDE Based LFMs}
+%
+\simo{This will be a extension of the basic LFM control to PDE case. The theory is quite heavy and therefore this will be quite pragmatic and referring heavily to the books of Curtain et al.}
 
 \subsection{Stabilizability of Controlled LFMs}
-
-
-\subsection{Linear Quadratic Gaussian Control Problems on LFMs}
 %
+\simo{Here we will show/argue that LFMs are always stabilizable provided that the problem without a latent force model is and hence the control problem makes sense.}
 
-
-\subsection{Linear Quadratic Regulation of LFMs}
-
-
-\subsection{Stabilizabiilty of Controlled LFMs}
 
 
 \section{Numerical methods for LFMs}
@@ -1475,6 +1573,11 @@ which is equivalent to the model \eqref{eq:ssmodel} in (statistical) input-outpu
 %\cite{Parlett+Reinsch:1969,Parlett+Reinsch:1971}
 \cite{Parlett+Reinsch:1971}
 originally developed for numerically stabilizing the computation the eigenvalues of a matrix (implemented, e.g., as the ``balance'' function in Matlab). This procedure gives us a suitable matrix $\mathbf{T}$ which can be used in the transformation above to give a numerically stable state-space model.
+
+\subsection{Covariance Computation via State-Space Representation}
+%
+\simo{One way to compute the covariance function $k_f$ is to form the state-spate representation of the full system and then use the state-space formula for the covariance.}
+
 
 \section{Extensions and Discussion}
 

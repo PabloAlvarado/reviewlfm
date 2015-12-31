@@ -138,7 +138,9 @@
     Pgp = lyap(Fgp,Lgp*Qc*Lgp');
     
     % State-space model for the PDE
-    % dvf/dt = [0 1; nabla^2  -2 sqrt(-nabla^2)] vf + [0;-1] u
+    % dvf/dt = [0 1; nabla^2  -2 sqrt(-nabla^2)] vf + [0;1] u
+    % which is stochastically equivalent to
+    % dvf/dt = [0 1; -nabla^2 0] vf + [0;1] u
     Fpd = zeros(2*N);
     Lpd = kron(eye(N),[0;1]);
     
@@ -146,6 +148,8 @@
         Fpd(2*i-1,2*i) = 1;
         Fpd(2*i,2*i-1) = -lap_e(i);
         Fpd(2*i,2*i)   = -2*sqrt(lap_e(i));
+
+%        Fpd(2*i,2*i-1) = lap_e(i);
     end
 
     Hpdc = kron(eye(N),[1 0]); % Gives plain coefficients
@@ -163,6 +167,8 @@
     Hu = [zeros(size(Hgp,1),d) Hgp];
     Hp = [Hpdp zeros(size(Hpdp,1),size(Fgp,1))];
     Hup = [zeros(size(Hgpp,1),d) Hgpp];
+    Hc = [Hpdc zeros(size(Hpdc,1),size(Fgp,1))];
+    Huc = [zeros(size(Hgpc,1),d) Hgpc];
     
 %    [F,L,H,T] = ss_balance(F,L,H);
 %    Hu = Hu * T;
@@ -207,16 +213,59 @@
     spy(Hup);
     
     %%
-    % Check that the forward model works
+    % Transform the input
     %
+    Fu = zeros(2*N);
+    Lu = kron(eye(N),[0;1]);
+    Hu = zeros(N,2*N);
+    
+    for i=1:N
+        Fu(2*i-1,2*i) = 1;
+        Fu(2*i,2*i-1) = -lap_e(i);
+        Fu(2*i,2*i)   = -2*sqrt(lap_e(i));
+        Hu(i,2*i-1)   = 2*lap_e(i);
+        Hu(i,2*i)     = 2*sqrt(lap_e(i));
+    end
+
+    Au = expm(Fu*dt);
+    tmp = expm([Fu Lu; zeros(size(Lu')) zeros(size(Lu,2))]*dt);
+    n = size(Fu,1);
+    Au = tmp(1:n,1:n);
+    Bu = tmp(1:n,n+1:end);
+    
+    tuu_c2 = zeros(size(NN,1),length(tlist));
+    tuu_p2 = zeros(size(uu));
+    tux_c2 = zeros(2*size(NN,1),1);
+    
     uu_c2 = zeros(size(NN,1),length(tlist));
     uu_p2 = zeros(size(uu));
     for k=1:length(tlist)
         for i=1:size(NN,1)
             uu_c2(i,k) = myinner(uu(k,:)',fun2(:,i));
-            uu_p2(k,:) = uu_p(k,:) + uu_c2(i,k) * fun2(:,i)';
+        end
+        tux_c2 = Au*tux_c2 + Bu*uu_c2(:,k);
+        tuu_c2(:,k) = uu_c2(:,k) - Hu*tux_c2;
+        for i=1:size(NN,1)
+            uu_p2(k,:)  = uu_p(k,:) + uu_c2(i,k) * fun2(:,i)';
+            tuu_p2(k,:) = tuu_p2(k,:) + tuu_c2(i,k) * fun2(:,i)';
         end
     end
+    
+    subplot(1,2,1);
+    pcolor(uu_p2)
+    shading flat;
+    colorbar;
+    ac = caxis;
+
+    subplot(1,2,2);
+    pcolor(tuu_p2)
+    shading flat;
+    colorbar;
+    
+    
+    %%
+    % Check that the forward model works
+    %
 
     Apd = expm(Fpd*dt);
     %Bpd = Lpd*dt;
@@ -228,7 +277,7 @@
     m = zeros(size(Fpd,1),1);
     ff_fwd = zeros(size(uu));
     for k=1:size(uu,1)
-        m = Apd*m + Bpd*uu_c2(:,k);
+        m = Apd*m + Bpd*tuu_c2(:,k);
         ff_fwd(k,:) = (Hpdp*m)';
 
         subplot(1,2,1);
@@ -413,4 +462,28 @@
     
     toc
     
+    %%
+    % Apply the transformation
+    %
+    tuu_c2 = zeros(size(NN,1),length(tlist));
+    tuu_p2 = zeros(size(uu));
+    tux_c2 = zeros(2*size(NN,1),1);
     
+    uu_c2 = zeros(size(NN,1),length(tlist));
+    uu_p2 = zeros(size(uu));
+    for k=1:length(tlist)
+        for i=1:size(NN,1)
+            uu_c2(i,k) = myinner(uu(k,:)',fun2(:,i));
+        end
+        tux_c2 = Au*tux_c2 + Bu*Huc*MS(:,k);
+        tuu_c2(:,k) = uu_c2(:,k) - Hu*tux_c2;
+        for i=1:size(NN,1)
+            uu_p2(k,:)  = uu_p(k,:) + uu_c2(i,k) * fun2(:,i)';
+            tuu_p2(k,:) = tuu_p2(k,:) + tuu_c2(i,k) * fun2(:,i)';
+        end
+    end
+
+    subplot(2,2,3);
+    pcolor(xx,tt,tuu_p2);
+    shading interp;
+    title('KS u (2)');
