@@ -363,8 +363,8 @@
 % can use linebreaks \\ within to get better formatting as desired
 % Do not put math or special symbols in the title.
 %\title{Latent force models for signal processing and machine learning }
-\title{Combining First-Principles and Non-Parametric Statistical Models via Latent Force Models}
-%\title{Gaussian Process Latent Force Models for Learning and Control in Physical Systems}
+%\title{Combining First-Principles and Non-Parametric Statistical Models via Latent Force Models}
+\title{Gaussian Process Latent Force Models for Learning and Stochastic Control of Physical Systems}
 
 
 %
@@ -1164,10 +1164,45 @@ This model is now time-stable and can be augmented with a state-space model for 
 
 However, it turns out that although we can indeed estimate the process $f$ easily using the representation, the estimation of $u$ becomes non-trivial. This is because we have implicitly made a unitary transformation for the input process. Although this does not affect the covariance structure of the input, it does transform the posterior mean of it using the same transformation. In order to determine the original $u$ from the estimate of $u$ obtained from this equation, we need to solve another pseudo-differential equation, which can be hard. Thus the benefit of using state-space methods for the Poisson equation is quite limited. 
 
+\subsection{Detectability of Latent Force Models}
+
+\simo{Show that latent force models are not observable but are detectable}
+
 %
 %\subsection{Discussion or comparison of both approaches}
 %
 %Maybe here we should give some analysical/numerical examples, making comparisons in terms of the types of covariance function one can get in both methods, or the type of power spectrum one may get. We could also discuss the possibilities to combine with other methods in GP/Kalman areas.
+
+\section{Hyperparameter Learning}
+%
+\subsection{Hyperparameter Learning in Covariance Function Based LFMs}
+
+\subsection{Hyperparameter Learning in State-Space LFMs}
+
+
+
+\subsection{Covariance Computation via State-Space Representation}
+%
+\simo{One way to compute the covariance function $k_f$ is to form the state-spate representation of the full system and then use the state-space formula for the covariance.}
+
+\section{Stochastic Control of Latent Force Models}
+%
+\simo{We could also discuss the use of LFMs in control. The state-space representation allows for the use of classical LQ-control theory for this. As the latent forces are modeled as stationary GPs, it implies that the model will not be controllable (from the force), but certainly it will be stabilizable. }
+
+\subsection{Controlled LFMs}
+
+\subsection{Stabilizability of Controlled LFMs}
+
+
+\subsection{Linear Quadratic Gaussian Control Problems on LFMs}
+%
+
+
+\subsection{Linear Quadratic Regulation of LFMs}
+
+
+\subsection{Stabilizabiilty of Controlled LFMs}
+
 
 \section{Numerical methods for LFMs}
 
@@ -1441,22 +1476,15 @@ which is equivalent to the model \eqref{eq:ssmodel} in (statistical) input-outpu
 \cite{Parlett+Reinsch:1971}
 originally developed for numerically stabilizing the computation the eigenvalues of a matrix (implemented, e.g., as the ``balance'' function in Matlab). This procedure gives us a suitable matrix $\mathbf{T}$ which can be used in the transformation above to give a numerically stable state-space model.
 
-\subsection{Covariance Computation via State-Space Representation}
-%
-\simo{One way to compute the covariance function $k_f$ is to form the state-spate representation of the full system and then use the state-space formula for the covariance.}
+\section{Extensions and Discussion}
 
+\subsection{Operators in Measurement Model}
 
-
-\section{Hyperparameter Learning}
-%
-\subsection{Hyperparameter Learning in Covariance Function Based LFMs}
-
-\subsection{Hyperparameter Learning in State-Space LFMs}
-
-
-\section{Extensions}
+\simo{Discuss how things work when we have operators in the measurement model as well}
 
 \subsection{Cascaded LFMs}
+
+\simo{I am not sure about the need of this section}
 
 In cascaded latent force models, we have two non-homogeneous ordinary differential equations acting in a serial way:
 the output of the first differential equation is used as the input for the second differential equation
@@ -1471,8 +1499,11 @@ a GP that is transformed non-linearly before serving as the input for the first 
 approximated using the MAP-Laplace method. For the same setup, the authors in \cite{Titsias:BMC:2012} use MCMC to
 approximate the posterior distributions for the processes involved.}
 
-
 \simo{Both write}
+
+\subsection{Periodic Latent Functions}
+
+\simo{I am not sure about the need of this section}
 
 \subsection{Non-linear Models}
 
@@ -1497,6 +1528,8 @@ differential equation has not been published before}.
 
 \simo{Non-linear models in state-space form here}
 
+\simo{Something about non-linear stochastic control here}
+
 
 \subsection{Switching LFMs}
 
@@ -1516,22 +1549,6 @@ tennis.
 that little n it's been used for the order of the differential operator}
 
 \simo{Both write}
-
-\subsection{Controlled LFMs}
-%
-\simo{We could also discuss the use of LFMs in control. The state-space representation allows for the use of classical LQ-control theory for this. As the latent forces are modeled as stationary GPs, it implies that the model will not be controllable (from the force), but certainly it will be stabilizable. }
-
-\subsection{\simo{\st{Periodic Latent Functions}}}
-
-\simo{Is this really an extension -- this is anyway a linear LFM? Let's leave this out.}
-
-%\simo{Both write}
-
-%\simo{Take the covariance series expansions from paper by Arno and Simo}
-
-\mauricio{Not sure what to put here, since we haven't really done any periodic latent function applications in the GP
-regression context}
-
 
 \section{Experimental Results}
 
