@@ -364,6 +364,8 @@
 % Do not put math or special symbols in the title.
 %\title{Latent force models for signal processing and machine learning }
 \title{Combining First-Principles and Non-Parametric Statistical Models via Latent Force Models}
+%\title{Gaussian Process Latent Force Models for Learning and Control in Physical Systems}
+
 
 %
 %
@@ -524,14 +526,12 @@ LFMs can be derived from two different perspectives: the covariance function per
 
 \section{Latent Force Models as Gaussian Process Regression with Specific Covariance Functions}
 
-In this section, we \ldots
+In this section, we \ldots \simo{To be completed}
 
 \subsection{Gaussian process regression}\label{sec:gp:regression}
 %
 
-A Gaussian process (GP) is usually defined as an stochastic process with the property that any
-finite number of random variables taken from that process follows a multivariate Gaussian
-distribution \cite{Rasmussen+Williams:2006, Shanmugan:randomSignals:88}. In machine learning \cite{Rasmussen+Williams:2006}, Gaussian processes are commonly used as prior distributions over functions $f: \mathbb{R}^d\rightarrow \mathbb{R}$. When used for regression, the GP encodes the uncertainty we have over a function, before seeing the data. Once we have specified a particular relationship between the function and the data we observe, we can update our beliefs over the function using the Bayesian theorem, and compute the posterior distribution.
+A Gaussian process (GP) is a stochastic process with the property that any finite number of random variables taken from that process follows a multivariate Gaussian distribution \cite{Rasmussen+Williams:2006, Shanmugan:randomSignals:88}. In machine learning \cite{Rasmussen+Williams:2006}, Gaussian processes are commonly used as prior distributions over functions $f: \mathbb{R}^d\rightarrow \mathbb{R}$. When used for regression, the GP encodes the uncertainty we have over a function, before seeing the data. Once we have specified a particular relationship between the function and the data we observe, we can update our beliefs over the function using the Bayesian theorem, and compute the posterior distribution.
 
 Consider predicting the value of an unknown function $y = f(x)$ at a certain test point $(y^*, x^*)$. The prediction
 is based on a finite set of previously seen data points or training samples
@@ -579,7 +579,7 @@ In practice, we assume that the observed values for $y^*$ are noisy versions of 
 We model the measurements as $y_k = f(t_k) + \epsilon_k$, where $e_k\sim \mathcal{N}(0, \sigma^2)$, and estimate
 the unknown function value $f(t^*)$ using the training data $\mathbf{t}, \mathbf{y}$.
 
-It can be shown that the posterior distribution for $f(t^*)$ given $\mathbf{y}$ is again Gaussian, given as
+The posterior distribution for $f(t^*)$ given $\mathbf{y}$ is again Gaussian, given as
 \begin{align*}
 p(f(t^*)|\mathbf{y}) & =\mathcal{N}(f(t^*)|\mu_{f(t^*)|\mathbf{y}}, \sigma^2_{f(t^*)|\mathbf{y}}),
 \end{align*}
@@ -633,13 +633,13 @@ On the stationary stage the solution to the differential equation \eqref{eq:dife
 \end{split}
 \end{equation}
 %
-where $h(t)$ is the impulse response of the system. When $u(s)$ is a Gaussian process with zero mean and covariance function $k(t - t')$ then we can easily compute the covariance function of the process $f(t)$:
+where $h(t)$ is the impulse response of the system. When $u(s)$ is a Gaussian process with zero mean and covariance function $k(t - t')$ then we can compute the covariance function of the process $f(t)$:
 %
 \begin{equation}
 \begin{split}
   k_{f,f}(t, t') &=
   \int_{-\infty}^{t} \int_{-\infty}^{t'}
-  h(t - s) \, h(t' - s') \, k(s - s') \, ds \, ds',
+  h(t - s) \, h(t' - s') \, k(s - s') \, ds \, ds'.
 \end{split}
 \label{eq:fcov}
 \end{equation}
@@ -719,22 +719,19 @@ include different types of input variables. For example, the vector $\mathbf{x}$
 coordinates $x$ and $y$ for the Laplace equation in two spatial dimensions, or to coordinate $x$ and time
 $t$ for the Heat equation in one spatial dimension.
 
-For example
+For example, the Laplace equation is given as
 \begin{align*}
-  \frac{\partial f(\mathbf{x})}{\partial t} &= \nabla^2 f(\mathbf{x},t) + u(\mathbf{x},t)
+  \nabla^2 f(\mathbf{x}) = u(\mathbf{x}).
 \end{align*}
 %
-\simo{Should change this to Heat equation's green's function:}
-Solution for $f(\mathbf{x})$ follows
+The solution for $f(\mathbf{x},t)$ has the form
 \begin{align*}
-f(\mathbf{x}) & = \int_{\mathcal{X}}G(\mathbf{x},  \mathbf{z})\,
-                u(\mathbf{z})\,d\mathbf{z}
-%+ g(\mathbf{x}),
+f(\mathbf{x}) & = \int_{\mathcal{X}} G(\mathbf{x}, \mathbf{z})\,
+                u(\mathbf{z})\,d\mathbf{z} + g(\mathbf{x}),
 \end{align*}
-where $\mathcal{X}$ is the input domain of integration, and
-$g(\mathbf{x})$ is the solution due to initial and boundary
-conditions. For simplicity in the presentation, we assume that the
-initial and boundary conditions are zero, but initial and boundary conditions could also be incorporated.
+%
+where $\mathcal{X}$ is the input domain of integration, and $g(\mathbf{x})$ is the solution due to the boundary
+conditions. For simplicity in the presentation, we assume that the boundary conditions are zero, but the boundary conditions could also be incorporated. In this case the Green's function $G(\mathbf{x}, \mathbf{z})$, with suitable boundary conditions, can be written in closed form. The explicit expression is given in Appendix X. \simo{Put the solution to appendix}.
 
 For the GP regression view of latent force models, we put a GP prior over $u(\mathbf{x})$,
 \begin{align*}
@@ -760,6 +757,44 @@ k_{f,u}(\mathbf{x},\mathbf{x}') & = \int_{\mathcal{X}} G(\mathbf{x}, \mathbf{z})
 Based on a set of noisy training samples, $\mathcal{D}=\{\mathbf{x}_k, y_k\}_{k=1}^n$, we can
 use the GP regression equations in sections \ref{sec:gp:regression} and \ref{sec:gp:regression:lfm}, to make predictions
 for a test input $\mathbf{x}^*$, both for the output process $f(\mathbf{x})$, and the input process $u(\mathbf{x})$.
+
+As an example of spatio-temporal PDE, the basic heat equation is given as
+\begin{align*}
+  \frac{\partial f(\mathbf{x},t)}{\partial t} &= \nabla^2 f(\mathbf{x},t) + u(\mathbf{x},t).
+\end{align*}
+%
+Let us now assume that we have an initial value problem (i.e., a Cauchy problem) with zero initial condition $f(\mathbf{x},t_0) = 0$ at a fixed $t_0$ together with certain boundary conditions on the boundary of a domain $\mathcal{X}$. 
+
+The solution for $f(\mathbf{x},t)$ can be written as
+\begin{align*}
+f(\mathbf{x},t) & = \int_{t_0}^t \int_{\mathcal{X}} G(\mathbf{x}, t;  \mathbf{z}, s)\,
+                u(\mathbf{z},s)\,d\mathbf{z}\,ds
+\end{align*}
+%
+and again it can be written in closed form (see Appendix Y \simo{Add the appendix}).
+
+In this case the Green's function is also the kernel of so called operator exponential (exponential semigroup) of the Laplacian operator:
+%
+\begin{equation}
+  \mathcal{U}(t, s) = \exp\left( (t-s) \, \nabla^2 \right).
+\end{equation}
+%
+The covariance functions of the process can now be expressed in terms of the Green's function
+%
+\begin{equation}
+\begin{split}
+  &k_{f,f}(\mathbf{x}, t; \mathbf{x}', t') \\
+  &=
+  \int_{t_0}^{t'} \int_{\mathcal{X}} \int_{t_0}^{t}  \int_{\mathcal{X}}
+  G(\mathbf{x}, t; \mathbf{z}, s) \, G(\mathbf{x}', t'; \mathbf{z}', s') \,
+  k(\mathbf{z}, s; \mathbf{z}', s') \, d\mathbf{z} \, ds \, d\mathbf{z}' \, ds'
+\end{split}
+\notag
+\end{equation}
+%
+or equivalently, in terms of the operator exponential
+%
+
 
 \simo{Should visualize something on Heat equation here}
 
@@ -1127,6 +1162,8 @@ which has the state-space representation
 %
 This model is now time-stable and can be augmented with a state-space model for $u$ in order to yield a state-space representation for the full LFM model.
 
+However, it turns out that although we can indeed estimate the process $f$ easily using the representation, the estimation of $u$ becomes non-trivial. This is because we have implicitly made a unitary transformation for the input process. Although this does not affect the covariance structure of the input, it does transform the posterior mean of it using the same transformation. In order to determine the original $u$ from the estimate of $u$ obtained from this equation, we need to solve another pseudo-differential equation, which can be hard. Thus the benefit of using state-space methods for the Poisson equation is quite limited. 
+
 %
 %\subsection{Discussion or comparison of both approaches}
 %
@@ -1136,7 +1173,7 @@ This model is now time-stable and can be augmented with a state-space model for 
 
 \subsection{PDE Methods for Covariance Function Computation}
 %
-One commonly used method for approximate solution of partial differential equations (PDEs) is the Galerkin's method which approximates the solution on a finite-dimensional space spanned by certain basis functions $\{ \phi_i(\mathbf{x})~i=1,2,\ldots,N \}$. With a suitable selection of basis functions it (in its weak formulation) leads to widely-used methods such as finite element method (FEM). As an example, let us consider the Gaussian process driven Poisson equation
+One commonly used method for approximate solution of partial differential equations (PDEs) is the Galerkin's method which approximates the solution on a finite-dimensional spaces spanned by sets of basis functions $\{ \phi_i(\mathbf{x})~i=1,2,\ldots,N \}$ and $\{ \varphi_j(\mathbf{x})~j=1,2,\ldots,N \}$. With a suitable selections of basis functions it (in its weak formulation) leads to widely-used methods such as finite element method (FEM). As an example, let us consider the Gaussian process driven Poisson equation
 %
 \begin{equation}
 \begin{split}
@@ -1144,17 +1181,87 @@ One commonly used method for approximate solution of partial differential equati
 \end{split}
 \end{equation}
 %
-Let us now assume, for example, that we are working in a compact subspace $\Omega \subset \mathbb{R}^p$ and define a Hilbert space with an inner product $\langle \cdot, \cdot \rangle$ such that $\{ \phi_i(\mathbf{x})~i=1,2,\ldots,N \}$ are orthonormal with respect to the inner product. We can now approximate $f$ and $u$ via the series expansions
+Let us now assume, for example, that we are working in a compact subspace $\Omega \subset \mathbb{R}^p$ and define a Hilbert space with an inner product $\langle \cdot, \cdot \rangle$ such that $\{ \phi_i(\mathbf{x})~i=1,2,\ldots,N \}$ are orthonormal with respect to the inner product. We can now approximate $f$ via the series expansion
 %
 \begin{equation}
 \begin{split}
    f(\mathbf{x}) &= \sum_{i=1}^N f_i \, \phi_i(\mathbf{x}) \\
-   u(\mathbf{x}) &= \sum_{i=1}^N u_i \, \phi_i(\mathbf{x}) \\   
 \end{split}
 \end{equation}
+%
+where $f_i = \langle f, \phi_i \rangle$, which leads to the approximate Laplace equation
+%
+\begin{equation}
+\begin{split}
+  \sum_{i=1}^N f_i \, \nabla^2 \phi_i(\mathbf{x}) = u(\mathbf{x})
+\end{split}
+\end{equation}
+%
+Taking inner products with respect to the set $\{ \varphi_i(\mathbf{x})~j=1,2,\ldots,N \}$ then gives the system of equations
+%
+\begin{equation}
+\begin{split}
+  \sum_{i=1}^N f_i \, \langle \nabla^2 \phi_i, \varphi_1 \rangle &= u_1 \\
+  &\vdots \\
+  \sum_{i=1}^N f_i \, \langle \nabla^2 \phi_i, \varphi_N \rangle &= u_N \\
+\end{split}
+\end{equation}
+%
+where $u_j = \langle u, \varphi_Nj\rangle$, which can be further written in form
+%
+\begin{equation}
+\begin{split}
+  \mathbf{D} \, \mathbf{f} &= \mathbf{u},
+\end{split}
+\label{eq:disc_pde}
+\end{equation}
+%
+where $[\mathbf{D}]_{ji} = \langle \nabla^2 \phi_i, \varphi_j \rangle$, $\mathbf{f} = \begin{pmatrix} f_1 & \cdots & f_N \end{pmatrix}^T$, and $\mathbf{u} = \begin{pmatrix} u_1 & \cdots & u_N  \end{pmatrix}^T$. Note that if we define the inner product suitably, we can sometimes integrate by parts to give $\langle \nabla^2 \phi_i, \varphi_j \rangle \to -\langle \nabla \phi_i, \nabla \varphi_j \rangle$ which leads to weak formulations of the problem. However, this aspect is not considered here further.
+
+By defining a matrix $\mathbf{G} = \mathbf{D}^{-1}$ \eqref{eq:disc_pde} then leads to the following approximate representation for the covariance function of $f$:
+%
+% f = G u
+% E[f f^T] = G E[u u^T] G^T = sum_ii' G_*i E[u_i u_i'] G_*i'
+% 
+% 
+\begin{equation}
+\begin{split}
+  k_f(\mathbf{x},\mathbf{x}')
+  \approx \sum_{i,j,i',j'=1}^N \phi_j(\mathbf{x}) \, [\mathbf{G}]_{ji} \, \mathrm{Cov}(u_i,u_{i'}) \, 
+    [\mathbf{G}]_{j'i'} \, \phi_{j'}(\mathbf{x}').
+\end{split}
+\end{equation}
+%
+and the cross-covariance can be approximated, for example, as
+%
+\begin{equation}
+\begin{split}
+  k_{f,u}(\mathbf{x},\mathbf{x}')
+  \approx \sum_{i,j,i',j'=1}^N \phi_j(\mathbf{x}) \, [\mathbf{G}]_{ji} \, \mathrm{Cov}(u_i,u_{i'}) \, 
+    [\mathbf{G}]_{j'i'} \, \nabla^2 \phi_{j'}(\mathbf{x}').
+\end{split}
+\label{eq:pde_kfu}
+\end{equation}
+%
+If we further select $\varphi_j = \phi_i$, we can also use the approximation
+%
+\begin{equation}
+\begin{split}
+  k_{f,u}(\mathbf{x},\mathbf{x}')
+  \approx \sum_{i,j,i',j'=1}^N \phi_j(\mathbf{x}) \, [\mathbf{G}]_{ji} \, \mathrm{Cov}(u_i,u_{i'}) \, \phi_{j'}(\mathbf{x}').
+\end{split}
+\label{eq:pde_kfu2}
+\end{equation}
+%
+Finite-difference methods also lead to an equation of the form \eqref{eq:disc_pde} where the vectors $\mathbf{f}$ and $\mathbf{u}$ contain the values of the processes at certain grid points, and the matrix $\mathbf{D}$ is a discrete approximation to the operator (e.g. Laplacian). The covariance function and cross-covariance approximations of the grid points are then given as $\mathbf{K}_f = \mathbf{G} \, \mathrm{Cov}(\mathbf{u},\mathbf{u}) \, \mathbf{G}^T$ and $\mathbf{K}_{f,u} = \mathbf{G} \, \mathrm{Cov}(\mathbf{u},\mathbf{u})$, respectively.
+
+Although in general the covariances $\mathrm{Cov}(u_i,u_{i'})$ can only be computed by explicit (numerical) integration, these covariance can sometimes be approximated very efficiently. When we use the eigenfunctions of the Laplacian operator as the basis and when the covariance function is stationary, we can approximate the covariances via point-wise evaluations of the spectral density of $u$ \cite{Solin+Sarkka:2016}. With this basis the case of translation invariant operators also becomes particularly easy, because the matrix $\mathbf{G}$ also becomes diagonal.
+
+\subsection{PDE Methods for State-Space PDEs}
+
+\simo{Discuss the use of Hilbert-space methods, FEM, and finite differences}
 
 
-\simo{Discuss the use of Hilbert-space methods, FEM, and finite differences to approximate the covariance function computation for LFMs both in covariance and state-space form}
 
 \subsection{Matrix and Operator Exponential Computation of Green's Functions}
 %
@@ -1463,24 +1570,32 @@ regression context}
 
 \subsection{A PDE Model II}
 
-\simo{Mauricio writes the Poisson 2D example here, Simo writes the corresponding state-space version. This leads to an interesting (weak) pseudo-differential equation representation of the Poisson model:}
+\simo{Mauricio writes the Poisson 2D example here and we use both series expansion and closed-form methods here. We leave the state-space version out because, as discussed a few sections ago, it is not at all suitable in this case.}
 
-\begin{equation}
-\begin{split}
-    \frac{\partial\mathbf{u}(\mathbf{x},t)}{\partial t} &= \mathbf{\mathcal{A}}_u \, \mathbf{u}(\mathbf{x},t)
-  + \mathbf{B}_u \, w(\mathbf{x},t) \\
-  \frac{\partial \mathbf{f}(\mathbf{x},t)}{\partial t} &= 
-       \begin{pmatrix} 
-        0 & 1 \\ 
-        \frac{\partial^2}{\partial x^2}
-        & -2 \sqrt{-\frac{\partial^2}{\partial x^2}} 
-      \end{pmatrix}\mathbf{u}(\mathbf{x},t)
-      + \begin{pmatrix} 0 \\ 1 \end{pmatrix} \mathbf{C}_u \, \mathbf{u}(\mathbf{x},t), \\
-      f(\mathbf{x},t) &= \begin{pmatrix} 1 & 0 \end{pmatrix} \, \mathbf{f}(\mathbf{x},t),
-\end{split}
-\end{equation}
+%\begin{equation}
+%\begin{split}
+%    \frac{\partial\mathbf{u}(\mathbf{x},t)}{\partial t} &= \mathbf{\mathcal{A}}_u \, \mathbf{u}(\mathbf{x},t)
+%  + \mathbf{B}_u \, w(\mathbf{x},t) \\
+%  \frac{\partial \mathbf{f}(\mathbf{x},t)}{\partial t} &= 
+%       \begin{pmatrix} 
+%        0 & 1 \\ 
+%        \frac{\partial^2}{\partial x^2}
+%        & -2 \sqrt{-\frac{\partial^2}{\partial x^2}} 
+%      \end{pmatrix}\mathbf{u}(\mathbf{x},t)
+%      + \begin{pmatrix} 0 \\ 1 \end{pmatrix} \mathbf{C}_u \, \mathbf{u}(\mathbf{x},t), \\
+%      f(\mathbf{x},t) &= \begin{pmatrix} 1 & 0 \end{pmatrix} \, \mathbf{f}(\mathbf{x},t),
+%\end{split}
+%\end{equation}
+%
 
-\subsection{LQ Control of LFMs}
+\subsection{LQ Control of ODE LFMs}
+
+\simo{State-space control of string model with comparison to non-LFM control.}
+
+\subsection{LQ Control of PDE LFMs}
+
+\simo{State-space control of the heat equation with the same input as we used above. If this works well then it would be beneficial to expand the control section and even change the title to include "control".}
+
 
 %\subsection{\simo{\st{A Periodic Model}}}
 
