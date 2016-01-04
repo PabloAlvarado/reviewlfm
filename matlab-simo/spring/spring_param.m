@@ -18,7 +18,7 @@
   %
   r1 = randn;
   r2 = randn;
-  amp_ext = 0.5;
-  u_ext = amp_ext*(sin(r1 + 0.43*tt) + sin(r1 + 0.19*tt));
+  amp_ext = 1;
+  u_ext = amp_ext*(sin(r1 + 0.73*tt) + sin(r1 + 0.29*tt));
   plot(tt,u_ext);
   

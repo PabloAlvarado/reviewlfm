@@ -10,11 +10,20 @@
     anim_open;
 
     %%
+    % Optimize
+    %
+    opt = optimset('Display','iter');
+    s_ell0 = [1 5] + rand;
+    s_ell = fminsearch(@(s_ell) spring_se_optfun(s_ell,sd,b,order,dt,Y),s_ell0,opt)
+    
+    %%
     % Create the state-space model approximation for RBF kernel
     %
     addpath ..
-    s = 1; % Scale
-    ell = 5;
+%    s = 1; % Scale
+%    ell = 5;
+    s = s_ell(1);
+    ell = s_ell(2);
     
     order = 4; % Order of state-space model
     
@@ -80,6 +89,8 @@
     
     [Ajm,Qjm] = lti_disc(Fjm,Ljm,qjm,dt);
     
+    nlog_lh = 0;
+    
     for k=1:length(Y)
         m = Ajm*m;
         P = Ajm*P*Ajm' + Qjm;
@@ -87,9 +98,11 @@
         if ~isnan(Y(k))
             S = Hjm*P*Hjm' + R;
             K = P * Hjm' / S;
-            m = m + K * (Y(k) - Hjm*m);
+            v = (Y(k) - Hjm*m);
+            m = m + K * v;
             P = P - K * S * K';
-            
+
+            nlog_lh = nlog_lh + 0.5*log(S) + 0.5*v^2/S;
         end
         
         MM(:,k) = m;
