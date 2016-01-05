@@ -58,12 +58,12 @@
     %
     s_t = 1
     ell_t = 1
-    order_t = 4; % Order of state-space model
+%    order_t = 4; % Order of state-space model
     
     se_cov_t = @(t) s_t^2 * exp(-t.^2/2/ell_t^2)
 
-%    [Bte,Ate] = se_pade(4,8,s_t,ell_t)
-    [Bte,Ate] = se_taylor(order_t,s_t,ell_t);
+    [Bte,Ate] = se_pade(4,8,s_t,ell_t)
+%    [Bte,Ate] = se_taylor(order_t,s_t,ell_t);
     [Fte,Lte,qte,Hte] = ratspec_to_ss(Bte,Ate);
     [Fte,Lte,Hte] = ss_balance(Fte,Lte,Hte);
 
@@ -205,6 +205,9 @@
         m = m + K * (y - H*m);
         P = P - K * S * K';
         
+        MM(:,k) = m;
+        PP(:,:,k) = P;
+        
         m_c = Hc*m;
         mu_c = Huc*m;
         
@@ -215,9 +218,6 @@
         for i=1:size(mu_c,1)
             kf_u_mu(:,:,k) = kf_u_mu(:,:,k) + mu_c(i) * fun2(:,:,i);
         end
-        
-        MM(:,k) = m;
-        PP(:,:,k) = P;
         
         if any(plot_list == k)
             subplot(2,2,1);
@@ -266,9 +266,12 @@
     ms = MM(:,end);
     Ps = PP(:,:,end);
     
-    ks_x_mu = kf_x_mu;
-    ks_u_mu = kf_u_mu;
+    ks_x_mu = zeros(size(kf_x_mu));
+    ks_u_mu = zeros(size(kf_u_mu));
 
+    ks_x_mu(:,:,end) = kf_x_mu(:,:,end);
+    ks_u_mu(:,:,end) = kf_u_mu(:,:,end);
+    
     plot_list = 1:10:length(tt);
     
     fprintf('Running smoother...\n');
@@ -341,35 +344,33 @@
     %%
     % Plot u estimates in the mid times
     %
-    k = round(length(tt)/3);
-    
-    subplot(2,2,1);
-    pcolor(xx1,xx2,UUT_p(:,:,k));
-    shading interp;
-    colorbar;
-    caxis([min_uc max_uc]);
-    title('True u');
-
-    subplot(2,2,3);
-    pcolor(xx1,xx2,ks_u_mu(:,:,k));
-    shading interp;
-    colorbar;
-    caxis([min_uc max_uc]);
-    title('KF u');
-
     k = round(length(tt)/6);
     
-    subplot(2,2,2);
-    pcolor(xx1,xx2,UUT_p(:,:,k));
-    shading interp;
-    colorbar;
-    caxis([min_uc max_uc]);
-    title('True u');
-
-    subplot(2,2,4);
-    pcolor(xx1,xx2,ks_u_mu(:,:,k));
+    subplot(2,2,1);
+    pcolor(xx1,xx2,kf_u_mu(:,:,k));
     shading interp;
     colorbar;
     caxis([min_uc max_uc]);
     title('KF u');
+
+    subplot(2,2,2);
+    pcolor(xx1,xx2,ks_u_mu(:,:,k));
+    shading interp;
+    colorbar;
+    caxis([min_uc max_uc]);
+    title('KS u');
+
+    subplot(2,2,3);
+    pcolor(xx1,xx2,kf_u_mu(:,:,k)-UUT(:,:,k));
+    shading interp;
+    colorbar;
+%    caxis([min_uc max_uc]);
+    title('KF u error');
+
+    subplot(2,2,4);
+    pcolor(xx1,xx2,ks_u_mu(:,:,k)-UUT(:,:,k));
+    shading interp;
+    colorbar;
+%    caxis([min_uc max_uc]);
+    title('KS u error');
     
