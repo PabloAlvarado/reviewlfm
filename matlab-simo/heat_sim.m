@@ -1,5 +1,6 @@
 %
-% Simulate data from heat equation in 2d
+% Simulate data from heat equation in 2d using basis
+% function approach.
 %
 
     %%
@@ -11,7 +12,7 @@
     decay = 0.2;  % Parameters \lambda in the equation
     diffusion = 1e-3; % Diffusion constant
     sensitivity = 1; % Sensitivity parameter
-    pos1 = [0.7 0.7]; % Heat source position start
+    pos1 = [0.5 0.5]; % Heat source position start
     pos2 = [-1.5 -1.5]; % Heat source position end
     amp = 1;         % Heat source amplitude
     sd = 0.1;  % Measurement noise variance
@@ -20,7 +21,7 @@
     % Form the basis and evaluate it on a grid
     %
 
-    m = 50; % Number of basis functions
+    m = 100; % Number of basis functions
 
     fprintf('Forming the basis of size %d ... ',m);
     LL = [1 1];
@@ -40,6 +41,8 @@
 %            end
 %        end
     end
+    
+    lap_e = eigenval(NN);
     
     clf;
     pcolor(xx1,xx2,fun(:,:,end))
@@ -113,6 +116,7 @@
     
     subplot(2,2,3);
     pcolor(xx1,xx2,UUT(:,:,ind))
+    ca = caxis;
     shading flat;
     colormap('hot')
     colorbar;
@@ -120,6 +124,7 @@
 
     subplot(2,2,4);
     pcolor(xx1,xx2,UUT_p(:,:,ind))
+    caxis(ca);
     shading flat;
     colormap('hot')
     colorbar;

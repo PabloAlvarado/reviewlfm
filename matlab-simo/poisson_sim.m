@@ -33,6 +33,8 @@
 %            end
 %        end
     end
+    
+    lap_e = eigenval(NN);
 
     clf;
     pcolor(xx1,xx2,fun(:,:,10))
@@ -99,7 +101,6 @@
     %
     sd = 0.1;
     ff_c = zeros(size(fun,3),1);
-    lap_e = eigenval(NN);
     ff_c = diag(1 ./ lap_e) * uu_c;
     ff_p = zeros(size(uu));
     for i=1:length(ff_c)

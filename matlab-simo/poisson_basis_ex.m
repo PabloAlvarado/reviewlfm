@@ -1,9 +1,9 @@
 %
-% Solve Poisson 2D model with basis function expansion.
+% Solve inverse Poisson 2D model with basis function expansion.
 %
 
     %%
-    % Simulate the data (takes a while)
+    % Simulate the data
     %
     poisson_sim;
 
@@ -18,8 +18,11 @@
     %%
     % Covariance function approximation for input
     %
-    ell = 0.2;
-    s = 20;
+    s = 20.3054;
+    ell = 0.1961;
+    
+%    ell = 0.2;
+%    s = 20;
 
     se_cov = @(norm_x) s^2 * exp(-norm_x.^2/2/ell^2);
     se_spec = @(norm_w) s^2 * (2*pi) * ell^2 * exp(-ell^2 * norm_w.^2/2);
@@ -58,7 +61,6 @@
     shading flat
     colorbar;
 
-
     %%
     % Solve the input with GP regression
     % y = C*G*u + e
@@ -74,7 +76,8 @@
         end
     end
     H = C*G;
-    m_c  = P*H'/(H*P*H'+R)*Y
+    S = (H*P*H'+R);
+    m_c  = P*H'/S*Y
     mf_c = G*m_c;
 
     m_p  = zeros(size(uu));
@@ -116,3 +119,15 @@
     colorbar;
     title('Reconstructed f(x)');
     caxis(cx);
+
+    %%
+    % Parameter estimation
+    %
+    opt = optimset('Display','iter');
+    s_ell0 = log([15 0.5]);
+    s_ell = fminsearch(@(s_ell) poisson_optfun(s_ell,fun2,Y,sd,lap_e2,meas_ind),s_ell0,opt)
+    
+    s = exp(s_ell(1))
+    ell = exp(s_ell(2))
+
+    
