@@ -5,7 +5,7 @@
     %%
     % Run the LQ controller
     %
-    G = lqr(Fsp,Lsp,diag([1 1]),0.05);
+    [G,S_lq,E_lq] = lqr(Fsp,Lsp,diag([1 1]),0.05);
     
     kf_x_mu1 = [];
     kf_x_V1  = [];

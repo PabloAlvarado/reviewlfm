@@ -5,7 +5,7 @@
     %%
     % LQ control
     %
-    G = lqr(Fjm,Ljmc,eye(size(Fjm,1)),0.05);
+    [G,S_lfm,E_lfm] = lqr(Fjm,Ljmc,diag([1 1 zeros(1,size(Fjm,1)-2)]),0.05);
     
     kf_x_mu2 = [];
     kf_x_V2  = [];
@@ -17,7 +17,7 @@
     Z2 = [];
     
     m = zeros(size(Fjm,1),1);
-    P = blkdiag(eye(size(Fsp,1)),Pgp)
+    P = blkdiag(eye(size(Fsp,1)),Pgp);
     
     MM2 = zeros(size(m,1),length(T));
     PP2 = zeros(size(P,1),size(P,2),length(T));
