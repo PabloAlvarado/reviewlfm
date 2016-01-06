@@ -524,15 +524,19 @@ where again the function $f$ and the force field $u$ are unknown. In this case t
 
 \simo{Explain here what has been done before and what is actually new here.}
 
+\subsection{Problem formulation}
+%
+\simo{Explain what kind of models in general we consider and what we wish to do with them.}
+
+\subsection{Outline of the approach}
+%
+\simo{Explain the principles how we approach the problem.}
+
 %\section{Combining Linear Differential Equations with Gaussian Process Regression Models}
 
 \section{Latent Force Models as Gaussian Process Regression with Specific Covariance Functions}
 
 In this section, we \ldots \simo{To be completed}
-
-\subsection{Classes of models considered}
-%
-\simo{Explain what kind of models in general we consider.}
 
 \subsection{Gaussian process regression}\label{sec:gp:regression}
 %
@@ -921,10 +925,6 @@ with
 where the operator multiplication from right is again interpreted as acting onto the variable $\mathbf{x}'$.
 
 
-\subsection{Hyperparameter Learning in LFMs}
-
-\simo{Mauricio writes}
-
 \subsection{PDE Methods for Covariance Function Computation}
 %
 One commonly used method for approximate solution of partial differential equations (PDEs) is the Galerkin's method which approximates the solution on a finite-dimensional spaces spanned by sets of basis functions $\{ \phi_i(\mathbf{x})~i=1,2,\ldots,N \}$ and $\{ \varphi_j(\mathbf{x})~j=1,2,\ldots,N \}$. With a suitable selections of basis functions it (in its weak formulation) leads to widely-used methods such as finite element method (FEM). As an example, let us consider the Gaussian process driven Poisson equation
@@ -1010,6 +1010,11 @@ If we further select $\varphi_j = \phi_i$, we can also use the approximation
 Finite-difference methods also lead to an equation of the form \eqref{eq:disc_pde} where the vectors $\mathbf{f}$ and $\mathbf{u}$ contain the values of the processes at certain grid points, and the matrix $\mathbf{D}$ is a discrete approximation to the operator (e.g. Laplacian). The covariance function and cross-covariance approximations of the grid points are then given as $\mathbf{K}_f = \mathbf{G} \, \mathrm{Cov}(\mathbf{u},\mathbf{u}) \, \mathbf{G}^T$ and $\mathbf{K}_{f,u} = \mathbf{G} \, \mathrm{Cov}(\mathbf{u},\mathbf{u})$, respectively.
 
 Although in general the covariances $\mathrm{Cov}(u_i,u_{i'})$ can only be computed by explicit (numerical) integration, these covariance can sometimes be approximated very efficiently. When we use the eigenfunctions of the Laplacian operator as the basis and when the covariance function is stationary, we can approximate the covariances via point-wise evaluations of the spectral density of $u$ \cite{Solin+Sarkka:2016}. With this basis the case of translation invariant operators also becomes particularly easy, because the matrix $\mathbf{G}$ also becomes diagonal.
+
+\subsection{Hyperparameter Learning in LFMs}
+
+\simo{Mauricio writes}
+
 
 
 \section{Latent Force Models as Stochastic State-Space Models}
@@ -1341,7 +1346,7 @@ However, it turns out that although we can indeed estimate the process $f$ easil
 
 \subsection{Detectability of Latent Force Models}
 
-\simo{Show/argue that latent force models are not observable but are detectable. The detectability follows, because the unstable states arising from the latent force model are still stable.}
+\simo{Explain that latent force models are not observable but are detectable. The detectability follows, because the unstable states arising from the latent force model are still stable. Find a reference for this.}
 
 \subsection{PDE Methods for State-Space PDEs}
 
@@ -1369,7 +1374,7 @@ Let us consider a controlled version of the state-space model with a Gaussian pr
 %
 Also recall that any basic LFM of the form \eqref{eq:difeq1} with a control signal can be written in a state-space form as above.
 
-We now could, for example, aim to minimize the quadratic cost
+We will specifically aim to consider optimal control problems which minimize the quadratic cost functinal
 %
 \begin{equation}
 \begin{split}
@@ -1377,11 +1382,14 @@ We now could, for example, aim to minimize the quadratic cost
     \mathbf{f}(T)^T \, \boldsymbol{\Phi} \, \mathbf{f}(T) \\
    &+ \int_0^T
    (\mathbf{f}^T(t) \, \mathbf{X}(t) \, \mathbf{f}(t)
-  + \mathbf{c}^T(t) \, \mathbf{U}(t) \, \mathbf{c}(t)) \, dt \Big].
+  + \mathbf{c}^T(t) \, \mathbf{U}(t) \, \mathbf{c}(t)) \, dt \Big],
 \end{split}
+\label{eq:quadcost1}
 \end{equation}
 %
-A straightforward approach to optimal control in this model would be to use the separation principle of linear estimation and control which amounts to designing the optimal controller for the case $u(t) = 0$ and use it in cascade with a Kalman filter. This indeed is the optimal solution in the case of white $u(t)$, but not in our case.
+because they lead to computationally tractable control laws. However, the principle outlined here can also be extended to more general cost functionals although the numerical methods become order of magnitude more complicated.
+
+A straightforward approach to optimal control with the quadratic cost \eqref{eq:quadcost1} is to use the separation principle of linear estimation and control which amounts to designing the optimal controller for the case $u(t) = 0$ and use it in cascade with a Kalman filter. This indeed is the optimal solution in the case of white $u(t)$, but not in our case.
 
 The correct approach in this case, which also utilizes the learning outcome of the Gaussian process regression is to use the augmented state space model with the control signal. In this case it is given as (see \eqref{eq:ssaug})
 
@@ -1393,20 +1401,31 @@ The correct approach in this case, which also utilizes the learning outcome of t
 \end{split}
 \end{equation}
 %
-with the measurement model \eqref{eq:ssaugkf}, where $ \mathbf{M} = \begin{pmatrix} \mathbf{M}_u \\ 0 \end{pmatrix}$ and the matrices $\mathbf{A}$ and $\mathbf{B}$ are defined in \eqref{eq:ssaugmats}. What we now should do is to design a controller for the above model with $w(t) = 0$ and run it in cascade with a Kalman filter processing the measurements in the model \eqref{eq:ssaugkf}. This yields to a controller which jointly learns the functions $f$ and $u$ and optimizes the control with respect to the cost criterion. In this case the control objective also needs to rewritten in form
+with the measurement model \eqref{eq:ssaugkf}, where $ \mathbf{M} = \begin{pmatrix} \mathbf{M}_u \\ 0 \end{pmatrix}$ and the matrices $\mathbf{A}$ and $\mathbf{B}$ are defined in \eqref{eq:ssaugmats}. What we now should do is to design a controller for the above model with $w(t) = 0$ and run it in cascade with a Kalman filter processing the measurements in the model \eqref{eq:ssaugkf}. This yields to a controller which jointly learns the functions $f$ and $u$ and optimizes the control with respect to the cost criterion. In this case the control cost function can be rewritten in form
 %
 \begin{equation}
 \begin{split}
   \mathcal{J}[\mathbf{c}] &= \frac{1}{2} \mathrm{E} \Big[
-    \mathbf{g}(T)^T \, \mathbf{C}^T \, \boldsymbol{\Phi} \, \mathbf{C} \, \mathbf{g}(T) \\
+    \mathbf{g}(T)^T \, \boldsymbol{\Phi}_g \, \mathbf{g}(T) \\
    &+ \int_0^T
-   (\mathbf{g}^T(t) \, \mathbf{C}^T \, \mathbf{X}(t) \, \mathbf{C} \, \mathbf{g}(t)
+   (\mathbf{g}^T(t) \, \mathbf{X}_g(t) \, \mathbf{g}(t)
   + \mathbf{c}^T(t) \, \mathbf{U}(t) \, \mathbf{c}(t)) \, dt \Big],
 \end{split}
 \end{equation}
 %
-where $\mathbf{C}$ is defined in \eqref{eq:ssaugmats}.
-
+where
+%
+\begin{equation}
+\begin{split}
+ \boldsymbol{\Phi}_g &= \begin{pmatrix}
+   \boldsymbol{\Phi} & 0 \\ 0 & 0
+ \end{pmatrix} \\
+ \mathbf{X}_g(t) &= \begin{pmatrix}
+   \mathbf{X}(t) & 0 \\ 0 & 0
+ \end{pmatrix} \\
+\end{split}
+\end{equation}
+%
 The design of the optimal linear quadratic controller for the resulting model can be done by using the classical Riccati-equation-based approaches \cite{LQ}. Namely, the optimal control takes the form
 %
 \begin{equation}
@@ -1422,13 +1441,26 @@ where $\hat{\mathbf{g}}(t)$ is the Kalman filter estimate of $\mathbf{g}(t)$ and
   \frac{d\mathbf{K}(t)}{dt} &=
     -\mathbf{A}^T \, \mathbf{K}(t) - \mathbf{K}(t) \, \mathbf{A} \\
   &+  \mathbf{K}(t) \, \mathbf{M} \, \mathbf{U}^{-1}(t) \,
-   \mathbf{M}^T \, \mathbf{K}(t) - \mathbf{C}^T \, \mathbf{X}(t) \, \mathbf{C}.
+   \mathbf{M}^T \, \mathbf{K}(t) - \mathbf{X}_g(t).
 \end{split}
 \end{equation}
 %
-with the boundary condition $\mathbf{K}(T) =  \mathbf{C}^T \, \boldsymbol{\Phi} \, \mathbf{C}$.
+with the boundary condition $\mathbf{K}(T) =  \boldsymbol{\Phi}_g$.
+
+\simo{Discuss these:}
+%
+\begin{equation}
+\begin{split}
+  \mathcal{J}[\mathbf{c}] &= \mathrm{E} \left[ \psi(\mathbf{f}(T))
+   + \int_0^T L(\mathbf{f}(t),\mathbf{c}(t),t) \, dt \right],
+\end{split}
+\label{eq:quadcost1}
+\end{equation}
+
 
 The use of more general cost functions than the quadratic cost is considerably more complicated than using a quadratic cost, because the estimation and control no longer separate. However, a typical practical approach is to assume that this still approximately holds. Also in this case we argue that it is desirable to design the (deterministic) controller for the augmented system instead of the original system with $u(t) = 0$, because this design is able to fully use the learning outcome of the Gaussian process regression of the input.
+
+However, in the next section we will simplify the control problem even more, and consider the limit $T \to \infty$, because it leads to a particularly convenient class of linear controllers which are computationally tractable while still being able to use the learning outcome of the Gaussian process inference.
 
 \subsection{Linear Quadratic Regulation of Basic LFMs}
 %
@@ -1442,26 +1474,97 @@ In the LFM case, namely because we have restricted our consideration to time-inv
 \end{split}
 \end{equation}
 %
-Following the classical results, the controller now becomes
+By rewriting the model as an augmented state-spate model as we did in the previous section and by following the classical results, the controller becomes
 %
 \begin{equation}
 \begin{split}
-  \mathbf{c}(t) = - \boldsymbol{\Gamma} \, \hat{\mathbf{g}}(t),
+  \mathbf{c}(t) = - \mathbf{U}^{-1} \, \mathbf{M}^T \, \mathbf{K}\, \hat{\mathbf{g}}(t),
 \end{split}
+\label{eq:joint_control}
 \end{equation}
 %
-where the constant gain $\boldsymbol{\Gamma} = \mathbf{U}^{-1} \, \mathbf{M}^T \, \mathbf{K}$ and the matrix $\mathbf{K}$ is the solution to the algebraic Riccati equation
+where the matrix $\mathbf{K}$ is the solution to the algebraic Riccati equation (ARE) 
 %
 \begin{equation}
 \begin{split}
   0 &=
     -\mathbf{A}^T \, \mathbf{K} - \mathbf{K} \, \mathbf{A} 
   +  \mathbf{K} \, \mathbf{M} \, \mathbf{U}^{-1} \,
-   \mathbf{M}^T \, \mathbf{K} - \mathbf{C}^T \, \mathbf{X} \, \mathbf{C}.
+   \mathbf{M}^T \, \mathbf{K} - \mathbf{X}_g.
+\end{split}
+\label{eq:joint_are}
+\end{equation}
+%
+By solving the control law from these equations, we get a controller which is function of both the estimate of the function $\mathrm{f}$ as well the latent force $\mathbf{u}$, and is hence able to utilize both the estimate of the function as well the learned Gaussian latent force model.
+
+It is also possible to express the solution to the LFM control problem above in terms of the corresponding control solution to the non-forced problem
+%
+\begin{equation}
+\begin{split}
+  \frac{d\mathbf{f}(t)}{dt}
+  &= \mathbf{A}_f \, \mathbf{f}(t) + \mathbf{M}_f \, \mathbf{c}(t) \\
+\end{split}
+\end{equation}
+%
+and a solution which only depends on the parameters of the Gaussian latent force model and how the force and control enter the equation (i.e., on $\mathbf{B}_f$ and $\mathbf{M}_f$).
+
+Recall that the optimal control $\mathbf{c}_f(t)$ for the above model is given by the equations
+%
+\begin{equation}
+\begin{split}
+  \mathbf{c}_f(t) &=
+  - \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_f \, \mathbf{f}(t) \\
+  0 &=
+    -\mathbf{A}_f^T \, \mathbf{K}_f - \mathbf{K}_f \, \mathbf{A}_f
+  +  \mathbf{K}_f \, \mathbf{M}_f \, \mathbf{U}^{-1} \,
+   \mathbf{M}_f^T \, \mathbf{K}_f - \mathbf{X}.
+\end{split}
+\label{eq:are_det}
+\end{equation}
+%
+If we now partition the ARE solution matrix as $\mathbf{K} = \begin{pmatrix} \mathbf{K}_{11} & \mathbf{K}_{12} \\ \mathbf{K}_{12}^T & \mathbf{K}_{22} \end{pmatrix}$, then \eqref{eq:joint_are} gives
+%
+\begin{equation}
+\begin{split}
+  0
+  &= -\mathbf{A}_f^T \, \mathbf{K}_{11} - \mathbf{K}_{11} \, \mathbf{A}_f
+  + \mathbf{K}_{11} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{11} \\
+  0
+  &= -\mathbf{A}_f^T \, \mathbf{K}_{12} - \mathbf{K}_{11} \, \mathbf{B}_f \, \mathbf{C}_u - \mathbf{K}_{12} \, \mathbf{A}_u
+  \\
+  &\qquad + \mathbf{K}_{11} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{12} \\
+  0
+  &= -\mathbf{C}_u^T \, \mathbf{B}_f^T \, \mathbf{K}_{12} - \mathbf{A}_u^T \, \mathbf{K}_{22}
+  - \mathbf{K}_{21} \, \mathbf{B}_f \, \mathbf{C}_u \\
+  &\qquad  - \mathbf{K}_{22} \, \mathbf{A}_u
+  + \mathbf{K}_{12}^T \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{12},
+\end{split}
+\end{equation}
+%
+where the first equation is the same as the second equation in \eqref{eq:are_det} and we can conclude that $\mathbf{K}_{11} = \mathbf{K}_f$. Given $\mathbf{K}_{11}$, the second equation is a Sylvester-type of equation for $\mathbf{K}_{12}$ and can be easily numerically solved. The last one is also a Sylvester/Lyapunov type of equations for $\mathbf{K}_{22}$, but it turns out that we do not need it.
+
+The control law in \eqref{eq:joint_control} can now be written as
+%
+\begin{equation}
+\begin{split}
+  \mathbf{c}(t) = - \begin{pmatrix}
+    \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{f} &
+    \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{12}
+  \end{pmatrix} \, \hat{\mathbf{g}}(t),
+\end{split}
+\label{eq:joint_control2}
+\end{equation}
+%
+where $\mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{f}$ is just the non-forced-case gain and $\mathbf{K}_{12}$ can be solved from the Sylvester equation
+%
+\begin{equation}
+\begin{split}
+  \left( \mathbf{K}_{f} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^T 
+         - \mathbf{A}_f^T \right) \, \mathbf{K}_{12}  - \mathbf{K}_{12} \, \mathbf{A}_u
+    = \mathbf{K}_{f} \, \mathbf{B}_f \, \mathbf{C}_u \\
 \end{split}
 \end{equation}
 
-\simo{Should now show that we can express the gain in terms of the gain for the original problem. Probably need to comment something in the previous section already.}
 
 \subsection{Controlled PDE Based LFMs}
 %
@@ -1469,17 +1572,7 @@ where the constant gain $\boldsymbol{\Gamma} = \mathbf{U}^{-1} \, \mathbf{M}^T \
 
 \subsection{Stabilizability of Controlled LFMs}
 %
-\simo{Here we will show/argue that LFMs are always stabilizable provided that the problem without a latent force model is and hence the control problem makes sense.}
-
-
-
-\section{Numerical Tricks for LFMs}
-
-
-
-\simo{Some more text to follow especially in relation to numerical methods in previous section.}
-
-
+\simo{Here we explain that LFMs are always stabilizable provided that the problem without a latent force model is and hence the control problem makes sense. Find a reference for this.}
 
 
 
