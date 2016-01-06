@@ -1,5 +1,5 @@
-function nlog_lh = spring_se_optfun(s_ell,sd,b,order,dt,Y)
-% nlog_lh = spring_se_optfun(s_ell,sd,b,order,dt,Y)
+function nlog_lh = spring_se_optfun(s_ell,sd,b,dt,Y)
+% nlog_lh = spring_se_optfun(s_ell,sd,b,dt,Y)
 
     s = s_ell(1);
     ell = s_ell(2);

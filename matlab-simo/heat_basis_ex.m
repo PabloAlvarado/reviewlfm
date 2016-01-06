@@ -11,7 +11,8 @@
     %%
     % Just use a subset of basis functions 
     %
-    n = 100
+    n = 50
+%    n = size(fun,3);
     fun2 = fun(:,:,1:n);
     lap_e2 = lap_e(1:n);
 
@@ -57,7 +58,7 @@
     % Temporal part in state-space form
     %
     s_t = 1
-    ell_t = 1
+    ell_t = 0.5
 %    order_t = 4; % Order of state-space model
     
     se_cov_t = @(t) s_t^2 * exp(-t.^2/2/ell_t^2)
@@ -373,4 +374,20 @@
     colorbar;
 %    caxis([min_uc max_uc]);
     title('KS u error');
+    
+    %%
+    % Plot the maxima (or means) at each time
+    %
+    maxim_r = zeros(1,size(ks_u_mu,3));
+    maxim_e = zeros(1,size(ks_u_mu,3));
+    for k=1:1:size(ks_u_mu,3)
+%        maxim_r(k) = max(max(UUT(:,:,k)));
+%        maxim_e(k) = max(max(ks_u_mu(:,:,k)));
+        maxim_r(k) = mean(mean(UUT(:,:,k)));
+        maxim_e(k) = mean(mean(ks_u_mu(:,:,k)));
+    end
+    
+    clf;
+    plot(tt,maxim_r,tt,maxim_e)
+    
     

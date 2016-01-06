@@ -15,7 +15,7 @@
     pos1 = [0.5 0.5]; % Heat source position start
     pos2 = [-1.5 -1.5]; % Heat source position end
     amp = 1;         % Heat source amplitude
-    sd = 0.1;  % Measurement noise variance
+    sd = 0.01;  % Measurement noise sd
 
     %%
     % Form the basis and evaluate it on a grid
@@ -146,7 +146,7 @@
         colorbar;
         title(sprintf('Frame %d/%d',k,size(UUT,3)));
         drawnow;
-        pause(0.01);
+        %pause(0.01);
     end
     
     %%
@@ -200,7 +200,7 @@
         
         title(sprintf('Frame %d/%d',k,size(UUT,3)));
         drawnow;
-        pause(0.01);
+        %pause(0.01);
     end
     
     %%
