@@ -530,6 +530,10 @@ where again the function $f$ and the force field $u$ are unknown. In this case t
 
 In this section, we \ldots \simo{To be completed}
 
+\subsection{Classes of models considered}
+%
+\simo{Explain what kind of models in general we consider.}
+
 \subsection{Gaussian process regression}\label{sec:gp:regression}
 %
 
@@ -710,6 +714,74 @@ easy. Otherwise numerical computations are needed.
 %Here, we could explain with a more bit of detail than in the previous section, all the work done together with Neil in the
 %context of the Machine learning perspective to construct GPs.
 
+\subsection{State-Space ODE LFMs}
+%
+We can also rewrite the basic LFM differential equation \eqref{eq:difeq1} in state-space form by defining a state vector $\mathbf{f} = (f, df/dt,\ldots,d^{n-1}f/dt^{n-1})$ and writing
+%
+\begin{equation}
+\begin{split}
+  \frac{d\mathbf{f}(t)}{dt}
+  &= \underbrace{\begin{pmatrix}
+       0             & 1      &        &       \\
+                     & \ddots & \ddots &       \\
+                     &         &  0    &     1 \\
+   -a_0 & -a_1 & \hdots &  -a_{n-1}
+  \end{pmatrix}}_{\mathbf{A}_f} \, \mathbf{f}(t)
+  + \underbrace{\begin{pmatrix}
+      0 \\
+      \vdots \\
+      0 \\
+      \frac{1}{a_n}
+  \end{pmatrix}}_{\mathbf{B}_f} \,
+   u(t) \\
+   f(t) &= \underbrace{\begin{pmatrix}
+     1 & 0 & \cdots & 0
+   \end{pmatrix}}_{\mathbf{C}_f} \, \mathbf{f}(t)
+\end{split}
+\label{eq:ss1}
+\end{equation}
+%
+This gives the following state-space representation for $f(t)$:
+%
+\begin{equation}
+\begin{split}
+  \frac{d\mathbf{f}(t)}{dt}
+  &= \mathbf{A}_f \, \mathbf{f}(t) + \mathbf{B}_f \, u(t) \\
+  f(t) &= \mathbf{C}_f \, \mathbf{f}(t).
+\end{split}
+\label{eq:ssgen}
+\end{equation}
+%
+\simo{Explain that we can generalize this a lot}
+
+Because this system is of the first order, the impulse response can be written down explicitly in terms of the matrix exponential function $\mathbf{U}(t) = \exp(t \, \mathbf{A})$ and hence the joint covariance function of $\mathbf{f}$ is
+%
+\begin{equation}
+\begin{split}
+  &\mathbf{K}_\mathbf{f}(t - t')
+  \\ &
+  =
+  \int_{-\infty}^{t} \int_{-\infty}^{t'}
+  \mathbf{U}(t - s) \, \mathbf{B}_f \, k(s - s') \,
+  \mathbf{B}_f^T \, \mathbf{U}^T(t' - s') \, ds \, ds',
+\end{split}
+\label{eq:vfcov}
+\end{equation}
+%
+and we can pick up the covariance function of $f(t)$ from the matrix via
+%
+\begin{equation}
+\begin{split}
+  k_f(t,t') &=
+  \mathbf{C}_f \, \mathbf{K}_\mathbf{f}(t - t') \, \mathbf{C}_f^T
+\end{split}
+\label{eq:fcov2}
+\end{equation}
+%
+This representation has the advantage that it is easy to numerically approximate the matrix exponential and hence the analytical computation of the impulse response becomes unnecessary. However, we still need to compute the integrals in \eqref{eq:vfcov} somehow. If closed form solution is not available (which surpricing often is), then the computations need to be done via numerical integration.
+
+
+
 \subsection{Partial Differential Equation Based LFMs}
 %
 Similar to the case of ordinary differential equations, we can associate a Green's function to a linear partial differential
@@ -809,6 +881,45 @@ The above approach conveniently generalizes to Gaussian process driven partial (
 where $\mathcal{D}$ is a (pseudo) differential operator.
 
 Once we have derived the covariance functions, we can use the Gaussian process regression equations as in Sections \ref{sec:gp:regression} and \ref{sec:gp:regression:lfm} for learning and prediction of functions $f$ and $u$.
+
+\subsection{State-Space PDE LFMs}
+
+\simo{Discuss state-space PDEs}
+
+Assume that that our PDE LFM has the form
+%
+\begin{equation}
+\begin{split}
+  \frac{\partial \mathbf{f}(\mathbf{x},t)}{\partial t}
+  &= \mathbf{\mathcal{A}}_f \, \mathbf{f}(\mathbf{x},t) + \mathbf{B}_f \, u(\mathbf{x},t) \\
+\end{split}
+\end{equation}
+%
+where $\mathbf{\mathcal{A}}_f$ is a matrix of linear operators. Let the covariance function of $u$ be $k(\mathbf{x},\mathbf{x}';t - t')$. Then, if we define the operator exponential $\mathbf{\mathcal{U}}(t) = \exp(t \, \mathbf{\mathcal{A}})$, the covariance function of $f$ can be expressed as
+%
+\begin{equation}
+\begin{split}
+  k_f(\mathbf{x},\mathbf{x}';t-t') &=
+  \mathbf{C}_f \, \mathbf{K}_\mathbf{f}(\mathbf{x},\mathbf{x}';t-t') \, \mathbf{C}_f^T
+\end{split}
+\end{equation}
+%
+with
+%
+\begin{equation}
+\begin{split}
+  &\mathbf{K}_\mathbf{f}(\mathbf{x},\mathbf{x}';t-t')
+  \\ &
+  =
+  \int_{-\infty}^{t} \int_{-\infty}^{t'}
+  \mathbf{\mathcal{U}}(t - s) \, \mathbf{B}_f \, k(\mathbf{x},\mathbf{x}';s - s') \,
+  \mathbf{B}_f^T \, \mathbf{\mathcal{U}}^T(t' - s') \, ds \, ds',
+\end{split}
+\label{eq:vfcov}
+\end{equation}
+%
+where the operator multiplication from right is again interpreted as acting onto the variable $\mathbf{x}'$.
+
 
 \subsection{Hyperparameter Learning in LFMs}
 
@@ -985,45 +1096,9 @@ State-space realizations of spatio-temporal oscillating fields have been discuss
 
 \simo{Should add a visualization of this idea here}
 
-\subsection{LFMs in state-space form}
+\subsection{LFMs in joint state-space form}
 %
-We can rewrite the basic LFM differential equation \eqref{eq:difeq1} in state-space form by defining a state vector $\mathbf{f} = (f, df/dt,\ldots,d^{n-1}f/dt^{n-1})$ and writing
-%
-\begin{equation}
-\begin{split}
-  \frac{d\mathbf{f}(t)}{dt}
-  &= \underbrace{\begin{pmatrix}
-       0             & 1      &        &       \\
-                     & \ddots & \ddots &       \\
-                     &         &  0    &     1 \\
-   -a_0 & -a_1 & \hdots &  -a_{n-1}
-  \end{pmatrix}}_{\mathbf{A}_f} \, \mathbf{f}(t)
-  + \underbrace{\begin{pmatrix}
-      0 \\
-      \vdots \\
-      0 \\
-      \frac{1}{a_n}
-  \end{pmatrix}}_{\mathbf{B}_f} \,
-   u(t) \\
-   f(t) &= \underbrace{\begin{pmatrix}
-     1 & 0 & \cdots & 0
-   \end{pmatrix}}_{\mathbf{C}_f} \, \mathbf{f}(t)
-\end{split}
-\label{eq:ss1}
-\end{equation}
-%
-This gives the following state-space representation for $f(t)$:
-%
-\begin{equation}
-\begin{split}
-  \frac{d\mathbf{f}(t)}{dt}
-  &= \mathbf{A}_f \, \mathbf{f}(t) + \mathbf{B}_f \, u(t) \\
-  f(t) &= \mathbf{C}_f \, \mathbf{f}(t).
-\end{split}
-\label{eq:ssgen}
-\end{equation}
-%
-We can now combine the above state-space representation with the state-space representation of LFMs in the previous section to obtain an augmented state-space representation of the LFM \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012}. Thus we obtain a combined model
+We can now combine the  state-space ODE \eqref{eq:ssgen} with the state-space representation of LFMs in the previous section to obtain an augmented state-space representation of the LFM \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012}. Thus we obtain a combined model
 %
 \begin{equation}
 \begin{split}
@@ -1266,11 +1341,15 @@ However, it turns out that although we can indeed estimate the process $f$ easil
 
 \subsection{Detectability of Latent Force Models}
 
-\simo{Show/argue that latent force models are not observable but are detectable}
+\simo{Show/argue that latent force models are not observable but are detectable. The detectability follows, because the unstable states arising from the latent force model are still stable.}
 
 \subsection{PDE Methods for State-Space PDEs}
 
 \simo{Discuss the use of Hilbert-space methods, FEM, and finite differences}
+
+\subsection{Separable Covariance Functions}
+%
+\simo{Some tips and tricks for separable covariance functions.}
 
 
 
@@ -1400,9 +1479,84 @@ where the constant gain $\boldsymbol{\Gamma} = \mathbf{U}^{-1} \, \mathbf{M}^T \
 
 \simo{Some more text to follow especially in relation to numerical methods in previous section.}
 
-\subsection{Separable Covariance Functions}
-%
-\simo{Some tips and tricks for separable covariance functions.}
+
+
+
+
+
+\section{Extensions and Discussion}
+
+\subsection{Operators in Measurement Model}
+
+\simo{Discuss how things work when we have operators in the measurement model as well}
+
+\subsection{Cascaded LFMs}
+
+\simo{I am not sure about the need of this section}
+
+In cascaded latent force models, we have two non-homogeneous ordinary differential equations acting in a serial way:
+the output of the first differential equation is used as the input for the second differential equation
+\cite{Honkela:PNAS10}. If $L_1p(t) = u(t)$, refers to the first differential equation,
+where $u(t)$ is the input and $p(t)$ is the output, then for the second differential equation we have $L_2f(t) = p(t)$,
+where $L_1$ and $L_2$ are both differential operators as before. In \cite{Honkela:PNAS10}, the authors assign a
+GP prior to $u(t)$, and find the posterior for $u(t)$, and $p(t)$, which can be computed analytically when $L_1$ and $L_2$
+are both differential operators associated to a first order ODE.
+
+\simo{[In wrong place:] In \cite{Gao:latent08}, the process $u(t)$ follows
+a GP that is transformed non-linearly before serving as the input for the first ODE. Posterior distributions are
+approximated using the MAP-Laplace method. For the same setup, the authors in \cite{Titsias:BMC:2012} use MCMC to
+approximate the posterior distributions for the processes involved.}
+
+\simo{Both write}
+
+\subsection{Periodic Latent Functions}
+
+\simo{I am not sure about the need of this section}
+
+\subsection{Non-linear Models}
+
+When the input force is modelled as a non-linear transformation of a Gaussian process \cite{Lawrence:gpsim2007a,
+Gao:latent08, Titsias:BMC:2012}, it is necessary to resort to an approximation in order to compute the posterior
+distribution for $u^*$ given $\mathbf{y}$, or the predictive distribution for $f^*$ given $\mathbf{y}$.
+
+The setup is again an ordinary differential equation of the form $Lf(t)=g(u(t))$, where $g(\cdot)$ is a non-linear function
+of the argument. In \cite{Lawrence:gpsim2007a, Gao:latent08}, the authors suggest the MAP-Laplace method
+\cite{Bishop:PRML06} as a way to approximate the posterior distribution for $u(t)$. The MAP-Laplace method approximates
+the posterior distribution by a
+Gaussian distribution centered at the Maximum a Posteriori (MAP) solution. The method implies functional derivatives of the
+log-likelihood for computing the gradient and the Hessian that are necessary in the optimization procedure. Functional
+derivatives for the terms involved are then computed on a grid using Riemann quadrature. In \cite{Titsias:BMC:2012}, the
+authors provide a Markov Chain Monte Carlo (MCMC) procedure to compute the posterior distribution for $u(t)$, as well
+as posterior distributions for any parameters appearing as part of the impulse response.
+
+\mauricio{We could go into more details here if we want. I was checking previous published papers and this is really
+the only non-linear model that has been proposed before, in the context of LFMs for regression. The non-linearity in the
+differential equation has not been published before}.
+
+
+\simo{Non-linear models in state-space form here}
+
+\simo{Something about non-linear stochastic control here}
+
+
+\subsection{Switching LFMs}
+
+In the basic LFM, the input process $u(t)$ is a continuous process. An important extension in different applied scenarios
+is to allow the input force $u(t)$ to be discontinuous. Equally important is to allow the coefficients $\{a_i\}_{i=0}^n$ that
+define the differential operator $L$, to take discrete values as function of $t$. The setup now includes a sequential
+series of basic LFMs $\{L_jf(t) = u_j(t)\}_{j=1}^J$, each of them applied in a particular time interval
+$\{[T_{j-1}, T_j]\}_{j=1}^J$, where $J$ is the maximum number of time intervals considered, $L_j$ is a differential operator
+with coefficients $\{a_i^j\}_{i=0,j=1}^{n, J}$, and $\{u_j(t)\}_{j=1}^J$ are GPs with covariance functions $k_j(t,t')$.
+Continuity in the output $f(t)$ is ensured by forcing the initial conditions for the $j$-th ODE to take the same value
+than the output $f(t)$ and its derivatives, at the last input point for the $j-1$-th time interval.
+In \cite{Alvarez:switched11}, the authors use second order differential operators for $L_j$, to sequentially segment
+basic movements (also known as motor primitives) from a multivariate time series coming from a robot arm playing table
+tennis.
+
+\mauricio{I just realized we should define a letter for the number of datapoints. I was using little n, but now I see
+that little n it's been used for the order of the differential operator}
+
+\simo{Both write}
 
 \subsection{Stable State-Space Realization of $u$}
 %
@@ -1503,159 +1657,11 @@ which is equivalent to the model \eqref{eq:ssmodel} in (statistical) input-outpu
 \cite{Parlett+Reinsch:1971}
 originally developed for numerically stabilizing the computation the eigenvalues of a matrix (implemented, e.g., as the ``balance'' function in Matlab). This procedure gives us a suitable matrix $\mathbf{T}$ which can be used in the transformation above to give a numerically stable state-space model.
 
-\subsection{Matrix and Operator Exponential Computation of Green's Functions}
-%
-Assume that we have a basic (differential equation) based LFM which has the state-space representation
-%
-\begin{equation}
-\begin{split}
-  \frac{d\mathbf{f}(t)}{dt}
-  &= \mathbf{A}_f \, \mathbf{f}(t) + \mathbf{B}_f \, u(t) \\
-\end{split}
-\end{equation}
-%
-with the function of interest being $f(t) = \mathbf{C}_f \, \mathbf{f}(t)$. Because this system is of the first order, the impulse response can be written down explicitly in terms of the matrix exponential function $\mathbf{U}(t) = \exp(t \, \mathbf{A})$ and hence the joint covariance function of $\mathbf{f}$ is
-%
-\begin{equation}
-\begin{split}
-  &\mathbf{K}_\mathbf{f}(t - t')
-  \\ &
-  =
-  \int_{-\infty}^{t} \int_{-\infty}^{t'}
-  \mathbf{U}(t - s) \, \mathbf{B}_f \, k(s - s') \,
-  \mathbf{B}_f^T \, \mathbf{U}^T(t' - s') \, ds \, ds',
-\end{split}
-\label{eq:vfcov}
-\end{equation}
-%
-and we can pick up the covariance function of $f(t)$ from the matrix via
-%
-\begin{equation}
-\begin{split}
-  k_f(t,t') &=
-  \mathbf{C}_f \, \mathbf{K}_\mathbf{f}(t - t') \, \mathbf{C}_f^T
-\end{split}
-\label{eq:fcov2}
-\end{equation}
-%
-This representation has the advantage that it is easy to numerically approximate the matrix exponential and hence the analytical computation of the impulse response becomes unnecessary. However, we still need to compute the integrals in \eqref{eq:vfcov} somehow. If closed form solution is not available (which surpricing often is), then the computations need to be done via numerical integration.
-
-\simo{If I recall right, we can use the stationarity to reduce this into a single integral, need to check}
-
-For the case of spatio-temporal covariance functions we now get an analogous results, except that matrices are generalized to operators. Assume that that out LFM has the form
-%
-\begin{equation}
-\begin{split}
-  \frac{\partial \mathbf{f}(\mathbf{x},t)}{\partial t}
-  &= \mathbf{\mathcal{A}}_f \, \mathbf{f}(\mathbf{x},t) + \mathbf{B}_f \, u(\mathbf{x},t) \\
-\end{split}
-\end{equation}
-%
-where $\mathbf{\mathcal{A}}_f$ is a matrix of linear operators. Let the covariance function of $u$ be $k(\mathbf{x},\mathbf{x}';t - t')$. Then, if we define the operator exponential $\mathbf{\mathcal{U}}(t) = \exp(t \, \mathbf{\mathcal{A}})$, the covariance function of $f$ can be expressed as
-%
-\begin{equation}
-\begin{split}
-  k_f(\mathbf{x},\mathbf{x}';t-t') &=
-  \mathbf{C}_f \, \mathbf{K}_\mathbf{f}(\mathbf{x},\mathbf{x}';t-t') \, \mathbf{C}_f^T
-\end{split}
-\end{equation}
-%
-with
-%
-\begin{equation}
-\begin{split}
-  &\mathbf{K}_\mathbf{f}(\mathbf{x},\mathbf{x}';t-t')
-  \\ &
-  =
-  \int_{-\infty}^{t} \int_{-\infty}^{t'}
-  \mathbf{\mathcal{U}}(t - s) \, \mathbf{B}_f \, k(\mathbf{x},\mathbf{x}';s - s') \,
-  \mathbf{B}_f^T \, \mathbf{\mathcal{U}}^T(t' - s') \, ds \, ds',
-\end{split}
-\label{eq:vfcov}
-\end{equation}
-%
-where the operator multiplication from right is again interpreted as acting onto the variable $\mathbf{x}'$.
 
 \subsection{Covariance Computation via State-Space Representation}
 %
 \simo{One way to compute the covariance function $k_f$ is to form the state-spate representation of the full system and then use the state-space formula for the covariance.}
 
-
-
-
-\section{Extensions and Discussion}
-
-\subsection{Operators in Measurement Model}
-
-\simo{Discuss how things work when we have operators in the measurement model as well}
-
-\subsection{Cascaded LFMs}
-
-\simo{I am not sure about the need of this section}
-
-In cascaded latent force models, we have two non-homogeneous ordinary differential equations acting in a serial way:
-the output of the first differential equation is used as the input for the second differential equation
-\cite{Honkela:PNAS10}. If $L_1p(t) = u(t)$, refers to the first differential equation,
-where $u(t)$ is the input and $p(t)$ is the output, then for the second differential equation we have $L_2f(t) = p(t)$,
-where $L_1$ and $L_2$ are both differential operators as before. In \cite{Honkela:PNAS10}, the authors assign a
-GP prior to $u(t)$, and find the posterior for $u(t)$, and $p(t)$, which can be computed analytically when $L_1$ and $L_2$
-are both differential operators associated to a first order ODE.
-
-\simo{[In wrong place:] In \cite{Gao:latent08}, the process $u(t)$ follows
-a GP that is transformed non-linearly before serving as the input for the first ODE. Posterior distributions are
-approximated using the MAP-Laplace method. For the same setup, the authors in \cite{Titsias:BMC:2012} use MCMC to
-approximate the posterior distributions for the processes involved.}
-
-\simo{Both write}
-
-\subsection{Periodic Latent Functions}
-
-\simo{I am not sure about the need of this section}
-
-\subsection{Non-linear Models}
-
-When the input force is modelled as a non-linear transformation of a Gaussian process \cite{Lawrence:gpsim2007a,
-Gao:latent08, Titsias:BMC:2012}, it is necessary to resort to an approximation in order to compute the posterior
-distribution for $u^*$ given $\mathbf{y}$, or the predictive distribution for $f^*$ given $\mathbf{y}$.
-
-The setup is again an ordinary differential equation of the form $Lf(t)=g(u(t))$, where $g(\cdot)$ is a non-linear function
-of the argument. In \cite{Lawrence:gpsim2007a, Gao:latent08}, the authors suggest the MAP-Laplace method
-\cite{Bishop:PRML06} as a way to approximate the posterior distribution for $u(t)$. The MAP-Laplace method approximates
-the posterior distribution by a
-Gaussian distribution centered at the Maximum a Posteriori (MAP) solution. The method implies functional derivatives of the
-log-likelihood for computing the gradient and the Hessian that are necessary in the optimization procedure. Functional
-derivatives for the terms involved are then computed on a grid using Riemann quadrature. In \cite{Titsias:BMC:2012}, the
-authors provide a Markov Chain Monte Carlo (MCMC) procedure to compute the posterior distribution for $u(t)$, as well
-as posterior distributions for any parameters appearing as part of the impulse response.
-
-\mauricio{We could go into more details here if we want. I was checking previous published papers and this is really
-the only non-linear model that has been proposed before, in the context of LFMs for regression. The non-linearity in the
-differential equation has not been published before}.
-
-
-\simo{Non-linear models in state-space form here}
-
-\simo{Something about non-linear stochastic control here}
-
-
-\subsection{Switching LFMs}
-
-In the basic LFM, the input process $u(t)$ is a continuous process. An important extension in different applied scenarios
-is to allow the input force $u(t)$ to be discontinuous. Equally important is to allow the coefficients $\{a_i\}_{i=0}^n$ that
-define the differential operator $L$, to take discrete values as function of $t$. The setup now includes a sequential
-series of basic LFMs $\{L_jf(t) = u_j(t)\}_{j=1}^J$, each of them applied in a particular time interval
-$\{[T_{j-1}, T_j]\}_{j=1}^J$, where $J$ is the maximum number of time intervals considered, $L_j$ is a differential operator
-with coefficients $\{a_i^j\}_{i=0,j=1}^{n, J}$, and $\{u_j(t)\}_{j=1}^J$ are GPs with covariance functions $k_j(t,t')$.
-Continuity in the output $f(t)$ is ensured by forcing the initial conditions for the $j$-th ODE to take the same value
-than the output $f(t)$ and its derivatives, at the last input point for the $j-1$-th time interval.
-In \cite{Alvarez:switched11}, the authors use second order differential operators for $L_j$, to sequentially segment
-basic movements (also known as motor primitives) from a multivariate time series coming from a robot arm playing table
-tennis.
-
-\mauricio{I just realized we should define a letter for the number of datapoints. I was using little n, but now I see
-that little n it's been used for the order of the differential operator}
-
-\simo{Both write}
 
 \section{Experimental Results}
 
