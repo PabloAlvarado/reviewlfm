@@ -1,0 +1,342 @@
+
+Consider the control problem
+
+  df/dt = A_f f + M_f c
+   J[c] = 1/2 f^T(T) Psi f(T) + int [f^T(t) X(t) f(t) + c^T(t) U(t) c(t)] dt
+
+The solution is
+
+   dK_f/dt = -A_f^T K_f - K_f A_f + K_f M_f U^{-1} M_f^T K_f - X
+    K_f(T) = Psi
+
+  c = -U^{-1} M_f^T K_f f
+
+the infinite-time LQ is then given by dK_f/dt = 0. 
+
+******************* 
+
+Consider the LFM problem
+
+  df/dt = A_f f + B_f C_u u + M_f c
+  du/dt = A_u u + B_u w
+
+which corresponds to g = [f;u]
+
+  dg/dt = A g + M c
+
+with
+
+  A = [A_f  B_f C_u;
+        0     A_u]
+
+  M = [M_f;
+        0  ]
+
+  C_g = [I;
+         0]
+
+Let us now consider the LQ control problem
+
+  J[c] = 1/2 f^T(T) Psi f(T) + int [f^T(t) X(t) f(t) + c^T(t) U(t) c(t)] dt
+
+which can be rewritten as
+
+  J[c] = 1/2 g^T(T) Psi_g f(T) + int [g^T(t) X_g(t) g(t) + c^T(t) U(t) c(t)] dt
+
+where
+
+   Psi_g = [Psi  0; 0 0]
+  X_g(t) = [X(t) 0; 0 0]
+
+The solution is now
+
+   dK/dt = -A^T K - K A + K M U^{-1} M^T K - X_g
+    K(T) = Psi_g
+
+  c = -U^{-1} M^T K g
+
+However, putting K = [K11 K12; K21 K22] with K21 = K12^T, we have
+
+A^T K =
+  [A_f^T*K11  A_f^T*K12
+   C_u^T*B_f^T*K11+A_u^T*K21  C_u^T*B_f^T*K12+A_u^T*K22]
+
+K*A =
+  [K11*A_f  K11*B_f*C_u+K12*A_u
+   K21*A_f  K21*B_f*C_u+K22*A_u]
+
+K M U^{-1} M^T K = 
+  [K11*M_f*U^{-1}*M_f^T*K11,  K11*M_f*U^{-1}*M_f^T*K12
+   K21*M_f*U^{-1}*M_f^T*K11,  K21*M_f*U^{-1}*M_f^T*K22]
+
+Thus we have
+
+  dK11/dt
+  = -A_f^T*K11 - K11*A_f
+  + K11*M_f*U^{-1}*M_f^T*K11
+  dK12/dt
+  = -A_f^T*K12 - K11*B_f*C_u - K12*A_u
+  + K11*M_f*U^{-1}*M_f^T*K12
+  dK21/dt
+  = -C_u^T*B_f^T*K11 - A_u^T*K21 - K21*A_f
+  + K21*M_f*U^{-1}*M_f^T*K11
+  dK22/dt
+  = -C_u^T*B_f^T*K12 - A_u^T*K22 - K21*B_f*C_u - K22*A_u
+  + K21*M_f*U^{-1}*M_f^T*K12
+
+  K(T) = [Psi  0; 0 0]
+
+Clearly the equation for K11 is exactly the equation for K_f(t) hence K11 = K_f. Let us look at
+
+  dK12/dt
+  = -A_f^T*K12 - K11*B_f*C_u - K12*A_u + K11*M_f*U^{-1}*M_f^T*K12
+
+which does not allow for a easy solution.
+
+However, in the case of infinite regulation we have
+  
+  0 = -A_f^T*K12 - K11*B_f*C_u - K12*A_u + K11*M_f*U^{-1}*M_f^T*K12
+  0 = (K11*M_f*U^{-1}*M_f^T-A_f^T)*K12 - K12*A_u - K11*B_f*C_u 
+  (K11*M_f*U^{-1}*M_f^T-A_f^T)*K12 - K12*A_u = K11*B_f*C_u 
+
+which is a sylvester equation and hence numerically solvable.
+
+For K22 we get
+
+  0 = -C_u^T*B_f^T*K12 - A_u^T*K22 - K21*B_f*C_u - K22*A_u
+  + K21*M_f*U^{-1}*M_f^T*K12
+
+  A_u^T*K22 + K22*A_u
+  = K21*M_f*U^{-1}*M_f^T*K12 - C_u^T*B_f^T*K12 - K21*B_f*C_u
+
+  A_u^T*K22 + K22*A_u
+  = K12'*M_f*U^{-1}*M_f^T*K12 - C_u^T*B_f^T*K12 - K12'*B_f*C_u
+
+which again is a sylvester equation (also a lyapunov equation).
+
+The gain is given as
+
+  G = U^{-1} [M_f'*K11  M_f'*K12]
+
+where the left-hand part is the basic LQ gain.
+
+
+--- appendix
+
+K*A =
+  [K11 K12  [A_f  B_f C_u;
+   K21 K22]    0     A_u]
+  =
+  [K11*A_f  K11*B_f*C_u+K12*A_u
+   K21*A_f  K21*B_f*C_u+K22*A_u]
+
+(K*A)^T = 
+  [A_f^T*K11  A_f^T*K12
+   C_u^T*B_f^T*K11+A_u^T*K21  C_u^T*B_f^T*K12+A_u^T*K22]
+
+[M_f;
+  0]  iU [M_f^T 0]
+= [M_f*iU;
+      0] [M_f^T 0]
+= [M_f*iU*M_f^T 0;
+      0         0]
+
+[K11 K12;  [M_f*iU*M_f^T 0;
+ K21 K22]      0         0]
+=
+[K11*M_f*iU*M_f^T  0;
+ K21*M_f*iU*M_f^T  0]
+
+[K11*M_f*iU*M_f^T  0; [K11 K12;
+ K21*M_f*iU*M_f^T  0]  K21 K22]
+=
+[K11*M_f*iU*M_f^T*K11 K11*M_f*iU*M_f^T*K12;
+ K21*M_f*iU*M_f^T*K11 K21*M_f*iU*M_f^T*K12]
+
+
+
+>> syms K11 K12 K21 K22 A_f A_u C_u B_f M_f iU real;
+>> K = [K11 K12; K21 K22];
+>> A = [A_f B_f*C_u; 0 A_u];
+>> M = [M_f; 0];
+>> K*A
+ 
+ans =
+ 
+[ A_f*K11, A_u*K12 + B_f*C_u*K11]
+[ A_f*K21, A_u*K22 + B_f*C_u*K21]
+ 
+>> A'*K
+ 
+ans =
+ 
+[               A_f*K11,               A_f*K12]
+[ A_u*K21 + B_f*C_u*K11, A_u*K22 + B_f*C_u*K12]
+ 
+>> K*M*iU*M'*K
+ 
+ans =
+ 
+[   K11^2*M_f^2*iU, K11*K12*M_f^2*iU]
+[ K11*K21*M_f^2*iU, K12*K21*M_f^2*iU]
+
+
+G = U^{-1} M^T K
+= U^{-1} [M_f' 0] [K11 K12
+                   K21 K22]
+= U^{-1} [M_f'*K11  M_f'*K12]
+          
+
+
+******************* 
+
+Assume that we have an LTI system
+
+  df/dt = A f + L u
+
+which is drive by a stationary GP
+
+  u(t) ~ GP(0,k(t-t'))
+  
+The solution to ODE is then given as
+
+  f(t) = exp(A (t-t0)) f(t0) + int_t0^t exp(A (t-tau)) u(t) dt
+
+Taking the limit t0 -> infty then gives
+
+  f(t) = int_{-infty}^t exp(A (t-tau)) u(t) dt
+
+The covariance function is then given as
+
+  E[f(t) f^T(t')]
+  = E[ { int_{-infty}^t exp(A (t-tau)) L u(tau) dtau }
+       { int_{-infty}^t' exp(A (t'-tau')) L u(tau') dtau' }^T ]
+  = E[
+  int_{-infty}^t' int_{-infty}^t exp(A (t-tau)) L u(tau) u(tau')^T L^T exp(A (t'-tau'))^T dtau dtau'
+     ]
+  = int_{-infty}^t' int_{-infty}^t exp(A (t-tau)) L k(tau-tau') L^T exp(A (t'-tau'))^T dtau dtau'
+
+Note that because of stationarity we have
+
+  E[f(t) f^T(t)]
+  = int_{-infty}^t' int_{-infty}^t exp(A (t-tau)) L k(tau-tau') L^T exp(A (t-tau))^T dtau dtau'
+  = C,
+
+which is independent of C. If t <= t' we now have
+
+  = int_{-infty}^t' int_{-infty}^t exp(A (t-tau)) L k(tau-tau') L^T exp(A (t'-tau'))^T dtau dtau'
+  = int_{-infty}^t int_{-infty}^t exp(A (t-tau)) L k(tau-tau') L^T exp(A (t'-tau'))^T dtau dtau'
+  + int_{t}^t' int_{-infty}^t exp(A (t-tau)) L k(tau-tau') L^T exp(A (t'-tau'))^T dtau dtau'
+
+For the first term we get
+
+  = int_{-infty}^t int_{-infty}^t exp(A (t-tau)) L k(tau-tau') L^T exp(A (t' - t + t -tau'))^T dtau dtau'
+  = int_{-infty}^t int_{-infty}^t exp(A (t-tau)) L k(tau-tau') L^T exp(A (t - tau'))^T dtau dtau' exp(A (t'-t))
+  = C exp(A (t'-t))
+
+The second term is harder though:
+
+  int_{t}^t' int_{-infty}^t exp(A (t-tau)) L k(tau-tau') L^T exp(A (t'-tau'))^T dtau dtau'
+
+Let try another technique. We have
+
+  E[f(t) f^T(t')]
+  = int_{-infty}^t' int_{-infty}^t exp(A (t-tau)) L k(tau-tau') L^T exp(A (t'-tau'))^T dtau dtau'
+
+Thus the Leibniz rule gives
+
+  d/dt' E[f(t) f^T(t')]
+  = int_{-infty}^t' int_{-infty}^t exp(A (t-tau)) L k(tau-tau') L^T exp(A (t'-tau'))^T dtau dtau' A^T 
+  + int_{-infty}^t exp(A (t-tau)) L k(tau-t') L^T exp(A (t'-t'))^T dtau
+  = E[f(t) f^T(t')] A^T 
+  + int_{-infty}^t exp(A (t-tau)) L k(tau-t') dtau L^T 
+
+The derivative for the second term is given as
+
+  d/dt' int_{-infty}^t exp(A (t-tau)) L k(tau-t') dtau L^T
+  = int_{-infty}^t exp(A (t-tau)) L dk/dt'(tau-t') dtau L^T
+
+******************* 
+
+Consider
+
+  d2f/dt2 + d2f/dx2 = u
+
+which naively would correspond to
+
+  d2f/dt2 = -d2f/dx2 + u
+
+or
+
+  df1/dt = f2
+  df2/dt = -d2f/dx2 + u
+
+which unfortunately is not stable.
+
+The spectral density can be solved as
+
+  -wt^2 F - wx^2 F = U
+  F = -U/(wt^2 + wx^2)
+  S = S_u/(wt^2 + wx^2)^2
+
+which gives the denominator roots
+
+        wt^2 + wx^2 = 0
+  -(iwt)^2 + wx^2 = 0
+  (iwt)^2 = wx^2
+  iwt = +- sqrt(wx^2)
+      = +- sqrt(-(iwx)^2)
+      
+Thus the stable part is
+
+  G(iwt) = 1 / (iwt + sqrt(-(iwx)^2))^2
+  = 1 / ((iwt)^2 + 2 sqrt(-(iwx)^2) (iwt) - (iwx)^2)
+
+which corresponds to
+
+  d2f/dt2 + 2 sqrt(-nabla^2) df/dt - nabla^2 f = u
+
+i.e.
+
+  dvf/dt = [0 1; nabla^2  -2 sqrt(-nabla^2)] vf + [0;1] u
+
+However, this is not entirely equivalent, because we have now some an
+unitary transformation on u as well. Recall that originally we have
+
+  [(i wt)^2 + (i wx)^2] F = U
+
+and the latter equation is actually
+
+  [iwt + sqrt(-(iwx)^2))]^2 F = tU
+
+What we can do is now to multiply with
+
+  H(iw,iwx) = [(i wt)^2 + (i wx)^2] / [iwt + sqrt(-(iwx)^2))]^2
+
+to give
+
+  [(i wt)^2 + (i wx)^2] F = H(iw,iwx) Ut
+
+Thus we should apply the operator H onto the input estimate to get it
+right. What does the operator look like then? Let us put
+
+  A = -(i wx)^2 = wx^2 =~ lap_e
+  B = sqrt(-(iwx)^2)) = |wx| =~ sqrt(lap_e)
+
+which both are positive operators. Thus
+
+  Z = [(i wt)^2 - A] / [iwt + B]^2 U
+    = [(i wt)^2 - A] / [(iwt)^2 + 2 (iwt) B + B^2] U
+    = [(i wt)^2 + 2 (iwt) B + B^2 - A - 2 (iwt) B - B^2]
+    / [(iwt)^2 + 2 (iwt) B + B^2] U
+    = { 1 - [2 B (iwt) + A + B^2] / [(iwt)^2 + 2 (iwt) B + B^2] } U
+
+which whose second part can be realized as a state-space system
+
+  dx/dt = [0 1; -B^2 -2B] x + [0;1] u
+      z = [(A+B^2)  2B] x
+
+
+
+
+  

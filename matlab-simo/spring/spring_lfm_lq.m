@@ -3,6 +3,23 @@
 %
     
     %%
+    % Check the theory on the relation to LQ solution
+    %
+    U = 0.05;
+    X = diag([1 1]);
+    [G_lq,S_lq,E_lq] = lqr(Fsp,Lsp,X,U);
+    [G_lfm,S_lfm,E_lfm] = lqr(Fjm,Ljmc,blkdiag(X,zeros(size(Fjm,1)-2)),U);
+    
+    K12 = sylvester(S_lq*Lsp/U*Lsp'-Fsp',-Fgp,S_lq*Lsp*Hgp)
+    K22 = lyap(-Fgp',K12'*Lsp/U*Lsp'*K12 - Hgp'*Lsp'*K12 - K12'*Lsp*Hgp)
+    S_lfm2 = [S_lq K12; K12' K22];
+    
+    S_norm = norm(S_lfm-S_lfm2)
+    G_lfm2 = [U\Lsp'*S_lq U\Lsp'*K12];
+    
+    G_norm = norm(G_lfm-G_lfm2)
+ 
+    %%
     % LQ control
     %
     [G,S_lfm,E_lfm] = lqr(Fjm,Ljmc,diag([1 1 zeros(1,size(Fjm,1)-2)]),0.05);
