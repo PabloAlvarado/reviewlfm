@@ -1,0 +1,30 @@
+\begin{thebibliography}{1}
+
+\bibitem{Polyanin:Handbook02}
+Andrei~D. Polyanin.
+\newblock {\em Handbook of Linear Partial Differential Equations for Engineers
+  and Scientists}.
+\newblock Chapman $\And$ Hall/CRC, 2002.
+
+\bibitem{Alvarez:HeatEquationReport}
+Mauricio~A. \'Alvarez.
+\newblock About the partial differential equation for the drosophila
+  segmentation problem.
+\newblock Technical report, Faculty of Engineering, Universidad Tecnol\'ogica
+  de Pereira, 2013.
+
+\bibitem{abramo:handbook1965}
+M.~Abramowitz and I.~A. Stegun, editors.
+\newblock {\em Handbook of Mathematical Functions: With Formulas, Graphs and
+  Mathematical Tables}.
+\newblock Dover Publications Inc., New York, NY, (USA), new edition edition,
+  1965.
+
+\bibitem{lawrence:GPSIM2007}
+N.~D. Lawrence, G.~Sanguinetti, and M.~Rattray.
+\newblock Modelling {t}ranscriptional {r}egulation using {G}aussian
+  {p}rocesses.
+\newblock In J.~C.~Platt B.~Schölkopf and T.~Hofmann, editors, {\em Advances in
+  Neural Information Processing Systems 19}. MIT Press, Cambridge, MA, 2007.
+
+\end{thebibliography}

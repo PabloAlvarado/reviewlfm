@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99d (TeX Live 2015)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: poisson.aux
+The style file: unsrt.bst
+Database file #1: pdebib.bib
+You've used 4 entries,
+            1791 wiz_defined-function locations,
+            473 strings with 4353 characters,
+and the built_in function-call counts, 719 in all, are:
+= -- 59
+> -- 36
+< -- 0
++ -- 13
+- -- 9
+* -- 32
+:= -- 131
+add.period$ -- 13
+call.type$ -- 4
+change.case$ -- 4
+chr.to.int$ -- 0
+cite$ -- 4
+duplicate$ -- 40
+empty$ -- 77
+format.name$ -- 9
+if$ -- 162
+int.to.chr$ -- 0
+int.to.str$ -- 4
+missing$ -- 4
+newline$ -- 23
+num.names$ -- 7
+pop$ -- 19
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 8
+stack$ -- 0
+substring$ -- 0
+swap$ -- 3
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 0
+while$ -- 5
+width$ -- 5
+write$ -- 47
