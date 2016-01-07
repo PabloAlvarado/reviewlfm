@@ -153,13 +153,13 @@
     % Form the state-space model, solve the equation,
     % and form the measurements
     %
-    F = diag(-decay - diffusion * eigenval(NN));
-    L = eye(size(F));
-    Z = zeros(size(F));
-    tmp = expm([F L; Z Z]*dt);
-    n = size(F,1);
-    A = tmp(1:n,1:n);
-    B = tmp(1:n,n+1:end);
+    F_sim = diag(-decay - diffusion * eigenval(NN));
+    L_sim = eye(size(F_sim));
+    Z = zeros(size(F_sim));
+    tmp = expm([F_sim L_sim; Z Z]*dt);
+    n = size(F_sim,1);
+    A_sim = tmp(1:n,1:n);
+    B_sim = tmp(1:n,n+1:end);
     
     dn1  = round(size(xx1,1)/20);
     dn2  = round(size(xx1,2)/20);
@@ -180,7 +180,7 @@
     
     ff_c = zeros(size(FFT_c,1),1);
     for k=1:size(FFT_c,2)
-        ff_c = A*ff_c + B*UUT_c(:,k);
+        ff_c = A_sim*ff_c + B_sim*UUT_c(:,k);
         FFT_c(:,k) = ff_c;
         for i=1:size(FFT_c,1)
             FFT_p(:,:,k) = FFT_p(:,:,k) + FFT_c(i,k) * fun(:,:,i);

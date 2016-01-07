@@ -11,8 +11,8 @@
     %%
     % Just use a subset of basis functions 
     %
-    n = 50
-%    n = size(fun,3);
+%    n = 50
+    n = size(fun,3);
     fun2 = fun(:,:,1:n);
     lap_e2 = lap_e(1:n);
 
@@ -124,6 +124,7 @@
     d = size(Fpd,1);
     F(1:d,d+1:end) = Lpd * Hgpc;
     L = [zeros(d,size(Lgp,2)); Lgp];
+    Lc = [Lpd; zeros(size(Lgp,1),size(Lpd,2))];
     H  = [Hpd zeros(size(Hpd,1),size(Fgp,1))];
     Hc = [Hpdc zeros(size(Hpdc,1),size(Fgp,1))];
     Hu  = [zeros(size(Hgp,1),d) Hgp];
@@ -195,10 +196,8 @@
     
     for k=1:length(tt)
         
-%        if k > 1
-            m = A*m;
-            P = A*P*A' + Q;
-%        end
+        m = A*m;
+        P = A*P*A' + Q;
 
         y = YYT(:,k);
         S = H*P*H' + R;
@@ -376,7 +375,7 @@
     title('KS u error');
     
     %%
-    % Plot the maxima (or means) at each time
+    % Plot the maxima (or means) controls at each time
     %
     maxim_r = zeros(1,size(ks_u_mu,3));
     maxim_e = zeros(1,size(ks_u_mu,3));
@@ -390,4 +389,18 @@
     clf;
     plot(tt,maxim_r,tt,maxim_e)
     
+    %%
+    % Plot the maxima (or means) states at each time
+    %
+    maxim_r = zeros(1,size(ks_x_mu,3));
+    maxim_e = zeros(1,size(ks_x_mu,3));
+    for k=1:1:size(ks_u_mu,3)
+%        maxim_r(k) = max(max(FFT_p(:,:,k)));
+%        maxim_e(k) = max(max(ks_x_mu(:,:,k)));
+        maxim_r(k) = mean(mean(FFT_p(:,:,k)));
+        maxim_e(k) = mean(mean(ks_x_mu(:,:,k)));
+    end
+    
+    clf;
+    plot(tt,maxim_r,tt,maxim_e)
     
