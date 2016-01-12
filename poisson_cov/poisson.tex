@@ -211,6 +211,19 @@ C_{y_q,y_s}(n)
 +\frac{\sigma^2_x}{2}\left[e^{-(\frac{l}{\sigma_x})^2}\cos(n\pi)-1\right]
 \end{align*}
 
+In the expression for $C_{y_q,y_s}(n,n')$, the term
+$e^{\left(\frac{\gamma_n\sigma_x}{2}\right)^2}\mathcal{I}\left[\mathcal{H}
+(\gamma_n,l)\right]$ can be replaced for a more numerical stable expression given in terms
+of the complex error function $w(z)$,
+
+\begin{align}
+\notag
+e^{\left(\frac{\gamma_n\sigma_x}{2}\right)^2}\mathcal{I}\left[\mathcal{H}(\gamma_n,l)\right]&= 
+\mathcal{I}\left[w(jz_1^{\gamma_n})-e^{-\left(\frac{l}{\sigma_x}\right)^2}e^{-\gamma_nl}w(jz_2^{\gamma_n})\right],
+\end{align}
+with $z_1^{\gamma_n}=\frac{\sigma_x\gamma_n}{2}$ and $z_2^{\gamma_n}=\frac{l}{\sigma_x}+\frac{\sigma_x\gamma_n}{2}$. A similar expression for $e^{\left(\frac{\gamma_n\sigma_x}{2}\right)^2}\mathcal{R}\left[\mathcal{H}
+(\gamma_n,l)\right]$ can be obtained when $n=m$.
+
 Derivative for $C_{y_q,y_s}(n,m)$ in terms of $\sigma_x$ can be found
 in \cite{Alvarez:HeatEquationReport}.
 
