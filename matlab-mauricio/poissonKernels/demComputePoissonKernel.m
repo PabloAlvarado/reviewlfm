@@ -5,9 +5,9 @@ close all
 s = RandStream('mt19937ar', 'Seed', 1e2);
 RandStream.setGlobalStream(s);
 
-nX = 40;
-nY = 40;
-nterms = 20;
+nX = 50;
+nY = 50;
+nterms = 5;
 x = linspace(-1,1, nX)';
 y = linspace(-1,1, nY)';
 [X1, Y1] = meshgrid(x, y);
