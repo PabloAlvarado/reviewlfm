@@ -1,4 +1,4 @@
-function g = poissonKernGradient(poissKern, x, covGrad)
+function g = poissonKernGradient(poissKern, x, varargin)
 
 % POISSONKERNGRADIENT Gradient of POISSON kernel's parameters.
 % FORMAT
@@ -29,13 +29,22 @@ if size(x, 2) ~= 2
     error('Input can only have two columns');
 end
 
+if nargin < 4
+    x2 = x;
+    covGrad = varargin{1};
+else
+    x2 = varargin{1};
+    covGrad = varargin{2};
+end
 
 % Split the domain into the x spatial domain and y spatial domain
 
-sx = x(:,1);
-sy = x(:,2);
+sx1 = x(:,1);
+sy1 = x(:,2);
+sx2 = x2(:,1);
+sy2 = x2(:,2);
 
-K = zeros(length(sx));
+sK = zeros(length(sx1), length(sx2));
 
 sigmax = sqrt(2/poissKern.inverseWidthX);
 sigmay = sqrt(2/poissKern.inverseWidthY);
@@ -64,42 +73,77 @@ wz2gqm = wofzPoppe(sqrt(-1)*z2gqm);
 cK = 16/(lengthX^lengthY);
 g = zeros(1, poissKern.nParams);
 
+% for n=1:nterms
+%     for m=1:nterms
+%         for np=1:nterms
+%             for mp=1:nterms
+%                 if (mod(n+np,2)==0) && (mod(m+mp,2)==0)
+%                     %%%%%
+%                     epsilon = 1e-9;
+%                     param = sigmax + epsilon;
+%                     f1 = computeCvv(param, lengthX, gammapn, wz1gpn, wz2gpn, n, np);
+%                     param = sigmax - epsilon;
+%                     f2 = computeCvv(param, lengthX, gammapn, wz1gpn, wz2gpn, n, np);
+%                     dCvvx = 0.5*(f1 - f2)/epsilon;
+%                     %param = sigmax;
+%                     %dCvvx = gradientCvv(sigmax, lengthX, gammapn, wz1gpn, wz2gpn, n, np);
+% %                     
+%                     %%%%%
+%                     Cvvx = computeCvv(sigmax, lengthX, gammapn, wz1gpn, wz2gpn, n, np);
+%                     Cvvy = computeCvv(sigmay, lengthY, gammaqm, wz1gqm, wz2gqm, m, mp);
+%                     %dCvvx = gradientCvv(sigmax, lengthX, gammapn, wz1gpn, wz2gpn, n, np);
+%                     dCvvy = gradientCvv(sigmay, lengthY, gammaqm, wz1gqm, wz2gqm, m, mp);
+%                     pn2qm2 = pn(n)^2 + qm(m)^2;
+%                     pnp2qmp2 = pn(np)^2 + qm(mp)^2;
+%                     const = (Cvvx*Cvvy)/(pn2qm2*pnp2qmp2);
+%                     sinx = sin(pn(n)*sx);
+%                     csinxsiny = (const*sinx).*sin(qm(m)*sy);
+%                     sinxsiny = sinx.*sin(qm(m)*sy);
+%                     sinxpsinyp = sin(pn(np)*sx).*sin(qm(mp)*sy);
+%                     K = K + csinxsiny*sinxpsinyp';
+%                     Kterm = sinxsiny*sinxpsinyp';
+%                     const1 = sum(sum(Kterm.*covGrad));
+%                     gC = (dCvvx*Cvvy*const1)/(pn2qm2*pnp2qmp2);
+%                     gC = -(1/sqrt(2*poissKern.inverseWidthX^3))*gC;
+%                     g(1) = g(1) + gC;
+%                     gC = (dCvvy*Cvvx*const1)/(pn2qm2*pnp2qmp2);
+%                     gC = -(1/sqrt(2*poissKern.inverseWidthX^3))*gC;
+%                     g(2) = g(2) + gC;
+%                 end
+%             end
+%         end
+%     end
+% end
+
 for n=1:nterms
-    for m=1:nterms
-        for np=1:nterms
-            for mp=1:nterms
-                if (mod(n+np,2)==0) && (mod(m+mp,2)==0)
-                    %%%%%
-                    epsilon = 1e-9;
-                    param = sigmax + epsilon;
-                    f1 = computeCvv(param, lengthX, gammapn, wz1gpn, wz2gpn, n, np);
-                    param = sigmax - epsilon;
-                    f2 = computeCvv(param, lengthX, gammapn, wz1gpn, wz2gpn, n, np);
-                    dCvvx = 0.5*(f1 - f2)/epsilon;
-                    %param = sigmax;
-                    %dCvvx = gradientCvv(sigmax, lengthX, gammapn, wz1gpn, wz2gpn, n, np);
-%                     
-                    %%%%%
-                    Cvvx = computeCvv(sigmax, lengthX, gammapn, wz1gpn, wz2gpn, n, np);
-                    Cvvy = computeCvv(sigmay, lengthY, gammaqm, wz1gqm, wz2gqm, m, mp);
-                    %dCvvx = gradientCvv(sigmax, lengthX, gammapn, wz1gpn, wz2gpn, n, np);
-                    dCvvy = gradientCvv(sigmay, lengthY, gammaqm, wz1gqm, wz2gqm, m, mp);
-                    pn2qm2 = pn(n)^2 + qm(m)^2;
-                    pnp2qmp2 = pn(np)^2 + qm(mp)^2;
-                    const = (Cvvx*Cvvy)/(pn2qm2*pnp2qmp2);
-                    sinx = sin(pn(n)*sx);
-                    csinxsiny = (const*sinx).*sin(qm(m)*sy);
-                    sinxsiny = sinx.*sin(qm(m)*sy);
-                    sinxpsinyp = sin(pn(np)*sx).*sin(qm(mp)*sy);
-                    K = K + csinxsiny*sinxpsinyp';
-                    Kterm = sinxsiny*sinxpsinyp';
-                    const1 = sum(sum(Kterm.*covGrad));
-                    gC = (dCvvx*Cvvy*const1)/(pn2qm2*pnp2qmp2);
-                    gC = -(1/sqrt(2*poissKern.inverseWidthX^3))*gC;
-                    g(1) = g(1) + gC;
-                    gC = (dCvvy*Cvvx*const1)/(pn2qm2*pnp2qmp2);
-                    gC = -(1/sqrt(2*poissKern.inverseWidthX^3))*gC;
-                    g(2) = g(2) + gC;
+    for np=1:nterms
+        if  (mod(n+np,2)==0)
+            Kx = sheatKernCompute(sigmax, lengthX, sx1, sx2, pn, ...
+                gammapn, wz1gpn, wz2gpn, n, np);
+            for m=1:nterms
+                for mp=1:nterms
+                    if  (mod(m+mp,2)==0)
+                        pn2qm2 = pn(n)^2 + qm(m)^2;
+                        pnp2qmp2 = pn(np)^2 + qm(mp)^2;
+                        Ky = sheatKernCompute(sigmay, lengthY, sy1, sy2, qm, ...
+                            gammaqm, wz1gqm, wz2gqm, m, mp);
+                        % Derivative wrt sigmax   
+                        covGradx = covGrad.*Ky;
+                        gx = sheatKernGradient(sigmax, lengthX, sx1, sx2, pn, ...
+                            gammapn, wz1gpn, wz2gpn, n, np, covGradx);
+                        gx = gx/(pn2qm2*pnp2qmp2);
+                        gx = -(1/sqrt(2*poissKern.inverseWidthX^3))*gx;
+                        g(1) = g(1) + gx;
+                        % Derivative wrt sigmay                        
+                        covGrady = covGrad.*Kx;
+                        gy = sheatKernGradient(sigmay, lengthY, sy1, sy2, qm, ...
+                            gammaqm, wz1gqm, wz2gqm, m, mp, covGrady);
+                        gy = gy/(pn2qm2*pnp2qmp2);
+                        gy = -(1/sqrt(2*poissKern.inverseWidthY^3))*gy;
+                        g(2) = g(2) + gy;
+                        
+                        sK = sK + (Kx.*Ky)/(pn2qm2*pnp2qmp2);
+                    end
                 end
             end
         end
@@ -107,7 +151,7 @@ for n=1:nterms
 end
 
 g(1:2) = cK*(poissKern.sensitivity^2)*g(1:2);
-g(3) = 2*poissKern.sensitivity*cK*sum(sum(K.*covGrad));
+g(3) = 2*poissKern.sensitivity*cK*sum(sum(sK.*covGrad));
 
 end
 

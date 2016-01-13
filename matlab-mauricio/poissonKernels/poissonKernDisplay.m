@@ -26,13 +26,15 @@ spacing = char(spacing);
 fprintf(spacing);
 fprintf('Number of terms in the series %2.4f\n', kern.nTerms)
 fprintf(spacing);
-fprintf('Space input domain length %2.4f\n', kern.lengthX)
+fprintf('Space input domain X length %2.4f\n', kern.lengthX)
+fprintf(spacing);
+fprintf('Space input domain Y length %2.4f\n', kern.lengthY)
 fprintf(spacing);
 fprintf('POISSON inverse width space X: %2.4f (length scale %2.4f)\n', ...
-    kern.inverseWidthTime, 1/sqrt(kern.inverseWidthTime));
+    kern.inverseWidthX, 1/sqrt(kern.inverseWidthX));
 fprintf(spacing);
 fprintf('POISSON inverse width space Y: %2.4f (length scale %2.4f)\n', ...
-    kern.inverseWidthSpace, 1/sqrt(kern.inverseWidthSpace));
+    kern.inverseWidthY, 1/sqrt(kern.inverseWidthY));
 fprintf(spacing);
 fprintf('POISSON sensitivity: %2.4f\n', kern.sensitivity)
 

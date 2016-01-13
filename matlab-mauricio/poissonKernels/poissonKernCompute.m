@@ -45,6 +45,7 @@ sy1 = x1(:,2);
 sy2 = x2(:,2);
 
 K = zeros(length(sx1), length(sx2));
+K1 = zeros(length(sx1), length(sx2));
 
 sigmax = sqrt(2/poissKern.inverseWidthX);
 sigmay = sqrt(2/poissKern.inverseWidthY);
@@ -72,25 +73,56 @@ wz2gqm = wofzPoppe(sqrt(-1)*z2gqm);
 
 cK = 16/(lengthX^lengthY);
 
+% ti = cputime;
+% for n=1:nterms
+%     for m=1:nterms
+%         for np=1:nterms
+%             for mp=1:nterms
+%                 if (mod(n+np,2)==0) && (mod(m+mp,2)==0)
+%                     Cvvx = computeCvv(sigmax, lengthX, gammapn, wz1gpn, wz2gpn, n, np);
+%                     Cvvy = computeCvv(sigmay, lengthY, gammaqm, wz1gqm, wz2gqm, m, mp);
+%                     pn2qm2 = pn(n)^2 + qm(m)^2;
+%                     pnp2qmp2 = pn(np)^2 + qm(mp)^2;
+%                     const = (Cvvx*Cvvy)/(pn2qm2*pnp2qmp2);
+%                     csinxsiny = const*sin(pn(n)*sx1);
+%                     sinxsiny = csinxsiny.*sin(qm(m)*sy1);
+%                     sinxpsinyp = sin(pn(np)*sx2).*sin(qm(mp)*sy2);
+%                     K = K + sinxsiny*sinxpsinyp';
+%                     %                     Kx = sheatKernCompute(sigmax, lengthX, sx1, sx2, pn, ...
+%                     %                         gammapn, wz1gpn, wz2gpn, n, np);
+%                     %                     Ky = sheatKernCompute(sigmay, lengthY, sy1, sy2, qm, ...
+%                     %                         gammaqm, wz1gqm, wz2gqm, m, mp);
+%                     %                     pn2qm2 = pn(n)^2 + qm(m)^2;
+%                     %                     pnp2qmp2 = pn(np)^2 + qm(mp)^2;
+%                     %                     K = K + (Kx.*Ky)/(pn2qm2*pnp2qmp2);
+%                 end
+%             end
+%         end
+%     end
+% end
+% 
+% t1 = cputime - ti;
+% ti = cputime;
 for n=1:nterms
-    for m=1:nterms
-        for np=1:nterms
-            for mp=1:nterms
-                if (mod(n+np,2)==0) && (mod(m+mp,2)==0)
-                    Cvvx = computeCvv(sigmax, lengthX, gammapn, wz1gpn, wz2gpn, n, np);
-                    Cvvy = computeCvv(sigmay, lengthY, gammaqm, wz1gqm, wz2gqm, m, mp);
-                    pn2qm2 = pn(n)^2 + qm(m)^2;
-                    pnp2qmp2 = pn(np)^2 + qm(mp)^2;
-                    const = (Cvvx*Cvvy)/(pn2qm2*pnp2qmp2);                    
-                    csinxsiny = const*sin(pn(n)*sx1);
-                    sinxsiny = csinxsiny.*sin(qm(m)*sy1);
-                    sinxpsinyp = sin(pn(np)*sx2).*sin(qm(mp)*sy2);                    
-                    K = K + sinxsiny*sinxpsinyp';
+    for np=1:nterms
+        if (mod(n+np,2)==0)
+            Kx = sheatKernCompute(sigmax, lengthX, sx1, sx2, pn, ...
+                gammapn, wz1gpn, wz2gpn, n, np);            
+            for m=1:nterms
+                for mp=1:nterms
+                    if (mod(m+mp,2)==0)                        
+                        Ky = sheatKernCompute(sigmay, lengthY, sy1, sy2, qm, ...
+                            gammaqm, wz1gqm, wz2gqm, m, mp);
+                        pn2qm2 = pn(n)^2 + qm(m)^2;
+                        pnp2qmp2 = pn(np)^2 + qm(mp)^2;
+                        K = K + (Kx.*Ky)/(pn2qm2*pnp2qmp2);
+                    end
                 end
             end
         end
     end
 end
+%t2 = cputime - ti;
 
 sK = cK*K;
 sK = real(sK);
