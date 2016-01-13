@@ -52,7 +52,7 @@ wz2gqm = wofzPoppe(sqrt(-1)*z2gqm);
 
 % Constant tmer in front of the kernel
 
-ck = 16/(lengthX^lengthY);
+ck = 16/((lengthX^lengthY)^2);
 
 for n=1:nterms
     for m=1:nterms

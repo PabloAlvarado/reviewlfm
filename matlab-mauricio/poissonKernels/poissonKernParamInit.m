@@ -58,7 +58,7 @@ kern.sensitivity = 1;
 kern.nParams = 3;
 kern.transforms.type = optimiDefaultConstraint('positive');
 kern.transforms.index = 1:(kern.nParams-1); % The sensitivity could be negative
-
+kern.isStationary = false; 
 
 
 

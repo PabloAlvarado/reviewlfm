@@ -70,50 +70,8 @@ wz2gqm = wofzPoppe(sqrt(-1)*z2gqm);
 
 % Constant tmer in front of the kernel
 
-cK = 16/(lengthX^lengthY);
+cK = 16/((lengthX^lengthY)^2);
 g = zeros(1, poissKern.nParams);
-
-% for n=1:nterms
-%     for m=1:nterms
-%         for np=1:nterms
-%             for mp=1:nterms
-%                 if (mod(n+np,2)==0) && (mod(m+mp,2)==0)
-%                     %%%%%
-%                     epsilon = 1e-9;
-%                     param = sigmax + epsilon;
-%                     f1 = computeCvv(param, lengthX, gammapn, wz1gpn, wz2gpn, n, np);
-%                     param = sigmax - epsilon;
-%                     f2 = computeCvv(param, lengthX, gammapn, wz1gpn, wz2gpn, n, np);
-%                     dCvvx = 0.5*(f1 - f2)/epsilon;
-%                     %param = sigmax;
-%                     %dCvvx = gradientCvv(sigmax, lengthX, gammapn, wz1gpn, wz2gpn, n, np);
-% %                     
-%                     %%%%%
-%                     Cvvx = computeCvv(sigmax, lengthX, gammapn, wz1gpn, wz2gpn, n, np);
-%                     Cvvy = computeCvv(sigmay, lengthY, gammaqm, wz1gqm, wz2gqm, m, mp);
-%                     %dCvvx = gradientCvv(sigmax, lengthX, gammapn, wz1gpn, wz2gpn, n, np);
-%                     dCvvy = gradientCvv(sigmay, lengthY, gammaqm, wz1gqm, wz2gqm, m, mp);
-%                     pn2qm2 = pn(n)^2 + qm(m)^2;
-%                     pnp2qmp2 = pn(np)^2 + qm(mp)^2;
-%                     const = (Cvvx*Cvvy)/(pn2qm2*pnp2qmp2);
-%                     sinx = sin(pn(n)*sx);
-%                     csinxsiny = (const*sinx).*sin(qm(m)*sy);
-%                     sinxsiny = sinx.*sin(qm(m)*sy);
-%                     sinxpsinyp = sin(pn(np)*sx).*sin(qm(mp)*sy);
-%                     K = K + csinxsiny*sinxpsinyp';
-%                     Kterm = sinxsiny*sinxpsinyp';
-%                     const1 = sum(sum(Kterm.*covGrad));
-%                     gC = (dCvvx*Cvvy*const1)/(pn2qm2*pnp2qmp2);
-%                     gC = -(1/sqrt(2*poissKern.inverseWidthX^3))*gC;
-%                     g(1) = g(1) + gC;
-%                     gC = (dCvvy*Cvvx*const1)/(pn2qm2*pnp2qmp2);
-%                     gC = -(1/sqrt(2*poissKern.inverseWidthX^3))*gC;
-%                     g(2) = g(2) + gC;
-%                 end
-%             end
-%         end
-%     end
-% end
 
 for n=1:nterms
     for np=1:nterms
