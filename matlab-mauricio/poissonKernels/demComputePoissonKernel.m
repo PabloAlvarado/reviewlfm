@@ -7,7 +7,7 @@ RandStream.setGlobalStream(s);
 
 nX = 50;
 nY = 50;
-nterms = 5;
+nterms = 10;
 x = linspace(-1,1, nX)';
 y = linspace(-1,1, nY)';
 [X1, Y1] = meshgrid(x, y);

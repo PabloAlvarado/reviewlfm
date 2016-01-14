@@ -14,7 +14,7 @@ y1 = ff_p(:);
 options = multigpOptions('ftc');
 options.optimiser = 'scg';
 options.kernType = 'poisson';
-options.kern.nTerms = 5;
+options.kern.nTerms = 10;
 options.kern.lenghtX = lengthX;
 options.kern.lenghtY = lengthY;
 options.nlf = 1;
@@ -41,12 +41,17 @@ warning('off','multigp:FixedParam');
 model = multigpCreate(q, d, X, y, options);
 
 % Optimizes model
-display = 2;
-iters = 10;
+display = 1;
+iters = 100;
 trainingTime = cputime;
 model = multigpOptimise(model, display, iters);
 trainingTime = cputime - trainingTime;
 
 [mu, varsigma] = multigpPosteriorMeanVar(model,  XTest);
+
+figure
+pcolor(xx1, xx2, ff_p)
+figure
+pcolor(xx1, xx2, reshape(mu{2}, size(xx1)))
 
 
