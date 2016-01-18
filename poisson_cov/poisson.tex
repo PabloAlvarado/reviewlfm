@@ -66,9 +66,9 @@ the solution to this equation is given by \cite{Polyanin:Handbook02}
 \begin{align}\label{eq:sol:poisson:dif:linear}
 \begin{split}
 v(x,y)&=\sum_{\forall i}s_{i} \int_{0}^{a}\int_{0}^{b}f_i(\xi,\eta)G(x, y,\xi,\eta)\dif{\eta}\dif{\xi}\\
-      &+ \int_0^bf_1(\eta)H_1(x, y, \xi, \eta)\dif\eta
-      -\int_0^bf_2(\eta)H_2(x, y, \xi, \eta)\dif\eta \\
- &+ \int_0^af_3(\xi)H_3(x, y, \xi, \eta)\dif\xi -\int_0^af_4(\eta)H_4(x, y, \xi, \eta)\dif\xi,
+      &+ \int_0^bf_1(\eta)H_1(x, y, \eta)\dif\eta
+      -\int_0^bf_2(\eta)H_2(x, y, \eta)\dif\eta \\
+ &+ \int_0^af_3(\xi)H_3(x, y, \xi)\dif\xi -\int_0^af_4(\eta)H_4(x, y, \xi)\dif\xi,
 \end{split}
 \end{align}
 where the Green function $G(x, y,\xi,\eta)$ and the functions $H_1(x,
@@ -77,13 +77,13 @@ y,\xi,\eta)$, $H_2(x, y,\xi,\eta)$, $H_3(x, y,\xi,\eta)$ and $H_4(x, y,\xi,\eta)
 G(x, y,\xi,\eta)&=\frac{4}{ab}\sum_{n=1}^\infty
                   \sum_{m=1}^\infty\frac{\sin\left({p_n x}\right)
 \sin\left(q_m y\right)\sin\left(p_n \xi\right)\sin\left(q_m \eta\right)}{p_n^2 + q_m^2},\\
-H_1(x, y,\xi,\eta)& =
+H_1(x, y,\eta)& =
                          \left.\frac{\partial}{\partial\xi}G(x, y, \xi,\eta)\right|_{\xi=0},\quad 
-H_2(x, y,\xi,\eta) = \left.\frac{\partial}{\partial\xi}G(x, y,
+H_2(x, y,\eta) = \left.\frac{\partial}{\partial\xi}G(x, y,
                     \xi,\eta)\right|_{\xi=a}\nonumber,\\
-H_3(x, y,\xi,\eta)& =
+H_3(x, y,\xi)& =
                          \left.\frac{\partial}{\partial\eta}G(x, y, \xi,\eta)\right|_{\eta=0},\quad 
-H_4(x, y,\xi,\eta) = \left.\frac{\partial}{\partial\eta}G(x, y, \xi,\eta)\right|_{\eta=b}\nonumber,
+H_4(x, y,\xi) = \left.\frac{\partial}{\partial\eta}G(x, y, \xi,\eta)\right|_{\eta=b}\nonumber,
 \end{align}
 where $p_n=\frac{n\pi}{a}$, and $q_m=\frac{m\pi}{b}$.
 
@@ -92,6 +92,40 @@ Assuming $f_1(y) = f_2(y)= f_3(x) = f_4(x) = 0$, equation \eqref{eq:sol:poisson:
 v(x,y)= \sum_{\forall i}s_{i} \int_{0}^{a}\int_{0}^{b}f_i(\xi,\eta)G(x, y,\xi,\eta)\dif{\eta}\dif{\xi}\label{eq:sol:poisson:dif:linear:init:hom}
 \end{align}
 where $G(x, y, \xi,\eta)$ is given by \eqref{eq:green:function}.
+
+\subsection*{Boundary conditions}
+
+We first compute the functions $H_1(x, y, \xi, \eta)$, $H_2(x, y, \xi, \eta)$,
+$H_3(x, y, \xi, \eta)$, and $H_4(x, y, \xi, \eta)$,
+
+\begin{align*}
+  H_1(x, y,\eta)& =\left.\frac{\partial}{\partial\xi}G(x, y, \xi,\eta)\right|_{\xi=0}
+  = \frac{4}{ab}\sum_{n=1}^\infty
+                  \sum_{m=1}^\infty \frac{p_n}{p_n^2 + q_m^2}\sin\left({p_n x}\right)
+\sin\left(q_m y\right)\sin\left(q_m \eta\right)
+\end{align*}
+
+\begin{align*}
+  H_2(x, y,\eta)& =\left.\frac{\partial}{\partial\xi}G(x, y, \xi,\eta)\right|_{\xi=a}
+  = \frac{4}{ab}\sum_{n=1}^\infty
+  \sum_{m=1}^\infty\frac{p_n\cos(n\pi)}{p_n^2 + q_m^2}
+  \sin\left({p_n x}\right)\sin\left(q_m y\right)\sin\left(q_m \eta\right)
+\end{align*}
+
+\begin{align*}
+  H_3(x, y,\xi)& =\left.\frac{\partial}{\partial\eta}G(x, y, \xi,\eta)\right|_{\eta=0}
+  = \frac{4}{ab}\sum_{n=1}^\infty
+                  \sum_{m=1}^\infty \frac{q_m}{p_n^2 + q_m^2}\sin\left({p_n x}\right)
+\sin\left(q_m y\right)\sin\left(p_n \xi\right)
+\end{align*}
+
+\begin{align*}
+  H_4(x, y,\xi)& =\left.\frac{\partial}{\partial\eta}G(x, y, \xi,\eta)\right|_{\eta=b}
+  = \frac{4}{ab}\sum_{n=1}^\infty
+  \sum_{m=1}^\infty\frac{q_m\cos(m\pi)}{p_n^2 + q_m^2}
+  \sin\left({p_n x}\right)\sin\left(q_m y\right)\sin\left(p_n \xi\right)
+\end{align*}
+
 
 
 \section{Covariance matrix bewteen the outputs}
@@ -226,6 +260,62 @@ with $z_1^{\gamma_n}=\frac{\sigma_x\gamma_n}{2}$ and $z_2^{\gamma_n}=\frac{l}{\s
 
 Derivative for $C_{y_q,y_s}(n,m)$ in terms of $\sigma_x$ can be found
 in \cite{Alvarez:HeatEquationReport}.
+
+\subsection*{Gaussian processes over the boundary conditions}
+
+We assume that the boundary functions $f_1(y)$, $f_2(y)$, $f_3(x)$, and $f_4(x)$ are
+independent Gaussian processes with SE covariance function. This means that the
+covariance for $\cov\left[v_q(x,y),v_s(x',y')\right]$ has additional terms that follow as
+  \begin{align*}
+    \cov\left[v^{\text{BC}}_q(x,y),v^{\text{BC}}_s(x',y')\right] & =
+    \int_0^b\int_0^bH_1(x, y, \eta)H_1(x', y', \eta')K_{f_1}(\eta, \eta')\dif\eta'
+    \dif\eta\\
+    &+ \int_0^b\int_0^bH_2(x, y, \eta)H_2(x', y', \eta')K_{f_2}(\eta, \eta')\dif\eta'\dif\eta\\
+    & + \int_0^a\int_0^aH_3(x, y, \xi)H_3(x', y', \xi')K_{f_3}(\xi, \xi')\dif\xi'
+    \dif\xi\\
+    &+\int_0^a\int_0^aH_4(x, y, \xi)H_4(x', y', \xi')K_{f_4}(\xi, \xi')\dif\xi'\dif\xi.
+  \end{align*}  
+For the first covariance, we have
+\begin{align*}   
+  &  \int_0^b\int_0^bH_1(x, y, \eta)H_1(x', y', \eta')K_{f_1}(\eta, \eta')\dif\eta'
+    \dif\eta  = \frac{16}{(ab)^2}\sum_{n=1}^\infty
+                  \sum_{m=1}^\infty \sum_{n'=1}^\infty
+                  \sum_{m'=1}^\infty\frac{p_n p_{n'}}{(p_n^2 + q_m^2)(p_{n'}^2 + q_{m'}^2)}
+                  \times \\
+  & \sin\left({p_n x}\right) \sin\left(q_m y\right)\sin\left({p_{n'} x'}\right)
+                  \sin\left(q_{m'} y'\right)\int_0^b\int_0^b
+                  \sin\left(q_m \eta\right)\sin\left(q_{m'} \eta'\right)
+                  \exp\left[-\frac{\left(\eta-\eta'\right)^2}{\sigma^2_{f_1}}\right]\dif\eta'\dif\eta. 
+\end{align*}
+Leading to
+\begin{align*}   
+\frac{16}{(ab)^2}\sum_{n=1}^\infty\sum_{m=1}^\infty \sum_{n'=1}^\infty
+\sum_{m'=1}^\infty\frac{p_n p_{n'}\sin\left(p_n x\right)\sin\left(p_{n'} x'\right)
+      C^{f_1}_{v^{\text{BC}}_q,v^{\text{BC}}_s}(m,m')\sin\left(q_m y\right)\sin\left(q_{m'} y'\right)}
+    {(p_n^2 + q_m^2)(p_{n'}^2 + q_{m'}^2)}.
+\end{align*}
+Following a similar procedure for the second covariance, we obtain
+\begin{align*}   
+\frac{16}{(ab)^2}\sum_{n=1}^\infty\sum_{m=1}^\infty \sum_{n'=1}^\infty
+\sum_{m'=1}^\infty\frac{p_n \cos(n\pi)p_{n'}\cos(n'\pi)\sin\left(p_n x\right)\sin\left(p_{n'} x'\right)
+      C^{f_2}_{v^{\text{BC}}_q,v^{\text{BC}}_s}(m,m')\sin\left(q_m y\right)\sin\left(q_{m'} y'\right)}
+    {(p_n^2 + q_m^2)(p_{n'}^2 + q_{m'}^2)}.
+\end{align*}
+For the third covariance, it follows
+\begin{align*}   
+\frac{16}{(ab)^2}\sum_{n=1}^\infty\sum_{m=1}^\infty \sum_{n'=1}^\infty
+\sum_{m'=1}^\infty\frac{C^{f_3}_{v^{\text{BC}}_q,v^{\text{BC}}_s}(n,n')\sin\left(p_n x\right)\sin\left(p_{n'} x'\right)
+    [q_m q_{m'}]\sin\left(q_m y\right)\sin\left(q_{m'} y'\right)}
+    {(p_n^2 + q_m^2)(p_{n'}^2 + q_{m'}^2)}.
+\end{align*}
+Finally, for the fourth covariance, we get
+\begin{align*}   
+\frac{16}{(ab)^2}\sum_{n=1}^\infty\sum_{m=1}^\infty \sum_{n'=1}^\infty
+\sum_{m'=1}^\infty\frac{C^{f_4}_{v^{\text{BC}}_q,v^{\text{BC}}_s}(n,n')\sin\left(p_n x\right)\sin\left(p_{n'} x'\right)
+      [q_m \cos(m\pi)q_{m'}\cos(m'\pi)]\sin\left(q_m y\right)\sin\left(q_{m'} y'\right)}
+    {(p_n^2 + q_m^2)(p_{n'}^2 + q_{m'}^2)}.
+\end{align*}
+
 
 \section{Covariance matrix bewteen the outputs and the latent functions}
 
