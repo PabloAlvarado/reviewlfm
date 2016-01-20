@@ -23,7 +23,7 @@
     dd = [0.01 0.01];
     %[xx1,xx2] = meshgrid((-LL(1)):dd(1):LL(1),(-LL(2)):dd(2):LL(2));
     
-    npoints = 50;
+    npoints = 30;
     x1grid = linspace(-LL(1), LL(1), npoints);
     x2grid = linspace(-LL(1), LL(1), npoints);
     [xx1,xx2] = meshgrid(x1grid,x2grid);
@@ -40,7 +40,7 @@
 %        end
     end
     
-    lap_e = eigenval(NN);
+    lap_e = -eigenval(NN);
 
     clf;
     pcolor(xx1,xx2,fun(:,:,10))
