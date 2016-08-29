@@ -3,6 +3,12 @@
 %
     
     %%
+    % Random seed and parameters
+    %
+    s = RandStream('mt19937ar', 'Seed', 1e8);
+    RandStream.setGlobalStream(s);
+    
+    %%
     % Run the LQ controller
     %
     [G,S_lq,E_lq] = lqr(Fsp,Lsp,diag([1 1]),0.05);

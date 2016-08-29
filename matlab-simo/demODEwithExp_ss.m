@@ -9,8 +9,8 @@
     clear
     close all
     s = RandStream('mt19937ar', 'Seed', 1);
-    RandStream.setDefaultStream(s);
-%    RandStream.setGlobalStream(s);
+%    RandStream.setDefaultStream(s);
+    RandStream.setGlobalStream(s);
     
     damperc = 40; % Damper constant = lambda if mass = 1
     springc = 10; % Spring constant = gamma  if mass = 1

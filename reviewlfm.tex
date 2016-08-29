@@ -480,6 +480,7 @@ Differential equations, Latent force models, state space representations.
 \begin{split}
   \frac{d^{2}f(t)}{dt^{2}} + \lambda \, \frac{df(t)}{dt} + \gamma \, f(t) = u(t) + c(t),
 \end{split}
+\label{eq:sde0}
 \end{equation}
 %
 where $u(t)$ and $f(t)$ are unknown an $c(t)$ is a control function (known or to be optimized). Further assume that we measure the function $f(t)$ via noisy measurements at discrete instants of time $t_1,t_2,\ldots$:
@@ -490,11 +491,11 @@ where $u(t)$ and $f(t)$ are unknown an $c(t)$ is a control function (known or to
 \end{split}
 \end{equation}
 %
-The aim of this article is to consider the unknown force or input $u$ as unknown and model it as a non-parametric Gaussian process model \cite{Rasmussen+Williams:2006} with a given covariance function in order to estimate, or in machine learning terms, learn $f$ and $u$. This kind of models are called latent force models (LFM) \cite{Alvarez+Lawrence:2009,Alvarez:2010,Alvarez+Luengo+Lawrence:2013} in machine learning literature.
+The aim of this article is to consider the unknown force or input $u$ as unknown and model it as a non-parametric Gaussian process model \cite{Rasmussen+Williams:2006} with a given covariance function in order to estimate, or in machine learning terms, {\em learn} $f$ and $u$. This kind of models are called latent force models (LFM) \cite{Alvarez+Lawrence:2009,Alvarez:2010,Alvarez+Luengo+Lawrence:2013} in machine learning literature. In addition to learning problem on the LFMs, we also consider the problem of controlling the LFM using the control function $c(t)$. In particular, we consider the problem of optimal linear stochastic control design for this type of models.
 
 The present problem is also closely related to so called input estimation problem that has previously been addressed in target tracking literature (e.g. \cite{Bar-Shalom+Li+Kirubarajan:2001}) by replacing the input or force with a white or colored noise. However, here we will specifically concentrate on the machine learning point of view which allows for encoding prior information into the driving force as well as the use of modern machine learning methods for coping with the related hyperparameter estimation problems and model extensions.
 
-We also explicitly consider partial differential equations driven by (structured) Gaussian processes. An example of this kind of model is the heat equation
+In this article we also consider partial differential equations driven by (structured) Gaussian processes. An example of this kind of model is the heat equation
 %
 \begin{equation}
 \begin{split}
@@ -503,9 +504,10 @@ We also explicitly consider partial differential equations driven by (structured
   &\qquad + u(\mathbf{x},t) + c(\mathbf{x},t) \\
   y_k &= f(\mathbf{x}_k,t_k) + \epsilon_k,
 \end{split}
+\label{eq:sde0}
 \end{equation}
 %
-where again the aim is to learn both the force field $u(\mathbf{x},t)$ and the function $f(\mathbf{x},t)$ from the noisy observations $y_k$.
+where again the aim is to learn both the Gaussian force field $u(\mathbf{x},t)$ and the function $f(\mathbf{x},t)$ from the noisy observations $y_k$. 
 
 In both types of the model above we also consider the associated stochastic control problem: how can we simultaneously learn the functions $f$ and $u$, and design an optimal stochastic controller $c$ which uses the learning outcome optimally. It turns out that this problem can be recasted as a classical stochastic control problem in an augmented state-space provided that we convert the Gaussian process input model into an equivalent stochastic state-space representation \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012}.
 
@@ -516,6 +518,7 @@ Another example of problem of interest is the Poisson equation
   \nabla^2 f(\mathbf{x}) &= u(\mathbf{x}) \\
   y_k &= f(\mathbf{x}_k) + \epsilon_k,
 \end{split}
+\label{eq:sde0}
 \end{equation}
 %
 where again the function $f$ and the force field $u$ are unknown. In this case there is no associated control problem, but learning the force field in this kind of models is of interest in many applications.

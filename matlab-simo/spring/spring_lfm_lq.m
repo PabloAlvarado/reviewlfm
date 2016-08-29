@@ -3,6 +3,12 @@
 %
     
     %%
+    % Random seed and parameters
+    %
+    s = RandStream('mt19937ar', 'Seed', 1e8);
+    RandStream.setGlobalStream(s);
+    
+    %%
     % Check the theory on the relation to LQ solution
     %
     U = 0.05;
