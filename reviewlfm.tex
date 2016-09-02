@@ -156,7 +156,7 @@
 
 % *** MATH PACKAGES ***
 %
-\usepackage{amsmath}
+\usepackage{amsmath,amsthm}
 % A popular package from the American Mathematical Society that provides
 % many useful and powerful commands for dealing with mathematics.
 %
@@ -353,6 +353,8 @@
 \usepackage{amsfonts,amssymb}
 \usepackage{soul}
 
+\newtheorem{theorem}{Theorem}[section]
+
 \newcommand{\mauricio}[1]{{\color{blue}#1}}
 
 \newcommand{\simo}[1]{{\color{red}#1}}
@@ -525,17 +527,37 @@ where again the function $f$ and the force field $u$ are unknown. In this case t
 
 %LFMs can be derived from two different perspectives: the covariance function perspective \cite{Alvarez+Lawrence:2009,Alvarez+Luengo+Lawrence:2013} and the state-space perspective \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012}. The former approach can be seen as a machine learning point of view (cf. \cite{Rasmussen+Williams:2006}) to LFMs whereas the latter approach is a signal processing point of view (cf. \cite{Sarkka+Solin+Hartikainen:2013,Sarkka:2013}). Both of these approaches have their own advantages and disadvantages in terms of flexibility, ease of implementation, and computational complexity. In this paper, we analyze both of these points of view to latent force models as well as present new computational methods which aim to combine the best sides of both points of view. 
 
-\simo{Explain here what has been done before and what is actually new here.}
+% \simo{Explain here what has been done before and what is actually new here.}
 
 \subsection{Problem formulation}
 %
-\simo{Explain what kind of models in general we consider and what we wish to do with them.}
-
-\subsection{Outline of the approach}
+%\simo{Explain what kind of models in general we consider and what we wish to do with them.}
+The latent force models considered in this article can be seen to belong to the following three classes:
 %
-\simo{Explain the principles how we approach the problem.}
+\begin{enumerate}
+\item Basic latent force models which are ordinary differential equations (ODEs) driven by Gaussian input processes $u(t)$ and control inputs $c(t)$. They can be written in form
+%
+\begin{equation}
+  L \, f(t) = u(t) + c(t),
+\end{equation}
+%
+where the linear operator $L\equiv a_n \, \frac{d}{dt^{n}} + \cdots + a_1 \, \frac{d}{dt} + a_0$ for some fixed constants $a_i, i=0,\ldots,n$. \simo{Mention state-space form}
 
-%\section{Combining Linear Differential Equations with Gaussian Process Regression Models}
+\item \simo{Spatio-temporal PDE models}
+
+\item \simo{Spatial PDE models}
+\end{enumerate}
+
+In each of the models we obtain noisy observations of the form
+%
+\begin{equation}
+  y_k = f(\bullet) + \epsilon_k,
+\end{equation}
+%
+where the argument $\bullet$ is either $t_k \in \mathbb{R}_+$, $(t_k,x_k) \in \mathbb{R}_+ \times \mathbb{R}^p$, or $x_k \in \mathbb{R}^d$. The measurement noise is assumed to be Gaussian $\epsilon_k \sim \mathrm{N}(0,\Sigma_k)$. We also briefly consider a number of generalizations, include linear operators in the measurement model, non-Gaussian noises, as well as switching dynamic models.
+
+\simo{Say that we consider inference problems both in batch form and with Kalman filters and smoothers, and we also consider the parameters estimation problems as well as the optimal control problem}
+
 
 \section{Latent Force Models as Gaussian Process Regression with Specific Covariance Functions}
 
@@ -635,7 +657,7 @@ which contains three parts: a Gaussian process part \eqref{eq:lgp1}, a different
 
 Equation \eqref{eq:difeq1} can written as $L{f(t)}=u(t)$, where $L$ is a linear
 differential operator of the form $L\equiv a_n \, \frac{d}{dt^{n}} + \cdots
-  + a_1 \, \frac{d}{dt} + a_0 $. The differential operator $L$ can be related to a so called Green's function or
+  + a_1 \, \frac{d}{dt} + a_0$. The differential operator $L$ can be related to a so called Green's function or
 impulse response $h(t)$.
 %\simo{What should we actually put here?}
 On the stationary stage the solution to the differential equation \eqref{eq:difeq1} can be expressed as
@@ -1351,6 +1373,25 @@ However, it turns out that although we can indeed estimate the process $f$ easil
 
 \simo{Explain that latent force models are not observable but are detectable. The detectability follows, because the unstable states arising from the latent force model are still stable. Find a reference for this.}
 
+\begin{theorem}
+  Assume that we have a latent force model which has the following state space representation:
+\begin{equation}
+\begin{split}
+  \frac{d\mathbf{f}(t)}{dt}
+  &= \mathbf{A}_f \, \mathbf{f}(t) + \mathbf{B}_f \, u(t) \\
+  y_k &= \mathbf{C}_f \, \mathbf{f}(t_k) + \epsilon_k,
+\end{split}
+\end{equation}
+%
+and that the pair $(\exp(\mathbf{A}_f \, \Delta t),\mathbf{C}_f)$ is detectable for all $\Delta t > 0$, and the pair $(\mathbf{A}_f,\mathbf{B}_f)$ is stabilizable. Further assume that the latent force $u(t)$ has a exponentially stable state space representation. Then the full system is \emph{detectable} and the Kalman filter for the model is exponentially stable.
+\end{theorem}
+
+\begin{proof}
+  \simo{Using the existence of gain from \cite{Anderson:1981} which causes exponential stability}
+\end{proof}
+
+\simo{Write the corresponding theorem for PDEs using \cite{Curtain:2012}}
+
 \subsection{PDE Methods for State-Space PDEs}
 
 \simo{Discuss the use of Hilbert-space methods, FEM, and finite differences}
@@ -1575,10 +1616,23 @@ where $\mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{f}$ is just the non-forc
 
 \subsection{Stabilizability of Controlled LFMs}
 %
-\simo{Here we explain that LFMs are always stabilizable provided that the problem without a latent force model is and hence the control problem makes sense. Find a reference for this.}
+\begin{theorem}
+Assume that we have a controlled latent force model, which has the following state-space form:
+\begin{equation}
+\begin{split}
+  \frac{d\mathbf{f}(t)}{dt}
+  &= \mathbf{A}_f \, \mathbf{f}(t) + \mathbf{B}_f \, u(t) + \mathbf{M}_f \, \mathbf{c}(t).
+\end{split}
+\end{equation}
+%
+Further assume that the pair $(\mathbf{A}_f,\mathbf{M}_f)$ is stabilizable and the latent force $u(t)$ has an exponentially stable state space representation. Then the full system is \emph{stabilizable}.
+\end{theorem}
 
+\begin{proof}
+  \simo{Proof this using the existence of gain in \cite{Wonham:1985}}
+\end{proof}
 
-
+\simo{Write the corresponding theorem for PDE models}
 
 \section{Extensions and Discussion}
 
