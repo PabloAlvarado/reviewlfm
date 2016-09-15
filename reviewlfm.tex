@@ -353,7 +353,7 @@
 \usepackage{amsfonts,amssymb}
 \usepackage{soul}
 
-\newtheorem{theorem}{Theorem}[section]
+\newtheorem{theorem}{Theorem} %[section]
 
 \newcommand{\mauricio}[1]{{\color{blue}#1}}
 
@@ -1626,13 +1626,40 @@ It is also possible to express the solution to the LFM control problem above in 
 \begin{equation}
 \begin{split}
   \frac{d\mathbf{f}(t)}{dt}
-  &= \mathbf{A}_f \, \mathbf{f}(t) + \mathbf{M}_f \, \mathbf{c}(t) \\
+  &= \mathbf{A}_f \, \mathbf{f}(t) + \mathbf{M}_f \, \mathbf{c}_f(t) \\
+\end{split}
+\label{eq:classic_lq_model}
+\end{equation}
+%
+and a solution which only depends on the parameters of the Gaussian latent force model and how the force and control enter the equation (i.e., on $\mathbf{B}_f$ and $\mathbf{M}_f$). Thie result is summarize in the following theorem.
+
+\begin{theorem} \label{the:control}
+The control law in \eqref{eq:joint_control} can now be written as
+%
+\begin{equation} 
+\begin{split}
+  \mathbf{c}(t) = - \begin{pmatrix}
+    \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{f} &
+    \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{12}
+  \end{pmatrix} \, \hat{\mathbf{g}}(t),
+\end{split}
+\label{eq:joint_control2}
+\end{equation}
+%
+where $\mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{f}$ is just the non-forced-case gain and $\mathbf{K}_{12}$ can be solved from the Sylvester equation
+%
+\begin{equation}
+\begin{split}
+  \left( \mathbf{K}_{f} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^T 
+         - \mathbf{A}_f^T \right) \, \mathbf{K}_{12}  - \mathbf{K}_{12} \, \mathbf{A}_u
+    = \mathbf{K}_{f} \, \mathbf{B}_f \, \mathbf{C}_u \\
 \end{split}
 \end{equation}
 %
-and a solution which only depends on the parameters of the Gaussian latent force model and how the force and control enter the equation (i.e., on $\mathbf{B}_f$ and $\mathbf{M}_f$).
+\end{theorem}
 
-Recall that the optimal control $\mathbf{c}_f(t)$ for the above model is given by the equations
+\begin{proof}
+Recall that the optimal control $\mathbf{c}_f(t)$ for \eqref{eq:classic_lq_model} is given by the equations
 %
 \begin{equation}
 \begin{split}
@@ -1665,30 +1692,11 @@ If we now partition the ARE solution matrix as $\mathbf{K} = \begin{pmatrix} \ma
 \end{split}
 \end{equation}
 %
-where the first equation is the same as the second equation in \eqref{eq:are_det} and we can conclude that $\mathbf{K}_{11} = \mathbf{K}_f$. Given $\mathbf{K}_{11}$, the second equation is a Sylvester-type of equation for $\mathbf{K}_{12}$ and can be easily numerically solved. The last one is also a Sylvester/Lyapunov type of equations for $\mathbf{K}_{22}$, but it turns out that we do not need it.
-
-The control law in \eqref{eq:joint_control} can now be written as
+where the first equation is the same as the second equation in \eqref{eq:are_det} and we can conclude that $\mathbf{K}_{11} = \mathbf{K}_f$. Given $\mathbf{K}_{11}$, the second equation gives the Sylvester-type of equation for $\mathbf{K}_{12}$ which concludes the proof.
+% and can be easily numerically solved. The last one is also a Sylvester/Lyapunov type of equations for $\mathbf{K}_{22}$, but it turns out that we do not need it.
+\end{proof}
 %
-\begin{equation}
-\begin{split}
-  \mathbf{c}(t) = - \begin{pmatrix}
-    \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{f} &
-    \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{12}
-  \end{pmatrix} \, \hat{\mathbf{g}}(t),
-\end{split}
-\label{eq:joint_control2}
-\end{equation}
-%
-where $\mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{f}$ is just the non-forced-case gain and $\mathbf{K}_{12}$ can be solved from the Sylvester equation
-%
-\begin{equation}
-\begin{split}
-  \left( \mathbf{K}_{f} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^T 
-         - \mathbf{A}_f^T \right) \, \mathbf{K}_{12}  - \mathbf{K}_{12} \, \mathbf{A}_u
-    = \mathbf{K}_{f} \, \mathbf{B}_f \, \mathbf{C}_u \\
-\end{split}
-\end{equation}
-
+Note that although the system is stabilizable also by setting the second term to zero, that is, using the non-forced gain (cf. Theorem~\ref{the:stab}), a better solution is obtained by using the control in Theorem~\ref{the:control} which depends on the latent force as well.
 
 \subsection{Controlled PDE Based LFMs}
 %
@@ -1698,7 +1706,7 @@ where $\mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{f}$ is just the non-forc
 %
 \simo{Say something for intro}
 
-\begin{theorem}
+\begin{theorem} \label{the:stab}
 Assume that we have a controlled latent force model, which has the following state-space form:
 %
 \begin{equation}
