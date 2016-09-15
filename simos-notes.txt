@@ -339,6 +339,54 @@ which whose second part can be realized as a state-space system
   dx/dt = [0 1; -B^2 -2B] x + [0;1] u
       z = [(A+B^2)  2B] x
 
+**
+
+We have
+
+  df/dt = A_f f + B_f C_u u 
+  du/dt = A_u u + B_u w
+    y_k = C_f f(t_k) + e_k
+
+Consider
+
+  expm([A B]
+       [0 C])
+
+We have
+
+  [A1 B1] [A2 B2]
+  [0  C1] [0  C2]
+  = [A1*A2 A1*B2+B1*C2;
+      0    C1*C2]
+
+  K [Cf 0] [f;u] = K Cf f
+
+We first discretize the system at arbitrary time points. The discretized system is
+
+  g_k = U(\Delta t) g_{k-1} + q_k
+  y_k = C g_k + e_k
+
+which will be detectable provided that there exists a bounded gain sequence K_k such that tg_k = (U(\Delta t) - K_k C) tg_k is exponentially stable [see e.g. Anderson/Moore]. More explicitly, the following system needs to be exponentially stable with some choice of sequence K_k:
+
+  tf_k = exp(A_f \, \Delta t_k) tf_{k-1} + \Gamma_k tu_{k-1} - K_k C_f tf_{k-1}
+  tu_k = exp(A_u \, \Delta t_k) tu_{k-1} 
+
+As the process u_k is exponentially stable, the sequence tu_k is exponentially decreasing and bounded. Hence it does not affect the stability of the first equation. Therefore, the full system will be detectable provided that there exists a gain sequence K_k such that tf_k = (exp(A_f \, \Delta t_k) - K_k C_f) tf_{k-1} is exponentially stable. The gain sequence exists, because [exp(A_f \, \Delta t_k),C_f] is detectable by assumption. 
+
+Remark. Even though latent force models are detectable, they are not observable due to the unobservable latent force component.
+
+The controlled system is
+
+  dg/dt = A g + B w + M c
+
+The system is stabilizable if there exist a finite gain K_c such that the system dtg/dt = (A tg + M K_c) tg is exponentially stable [see e.g. Wonham]. More explicitly we should have
+
+  dtf/dt = (A_f + M_u K_f) tf + (B_f*C_u + M_u K_u) tu
+  dtu/dt = A_u tu
+
+where we have written K_c = [K_f K_u]. Because tu does not infer the control of tf, and it is bounded, we can safely set K_u = 0. The remainder of the system will be stabilizable if there exists a gain K_f such that dtf/dt = (A_f + M_u K_f) tf is exponentially stable. By our assumption of the stabilizability of [A_f,M_f], this is true and hence the result follows.
+
+Remark. Although the latent force is stabilizable it is not controllable, bacause we cannot control the latent GP. 
 
 
 
