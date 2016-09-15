@@ -1197,7 +1197,7 @@ The measurements can be included into the model by replacing the second equation
 \label{eq:ssaugkf}
 \end{equation}
 %
-The advantage of this formulation is that we can infer both the process and the latent Gaussian process via Kalman filtering and smoothing in linear time (see \cite{Hartikainen+Sarkka:2010,Sarkka+Solin+Hartikainen:2013}). The link to Kalman filtering and smoothing follows from the result that as the model above is linear, we can form an exact (error-free) discretization of the model as
+The advantage of this formulation is that we can infer both the process and the latent Gaussian process via Kalman filtering and smoothing in linear time (see \cite{Hartikainen+Sarkka:2010,Sarkka+Solin+Hartikainen:2013}). The link to Kalman filtering and smoothing follows from the result that as the model above is linear, we can form an exact discretization of the model as
 %
 \begin{equation}
 \begin{split}
@@ -1387,20 +1387,65 @@ However, it turns out that although we can indeed estimate the process $f$ easil
   Assume that we have a latent force model which has the following state space representation:
 \begin{equation}
 \begin{split}
-  \frac{d\mathbf{f}(t)}{dt}
-  &= \mathbf{A}_f \, \mathbf{f}(t) + \mathbf{B}_f \, u(t) \\
-  y_k &= \mathbf{C}_f \, \mathbf{f}(t_k) + \epsilon_k,
+  \frac{d\mathbf{g}(t)}{dt}
+  &= \mathbf{A} \, \mathbf{g}(t)
+  + \mathbf{B} \, w(t) \\
+  y_k &= \mathbf{C} \, \mathbf{g}(t_k) + \epsilon_k,
 \end{split}
 \end{equation}
 %
-and that the pair $(\exp(\mathbf{A}_f \, \Delta t),\mathbf{C}_f)$ is detectable for all $\Delta t > 0$, and the pair $(\mathbf{A}_f,\mathbf{B}_f)$ is stabilizable. Further assume that the latent force $u(t)$ has a exponentially stable state space representation. Then the full system is \emph{detectable} and the Kalman filter for the model is exponentially stable.
+where the matrices above are defined by (cf. \eqref{eq:ssaugmats})
+%
+\begin{equation}
+\begin{split}
+  \mathbf{A}
+  = \begin{pmatrix}
+	\mathbf{A}_f & \mathbf{\mathbf{B}_f \, \mathbf{C}_u} \\
+	0 & \mathbf{A}_u
+  \end{pmatrix}, 
+  \mathbf{B}
+  = \begin{pmatrix}
+	0 & \mathbf{B}_u
+  \end{pmatrix}, 
+  \mathbf{C}
+  = \begin{pmatrix}
+	\mathbf{C}_f & 0
+  \end{pmatrix},
+\end{split}
+\end{equation}
+%
+with $\mathbf{g} = \begin{pmatrix} \mathbf{f}, \mathbf{u} \end{pmatrix}$. 
+
+Assume that $(\exp(\mathbf{A}_f \, \Delta t_k),\mathbf{C}_f)$ is detectable, and that the latent force $u(t)$ has a exponentially stable state space representation. Then the full system is \emph{detectable} and the Kalman filter for the model is exponentially stable.
 \end{theorem}
 
 \begin{proof}
-  \simo{Using the existence of gain from \cite{Anderson:1981} which causes exponential stability}
+%  \simo{Using the existence of gain from \cite{Anderson:1981} which causes exponential stability}
+We first discretize the system at arbitrary time points. The discretized system is (cf. \eqref{eq:dssaug})
+%
+\begin{equation}
+\begin{split}
+   \mathbf{g}_k &= \mathbf{U}(\Delta t_k) \, \mathbf{g}_{k-1} +  \mathbf{q}_k \\
+  y_k &=  \mathbf{C} \,  \mathbf{g}_k + \epsilon_k,
+\end{split}
+\end{equation}
+%
+which will be detectable provided that there exists a bounded gain sequence $\mathbf{K}_k$ such that $\tilde{\mathbf{g}}_k = (\mathbf{U}(\Delta t_k) - \mathbf{K}_k \, \mathbf{C}) \, \tilde{\mathbf{g}}_{k-1}$ is exponentially stable \cite{Anderson:1981}. More explicitly, the following system needs to be exponentially stable with some choice of sequence $\mathbf{K}_k$:
+%
+\begin{equation}
+\begin{split}
+  \tilde{\mathbf{f}}_k &= \exp(\mathbf{A}_f \, \Delta t_k) \, \tilde{\mathbf{f}}_{k-1}
+  + \Gamma_k \, \tilde{\mathbf{u}}_{k-1} - \mathbf{K}_k \, \mathbf{C}_f \, \tilde{\mathbf{f}}_{k-1} \\
+  \tilde{\mathbf{u}}_k &= \exp(\mathbf{A}_u \, \Delta t_k) \, \tilde{\mathbf{u}}_{k-1} 
+\end{split}
+\end{equation}
+%
+As the process $\mathbf{u}_k$ is exponentially stable, the sequence $\tilde{\mathbf{u}}_k$ is exponentially decreasing and bounded. Hence it does not affect the stability of the first equation. Therefore, the full system will be detectable provided that there exists a gain sequence $K_k$ such that $\tilde{\mathbf{f}}_k = (\exp(\mathbf{A}_f \, \Delta t_k) - \mathbf{K}_k \, \mathbf{C}_f) \, \tilde{\mathbf{f}}_{k-1}$ is exponentially stable. The gain sequence exists, because $[\exp(\mathbf{A}_f \, \Delta t_k),\mathbf{C}_f]$ is detectable by assumption. 
 \end{proof}
 
-\simo{Write the corresponding theorem for PDEs using \cite{Curtain:2012}}
+\simo{Remark. Even though latent force models are detectable, they are not observable due to the unobservable latent force component.}
+
+\simo{Write/comment the corresponding theorem for PDEs using \cite{Curtain:2012}}
 
 \subsection{PDE Methods for State-Space PDEs}
 
@@ -1628,21 +1673,56 @@ where $\mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{f}$ is just the non-forc
 %
 \begin{theorem}
 Assume that we have a controlled latent force model, which has the following state-space form:
+%
 \begin{equation}
 \begin{split}
-  \frac{d\mathbf{f}(t)}{dt}
-  &= \mathbf{A}_f \, \mathbf{f}(t) + \mathbf{B}_f \, u(t) + \mathbf{M}_f \, \mathbf{c}(t).
+  \frac{d\mathbf{g}(t)}{dt}
+  &= \mathbf{A} \, \mathbf{g}(t)
+  + \mathbf{B} \, w(t) + \mathbf{M} \, \mathbf{c}(t),
 \end{split}
 \end{equation}
 %
-Further assume that the pair $(\mathbf{A}_f,\mathbf{M}_f)$ is stabilizable and the latent force $u(t)$ has an exponentially stable state space representation. Then the full system is \emph{stabilizable}.
+where (cf. \eqref{eq:ssaugmats})
+%
+\begin{equation}
+\begin{split}
+  \mathbf{A}
+  = \begin{pmatrix}
+	\mathbf{A}_f & \mathbf{\mathbf{B}_f \, \mathbf{C}_u} \\
+	0 & \mathbf{A}_u
+  \end{pmatrix}, 
+  \mathbf{B}
+  = \begin{pmatrix}
+	0 & \mathbf{B}_u
+  \end{pmatrix}, 
+  \mathbf{M} = \begin{pmatrix} \mathbf{M}_u \\ 0 \end{pmatrix},
+\end{split}
+\end{equation}
+%
+and $\mathbf{g} = \begin{pmatrix} \mathbf{f}, \mathbf{u} \end{pmatrix}$.
+
+Further assume that $(\mathbf{A}_f,\mathbf{M}_f)$ is stabilizable and the latent force $u(t)$ has an exponentially stable state space representation. Then the full system is \emph{stabilizable}.
 \end{theorem}
 
 \begin{proof}
-  \simo{Proof this using the existence of gain in \cite{Wonham:1985}}
+%  \simo{Proof this using the existence of gain in \cite{Wonham:1985}}
+The system is stabilizable if there exist a finite gain $\mathbf{K}_c$ such that the system $d\tilde{\mathbf{g}}/dt = (\mathbf{A} + \mathbf{M} \, \mathbf{K}_c) \, \tilde{\mathbf{g}}$ is exponentially stable \cite{Wonham:1985}. More explicitly we should have
+%
+\begin{equation}
+\begin{split}
+  \frac{d\tilde{\mathbf{f}}}{dt} &= (\mathbf{A}_f + \mathbf{M}_u \, \mathbf{K}_f) \, \tilde{\mathbf{f}}
+  + (\mathbf{B}_f \, \mathbf{C}_u + \mathbf{M}_u \, \mathbf{K}_u) \, \tilde{\mathbf{u}} \\
+  \frac{d\tilde{\mathbf{u}}}{dt} &= \mathbf{A}_u \, \tilde{\mathbf{u}}
+\end{split}
+\end{equation}
+%
+where we have written $\mathbf{K}_c = \begin{pmatrix} \mathbf{K}_f & \mathbf{K}_u \end{pmatrix}$. Because $\tilde{\mathbf{u}}$ is exponentially decreasing and bounded, we can safely set $\mathbf{K}_u = 0$. The remainder of the system will be stabilizable if there exists a gain $\mathbf{K}_f$ such that $d\tilde{\mathbf{f}}/dt = (\mathbf{A}_f + \mathbf{M}_u \, \mathbf{K}_f) \, \tilde{\mathbf{f}}$ is exponentially stable. By our assumption on the stabilizability of $[\mathbf{A}_f,\mathbf{M}_f]$, this is true and hence the result follows.
 \end{proof}
 
-\simo{Write the corresponding theorem for PDE models}
+\simo{Remark. Although the latent force is stabilizable it is not controllable, because we cannot control the latent GP. }
+
+\simo{Write/comment the corresponding theorem for PDE models}
+
 
 \section{Extensions and Discussion}
 
