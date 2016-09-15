@@ -529,10 +529,19 @@ where again the function $f$ and the force field $u$ are unknown. In this case t
 
 % \simo{Explain here what has been done before and what is actually new here.}
 
-\subsection{Problem formulation}
+The new contributions of this article are:
+%
+\begin{itemize}
+\item \simo{Unified treatment of batch and state space.}
+\item \simo{Particle differential equation methods.}
+\item \simo{Control problems.}
+\item \simo{Detectability and stabilizability.}
+\end{itemize}
+
+\subsection{General problem formulation}
 %
 %\simo{Explain what kind of models in general we consider and what we wish to do with them.}
-The latent force models considered in this article can be seen to belong to the following three classes:
+More generally, the latent force models considered in this article can be seen to belong to the following three classes:
 %
 \begin{enumerate}
 \item Basic latent force models which are ordinary differential equations (ODEs) driven by Gaussian input processes $u(t)$ and control inputs $c(t)$. They can be written in form
@@ -541,11 +550,30 @@ The latent force models considered in this article can be seen to belong to the 
   L \, f(t) = u(t) + c(t),
 \end{equation}
 %
-where the linear operator $L\equiv a_n \, \frac{d}{dt^{n}} + \cdots + a_1 \, \frac{d}{dt} + a_0$ for some fixed constants $a_i, i=0,\ldots,n$. \simo{Mention state-space form}
+where the linear operator $L\equiv a_n \, \frac{d}{dt^{n}} + \cdots + a_1 \, \frac{d}{dt} + a_0$ for some fixed constants $a_i, i=0,\ldots,n$. This kind of models can typically be rewritten in 
+\emph{state-space form}. We will return to that later in this article.
 
-\item \simo{Spatio-temporal PDE models}
+\item Another class of models that we consider are dynamic partial and pseudo differential equation (PDE) based models that can generally be written in form
+%
+\begin{equation}
+  L \, f(\mathbf{x},t) = u(\mathbf{x},t) + c(\mathbf{x},t),
+\end{equation}
+%
+where $L$ is a linear operator in space and time. The input Gaussian process $u(\mathbf{x},t)$ and control input $c(\mathbf{x},t)$ are also space-time processes. Typically, the operator as the form
+%
+\begin{equation}
+  L\equiv A_n \, \frac{d}{dt^{n}} + \cdots + A_1 \, \frac{d}{dt} + A_0,
+\end{equation}
+%
+where $A_0,\ldots,A_n$ are some spatial partial differential or pseudo-differential operators. This kind of models can often be also written in form of \emph{spatio-temporal state-space models}, which we shall consider later in this article.
 
-\item \simo{Spatial PDE models}
+\item As a static special case of the above models we have the following class of partial and pseudo differential equation (PDE) models driven by spatial Gaussian processes $u(\mathbf{x})$:
+%
+\begin{equation}
+  L \, f(\mathbf{x}) = u(\mathbf{x}),
+\end{equation}
+%
+where $L$ is a spatial partial differential operator or pseudo-differential operator. For this kind of models there is no control problem per se, because there is no time dependence. 
 \end{enumerate}
 
 In each of the models we obtain noisy observations of the form
@@ -556,8 +584,7 @@ In each of the models we obtain noisy observations of the form
 %
 where the argument $\bullet$ is either $t_k \in \mathbb{R}_+$, $(t_k,x_k) \in \mathbb{R}_+ \times \mathbb{R}^p$, or $x_k \in \mathbb{R}^d$. The measurement noise is assumed to be Gaussian $\epsilon_k \sim \mathrm{N}(0,\Sigma_k)$. We also briefly consider a number of generalizations, include linear operators in the measurement model, non-Gaussian noises, as well as switching dynamic models.
 
-\simo{Say that we consider inference problems both in batch form and with Kalman filters and smoothers, and we also consider the parameters estimation problems as well as the optimal control problem}
-
+The aim of this article is to consider the problem of inferring the function $f(\bullet)$ from a set of noisy measurements $\{ y_k \}$. We consider inference problems both in batch form and with recursive Kalman filters and smoothers. We also consider the parameter estimation problems as well as the optimal control problems on these models.
 
 \section{Latent Force Models as Gaussian Process Regression with Specific Covariance Functions}
 
@@ -1371,7 +1398,9 @@ However, it turns out that although we can indeed estimate the process $f$ easil
 
 \subsection{Detectability of Latent Force Models}
 
-\simo{Explain that latent force models are not observable but are detectable. The detectability follows, because the unstable states arising from the latent force model are still stable. Find a reference for this.}
+%\simo{Explain that latent force models are not observable but are detectable. The detectability follows, because the unstable states arising from the latent force model are still stable. Find a reference for this.}
+
+\simo{Say something for intro}
 
 \begin{theorem}
   Assume that we have a latent force model which has the following state space representation:
@@ -1441,15 +1470,11 @@ As the process $\mathbf{u}_k$ is exponentially stable, the sequence $\tilde{\mat
 
 \simo{Discuss the use of Hilbert-space methods, FEM, and finite differences}
 
-\subsection{Separable Covariance Functions}
-%
-\simo{Some tips and tricks for separable covariance functions.}
-
-
-
 \section{Stochastic Control of Latent Force Models}
 %
-\simo{We could also discuss the use of LFMs in control. The state-space representation allows for the use of classical LQ-control theory for this. As the latent forces are modeled as stationary GPs, it implies that the model will not be controllable (from the force), but certainly it will be stabilizable. }
+%\simo{We could also discuss the use of LFMs in control. The state-space representation allows for the use of classical LQ-control theory for this. As the latent forces are modeled as stationary GPs, it implies that the model will not be controllable (from the force), but certainly it will be stabilizable. }
+
+\simo{Say something for intro}
 
 \subsection{Controlled Basic LFMs}
 %
@@ -1661,6 +1686,8 @@ where $\mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{f}$ is just the non-forc
 
 \subsection{Stabilizability of Controlled LFMs}
 %
+\simo{Say something for intro}
+
 \begin{theorem}
 Assume that we have a controlled latent force model, which has the following state-space form:
 %
@@ -1718,31 +1745,31 @@ where we have written $\mathbf{K}_c = \begin{pmatrix} \mathbf{K}_f & \mathbf{K}_
 
 \subsection{Operators in Measurement Model}
 
-\simo{Discuss how things work when we have operators in the measurement model as well}
+\simo{Discuss how things work when we have operators in the measurement model as well. In fact everything is already in the SigProcMag article, so this can be brief.}
 
-\subsection{Cascaded LFMs}
 
-\simo{I am not sure about the need of this section}
 
-In cascaded latent force models, we have two non-homogeneous ordinary differential equations acting in a serial way:
-the output of the first differential equation is used as the input for the second differential equation
-\cite{Honkela:PNAS10}. If $L_1p(t) = u(t)$, refers to the first differential equation,
-where $u(t)$ is the input and $p(t)$ is the output, then for the second differential equation we have $L_2f(t) = p(t)$,
-where $L_1$ and $L_2$ are both differential operators as before. In \cite{Honkela:PNAS10}, the authors assign a
-GP prior to $u(t)$, and find the posterior for $u(t)$, and $p(t)$, which can be computed analytically when $L_1$ and $L_2$
-are both differential operators associated to a first order ODE.
+%\subsection{Cascaded LFMs}
+%
+%In cascaded latent force models, we have two non-homogeneous ordinary differential equations acting in a serial way:
+%the output of the first differential equation is used as the input for the second differential equation
+%\cite{Honkela:PNAS10}. If $L_1p(t) = u(t)$, refers to the first differential equation,
+%where $u(t)$ is the input and $p(t)$ is the output, then for the second differential equation we have $L_2f(t) = p(t)$,
+%where $L_1$ and $L_2$ are both differential operators as before. In \cite{Honkela:PNAS10}, the authors assign a
+%GP prior to $u(t)$, and find the posterior for $u(t)$, and $p(t)$, which can be computed analytically when $L_1$ and $L_2$
+%are both differential operators associated to a first order ODE.
+%
+%\simo{[In wrong place:] In \cite{Gao:latent08}, the process $u(t)$ follows
+%a GP that is transformed non-linearly before serving as the input for the first ODE. Posterior distributions are
+%approximated using the MAP-Laplace method. For the same setup, the authors in \cite{Titsias:BMC:2012} use MCMC to
+%approximate the posterior distributions for the processes involved.}
+%
+%\simo{Both write}
 
-\simo{[In wrong place:] In \cite{Gao:latent08}, the process $u(t)$ follows
-a GP that is transformed non-linearly before serving as the input for the first ODE. Posterior distributions are
-approximated using the MAP-Laplace method. For the same setup, the authors in \cite{Titsias:BMC:2012} use MCMC to
-approximate the posterior distributions for the processes involved.}
-
-\simo{Both write}
-
-\subsection{Periodic Latent Functions}
-
-\simo{I am not sure about the need of this section}
-
+%\subsection{Periodic Latent Functions}
+%
+%\simo{I am not sure about the need of this section}
+%
 \subsection{Non-linear Models}
 
 When the input force is modelled as a non-linear transformation of a Gaussian process \cite{Lawrence:gpsim2007a,
@@ -1887,10 +1914,19 @@ which is equivalent to the model \eqref{eq:ssmodel} in (statistical) input-outpu
 \cite{Parlett+Reinsch:1971}
 originally developed for numerically stabilizing the computation the eigenvalues of a matrix (implemented, e.g., as the ``balance'' function in Matlab). This procedure gives us a suitable matrix $\mathbf{T}$ which can be used in the transformation above to give a numerically stable state-space model.
 
+\subsection{Separable Covariance Functions}
+%
+\simo{Some tips and tricks for separable covariance functions.}
+
+
+
 
 \subsection{Covariance Computation via State-Space Representation}
 %
 \simo{One way to compute the covariance function $k_f$ is to form the state-spate representation of the full system and then use the state-space formula for the covariance.}
+
+
+
 
 
 \section{Experimental Results}
