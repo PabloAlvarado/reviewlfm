@@ -1038,7 +1038,17 @@ Although in general the covariances $\mathrm{Cov}(u_i,u_{i'})$ can only be compu
 
 \subsection{Hyperparameter Learning in LFMs}
 
-\simo{Mauricio writes}
+Expressions for the covariance functions $k_{f}(t,t')$,
+$k_{f}(\mathbf{x}, \mathbf{x}', t-t')$, and
+$k_{f}(\mathbf{x}, \mathbf{x}')$ involve the parameters of the
+differential equations, and the hyperparameters of the covariance
+function of the latent process $u(\cdot)$. A common practice in GP
+regression is to estimate these parameters by maximizing the marginal
+likelihood of a given data set \cite{Rasmussen+Williams:2006}. More recently, there have been
+attempts to estimate these parameters using Markov Chain Monte Carlo,
+by including priors for the parameters of the differential equations
+and the covariance function of the latent process
+\cite{Titsias:control:vars:2009, Titsias:BMC:2012}.
 
 
 
