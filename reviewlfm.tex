@@ -1163,6 +1163,54 @@ State-space realizations of spatio-temporal oscillating fields have been discuss
 
 \simo{Should add a visualization of this idea here}
 
+\subsection{Covariance functions implied by state-space models}
+%
+The covariance function of $u(t)$ can be expressed as
+%
+\begin{equation}
+\begin{split}
+  k(\tau) = \begin{cases}
+    \mathbf{C}_u \, \mathbf{P}^u_\infty \, \exp(\tau \, \mathbf{A}_u)^T \, \mathbf{C}_u^T &,
+    \text{ if } \tau \ge 0 \\
+    \mathbf{C}_u \, \exp(-\tau \, \mathbf{A}_u) \, \mathbf{P}^u_\infty \, \mathbf{C}_u &,
+    \text{ if } \tau < 0.
+  \end{cases}
+\end{split}
+\end{equation}
+%
+where $\tau = t' - t$, and $\mathbf{P}^u_\infty$ is the solution to
+%
+\begin{equation}
+\begin{split}
+  \mathbf{A}_u \, \mathbf{P}^u_\infty + \mathbf{P}^u_\infty \, \mathbf{A}_u^T
+  + \mathbf{B}_u \, q_u \, \mathbf{B}_u^T = 0.
+\end{split}
+\end{equation}
+%
+The corresponding spatio-temporal covariance function of $u(\mathbf{x},t)$ is (with matrix-like interpretation of operating with a linear operator from the right):
+%
+\begin{equation}
+\begin{split}
+  k(\mathbf{x},\mathbf{x}';\tau) = \begin{cases}
+    \mathbf{C}_u \, \mathcal{P}^u_\infty \, \exp(\tau \, \mathcal{A}_u)^T \, \mathbf{C}_u^T &,
+    \text{ if } \tau \ge 0 \\
+    \mathbf{C}_u \, \exp(-\tau \, \mathcal{A}_u) \, \mathcal{P}^u_\infty \, \mathbf{C}_u &,
+    \text{ if } \tau < 0.
+  \end{cases}
+\end{split}
+\end{equation}
+%
+where $\tau = t' - t$, and the operator $\mathcal{P}^u_\infty$ is the solution to
+%
+\begin{equation}
+\begin{split}
+  \mathcal{A}_u \, \mathcal{P}^u_\infty + \mathcal{P}^u_\infty \, \mathcal{A}_u^T
+  + \mathbf{B}_u \, q_u(\mathbf{x},\mathbf{x}') \, \mathbf{B}_u^T = 0.
+\end{split}
+\end{equation}
+%
+\simo{Comment that we don't necessarily need to explicitly compute these ever.}
+
 \subsection{LFMs in joint state-space form}
 %
 We can now combine the  state-space ODE \eqref{eq:ssgen} with the state-space representation of LFMs in the previous section to obtain an augmented state-space representation of the LFM \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012}. Thus we obtain a combined model
@@ -1941,8 +1989,7 @@ originally developed for numerically stabilizing the computation the eigenvalues
 
 \subsection{Covariance Computation via State-Space Representation}
 %
-\simo{One way to compute the covariance function $k_f$ is to form the state-spate representation of the full system and then use the state-space formula for the covariance.}
-
+\simo{One way to compute the covariance function $k_f$ is to form the state-spate representation of the full system and then use the state-space formula for the covariance. However, usually we impose initial conditions of the differential equation part and hence the expressions needs to be determined with care.}
 
 
 

@@ -388,6 +388,49 @@ where we have written K_c = [K_f K_u]. Because tu does not infer the control of 
 
 Remark. Although the latent force is stabilizable it is not controllable, bacause we cannot control the latent GP. 
 
+**
 
+Let
 
-  
+  dg/dt = A g + B w,
+
+and let P_oo be the solution to
+
+  A P_oo + P_oo A^T + B q_c B^T = 0
+
+Then we have
+
+  E[g(t) g^T(t+tau)]
+    { P_oo exp(A tau)^T, if tau >= 0
+  = {
+    { exp(-A tau) P_oo,  if tau < 0
+
+Let the process
+
+  dg(t)/dt = A g(t) + B w(t)
+      g(t) = C g(t)
+       
+have a covariance function k_t(t,t'). Then the process
+
+  dg(x,t)/dt = A g(x,t) + B w(x,t)
+      f(x,t) = C g(x,t)
+
+where E[w(x,t) w(x',t')] = q_c(x,x') delta(t-t') has the covariance function
+
+  k(x,t;x',t') = q_(x,x') k_t(t,t')
+    { P_oo exp(A tau)^T q_c(x,x'), if tau >= 0
+  = {
+    { exp(-A tau) P_oo q_c(x,x'),  if tau < 0
+
+proof: We have
+
+  g(x,t) = C_f int_{-oo}^t exp(A (t-s)) B w(x,s) ds
+
+thus
+
+  E[f(x,t) f^T(x',t')]
+  = E[ C_f {int_{-oo}^t exp(A (t-s)) B w(x,s) ds}
+     * {int_{-oo}^t' exp(A (t'-s')) B w(x',s') ds'}^T C^T ]
+  = C_f int_{-oo}^min(t,t') exp(A (t-s)) B q_c(x,x') B^T exp(A (t'-s))^T ds C^T
+  = k_t(t,t') q_c(x,x')
+
