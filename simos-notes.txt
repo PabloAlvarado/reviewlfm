@@ -434,3 +434,43 @@ thus
   = C_f int_{-oo}^min(t,t') exp(A (t-s)) B q_c(x,x') B^T exp(A (t'-s))^T ds C^T
   = k_t(t,t') q_c(x,x')
 
+**
+
+Let us consider
+
+  df/dt = A_f f + B_f u
+  du/dt = A_u u + B_u w
+      f = C_f f
+
+where A_f might not be stable. The stationary solution for u is indeed
+
+  k(t - t') = { ...
+
+which can be forced by putting u(0) ~ N(0,P^u_oo).
+
+Let
+
+  f(0) ~ N(0,P_0)
+  u(0) ~ N(0,P^u_oo)
+
+then with g(0) = [f(0); u(0)]
+
+  g(t) = exp(t A) g(0) + int_0^t exp((t-s) A) B w(s) ds
+
+and thus
+
+  E[g(t) g^T(t')]
+  = E[ { exp(t A) g(0) + int_0^t exp((t-s) A) B w(s) ds }
+     * { exp(t' A) g(0) + int_0^t' exp((t'-s') A) B w(s') ds' }^T ]
+  = exp(t A) E[ g(0) g^T(0) ] exp(t' A)
+  + int_0^min(t,t') exp((t-s) A) B q_c B^T exp((t'-s) A)^T ds
+  = exp(t A) blkdiag(P_0,P^u_oo) exp(t' A)
+    { int_0^t exp((t-s) A) B q_c B^T exp((t-s) A)^T ds exp((t'-t) A)^T, if t <= t'
+  + { 
+    { exp((t-t') A) int_0^t' exp((t'-s) A) B q_c B^T exp((t'-s) A)^T ds, if t > t'
+  = exp(t A) blkdiag(P_0,P^u_oo) exp(t' A)
+    { Q(t) exp((t'-t) A)^T, if t <= t'
+  + { 
+    { exp((t-t') A) Q(t'), if t > t'
+
+where Q(t) was defined in (49) and can be efficently computed with matrix fractions. This representation could further be simplified by using the fact that u(t) is stationary also in this joint model. 
