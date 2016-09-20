@@ -456,6 +456,66 @@ http://www.sciencedirect.com.libproxy.aalto.fi/science/article/pii/S000510980800
 
 Then the corresponding discrete-time system will be controllable and observable provided that the sampling rate is non-pathological - see above.
 
+A problematic case is e.g.
+
+  H_U = 1 / (1 + s)
+  H_F = (1 + s) / (1 + 2s + s^2)
+
+which is
+
+  du/dt = -u + w
+  df/dt = [0 1; -1 -2] f + [0;1] u
+      y = [1 1] f
+
+
+We can also directly consider continuous-time observability and controllability conditions for 
+
+  df/dt = A_f f + B_f C_u u
+  du/dt = A_u u + B_u w
+      y = C_f f
+
+with
+
+  A = [A_f  B_f*C_u;
+       Au      0    ]
+
+  B = [ 0
+       B_u]
+
+  C = [C_f 0]
+
+We can now write
+
+  [C; C*A; C*A^2; ...]
+  = [C_f 0;
+     C_f*Af C_f*Au;
+     ...];
+
+In our example we have
+
+  A = [ 0 1  0;
+       -1 -1 1;
+       -1 0 0 ]
+  B = [0;
+       0;
+       1]
+
+  C = [1 1 0]
+
+>> rank([C; C*A; C*A^2])
+
+ans =
+
+     2
+
+>> rank([B A*B A^2*B])
+
+ans =
+
+     3
+
+Thus the system is not observable.
+
 **
 
 We have
