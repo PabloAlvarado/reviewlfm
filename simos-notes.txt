@@ -381,7 +381,7 @@ Observability of [F_k,G_k] means that the following matrix is positive definite:
 
   O_{k,l} = sum_{i=l}^k Psi_{i-1,l}^T G_i^T G_i Psi_{i-1,l}
 
-where Psi_{i-1,l} = prod_{i=l}^{i-1} F_i. The observability matrix is
+where Psi_{i-1,l} = prod_{i=l}^{i-1} F_i. The controllability matrix is
 
   C_{k,l} = sum_{i=l}^k Psi_{k-1,i+1} G_i G_i^T Psi_{k-1,i+1}^T
 
@@ -427,6 +427,34 @@ Furthermore a discrete system
 is uniformly controllable w.r.t. noise if the following matrix is similarly bounded:
 
   G_k = sum_{i=0} exp(A (t_k - t_{i+1}))^T Gamma_k Q_k Gamma_k^T exp(A (t_k - t_{i+1})) 
+
+**
+
+Let us consider the composite continuous-time system
+
+  du/dt = A_u u + B_u w
+  df/dt = A_f f + B_f C_u u
+      y = C_f f
+
+Note that the system is essentially a composition of two transfer functions for the systems
+
+     du/dt = A_u u + B_u input_u
+  output_u = C_u u
+     df/dt = A_f f + B_f input_f
+    output_f = C_f f
+
+i.e.
+
+  Output_U = H_U Input_U
+  Output_F = H_F Input_F
+
+Then the composite system is (continuous-time) observable and controllable if the subsystems are and if no pole of H_F is a zero of H_U and vice versa. [should find reference for this]
+
+http://www.ece.rutgers.edu/~gajic/psfiles/chap5traCO.pdf
+
+http://www.sciencedirect.com.libproxy.aalto.fi/science/article/pii/S0005109808004457
+
+Then the corresponding discrete-time system will be controllable and observable provided that the sampling rate is non-pathological - see above.
 
 **
 
