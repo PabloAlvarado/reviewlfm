@@ -474,17 +474,30 @@ Note that the poles of system
 
 are given by eigenvalues of A and the zeros are determined via
 
-  det([Is-A -B; C 0]) = 0
+  det([Is-A B; -C 0]) = 0
+
+Reference:
+
+@article{emami1982computation,
+  title={Computation of zeros of linear multivariable systems},
+  author={Abbas Emami-Naeini and Paul Van~Dooren},
+  journal={Automatica},
+  volume={18},
+  number={4},
+  pages={415--430},
+  year={1982},
+}
+https://www.researchgate.net/profile/Paul_Van_Dooren/publication/222465804_Computation_of_zeros_of_linear_multivariable_systems/links/0912f50f693ab7d2a0000000.pdf
 
 For u above we get
 
   eig([-1]) = -1 (one pole)
-  det([s+1 -1; 1 0]) = 1 (no zeros)
+  det([s+1 1; -1 0]) = 1 (no zeros)
 
 For f we get
 
   eig([0 1; -1 -2]) = [-1 -1] (double pole)
-  det([s*eye(2)-[0 1; -1 -2] (-[0;1]); [1 1] 0]) = s + 1 (zero at -1)
+  det([s*eye(2)-[0 1; -1 -2] ([0;1]); -[1 1] 0]) = s + 1 (zero at -1)
 
 Thus provided that for all eigenvalues lambda^u_i of A_u we have det([Is-A_f -B_f; C_f 0]) != 0 and for all eigenvalues lambda^f_j of A_f we have det([Is-A_u -B_u; C_u 0]) != 0 then the system is observable.
 
