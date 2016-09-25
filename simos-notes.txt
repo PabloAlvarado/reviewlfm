@@ -467,6 +467,26 @@ which is
   df/dt = [0 1; -1 -2] f + [0;1] u
       y = [1 1] f
 
+Note that the poles of system
+
+  dg/dt = A g + B u
+      y = C g
+
+are given by eigenvalues of A and the zeros are determined via
+
+  det([Is-A -B; C 0]) = 0
+
+For u above we get
+
+  eig([-1]) = -1 (one pole)
+  det([s+1 -1; 1 0]) = 1 (no zeros)
+
+For f we get
+
+  eig([0 1; -1 -2]) = [-1 -1] (double pole)
+  det([s*eye(2)-[0 1; -1 -2] (-[0;1]); [1 1] 0]) = s + 1 (zero at -1)
+
+Thus provided that for all eigenvalues lambda^u_i of A_u we have det([Is-A_f -B_f; C_f 0]) != 0 and for all eigenvalues lambda^f_j of A_f we have det([Is-A_u -B_u; C_u 0]) != 0 then the system is observable.
 
 We can also directly consider continuous-time observability and controllability conditions for 
 
