@@ -354,6 +354,9 @@
 \usepackage{soul}
 
 \newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{remark}{Remark}[section]
+\newtheorem{lemma}{Lemma}[section]
 
 \newcommand{\mauricio}[1]{{\color{blue}#1}}
 
@@ -1520,7 +1523,7 @@ As the process $\mathbf{u}_k$ is exponentially stable, the sequence $\tilde{\mat
 
 \simo{Could comment here that this is pretty useless in practice, but still shows that the Kalman filter will always be exponentially stable.}
 
-\begin{theorem}
+\begin{theorem} \label{the:obsv}
   Let us define transfer functions (which are rational functions of $s$) as follows:
 \begin{equation}
 \begin{split}
@@ -1535,6 +1538,22 @@ Assume that (a) the pairs $(\mathbf{A}_f,\mathbf{C}_f)$ and $(\mathbf{A}_u,\math
 \begin{proof}
   \simo{To be written}
 \end{proof}
+
+\begin{corollary}
+The corresponding discrete-time system is observable if the conditions (a) and (c) in Theorem~\ref{the:obsv} are satisfied, and for all eigenvalues $\lambda^f_i$ of the matrix $\mathbf{A}_f$ and eigenvalues $\lambda^u_j$ of the matrix $\mathbf{A}_u$ we have
+%
+\begin{equation}
+\begin{split}
+  \det \begin{pmatrix}
+    \lambda^u_j \, \mathbf{I}-\mathbf{A}_f & \mathbf{B}_f \\ -\mathbf{C}_f & 0
+    \end{pmatrix} \neq 0,
+    \quad
+  \det \begin{pmatrix}
+    \lambda^f_j \, \mathbf{I}-\mathbf{A}_u & \mathbf{B}_u \\ -\mathbf{C}_u & 0
+    \end{pmatrix} \neq 0.
+\end{split}
+\end{equation}
+\end{corollary}
 
 \simo{Write/comment the corresponding theorem for PDEs using \cite{Curtain:2012}}
 
