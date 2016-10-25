@@ -2,7 +2,7 @@
 %
 % Spring without a control
 %
-%   d²y/dt² + b dy/dt + y = a-b
+%   d²y/dt² + b dy/dt + y = a
 %
 %   dy_1/dt = y_2
 %   dy_2/dt = -b y_2 - y_1 + a
