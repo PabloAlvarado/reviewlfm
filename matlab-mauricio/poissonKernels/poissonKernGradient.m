@@ -57,45 +57,45 @@ pn = ((1:nterms)*(pi/lengthX))';
 gammapn = sqrt(-1)*pn;
 z1gpn = sigmax*gammapn/2;
 z2gpn = lengthX/sigmax + z1gpn;
-wz1gpn = wofzPoppe(sqrt(-1)*z1gpn);
-wz2gpn = wofzPoppe(sqrt(-1)*z2gpn);
-
+% wz1gpn = wofzPoppe(sqrt(-1)*z1gpn);
+% wz2gpn = wofzPoppe(sqrt(-1)*z2gpn);
+% 
 % Precompute some terms for spatial variable Y
 qm = ((1:nterms)*(pi/lengthY))';
 gammaqm = sqrt(-1)*qm;
 z1gqm = sigmay*gammaqm/2;
 z2gqm = lengthY/sigmay + z1gqm;
-wz1gqm = wofzPoppe(sqrt(-1)*z1gqm);
-wz2gqm = wofzPoppe(sqrt(-1)*z2gqm);
+% wz1gqm = wofzPoppe(sqrt(-1)*z1gqm);
+% wz2gqm = wofzPoppe(sqrt(-1)*z2gqm);
 
 % Constant tmer in front of the kernel
 
-cK = 16/((lengthX^lengthY)^2);
+cK = 16/((lengthX*lengthY)^2);
 g = zeros(1, poissKern.nParams);
 
 for n=1:nterms
     for np=1:nterms
         if  (mod(n+np,2)==0)
-            Kx = sheatKernCompute(sigmax, lengthX, sx1, sx2, pn, ...
-                gammapn, wz1gpn, wz2gpn, n, np);
+            Kx = sheatKernComputeErfc(sigmax, lengthX, sx1, sx2, pn, ...
+                gammapn, z1gpn, z2gpn, n, np);
             for m=1:nterms
                 for mp=1:nterms
                     if  (mod(m+mp,2)==0)
                         pn2qm2 = pn(n)^2 + qm(m)^2;
                         pnp2qmp2 = pn(np)^2 + qm(mp)^2;
-                        Ky = sheatKernCompute(sigmay, lengthY, sy1, sy2, qm, ...
-                            gammaqm, wz1gqm, wz2gqm, m, mp);
+                        Ky = sheatKernComputeErfc(sigmay, lengthY, sy1, sy2, qm, ...
+                            gammaqm, z1gqm, z2gqm, m, mp);
                         % Derivative wrt sigmax   
                         covGradx = covGrad.*Ky;
-                        gx = sheatKernGradient(sigmax, lengthX, sx1, sx2, pn, ...
-                            gammapn, wz1gpn, wz2gpn, n, np, covGradx);
+                        gx = sheatKernGradientErfc(sigmax, lengthX, sx1, sx2, pn, ...
+                            gammapn, z1gpn, z2gpn, n, np, covGradx);
                         gx = gx/(pn2qm2*pnp2qmp2);
                         gx = -(1/sqrt(2*poissKern.inverseWidthX^3))*gx;
                         g(1) = g(1) + gx;
                         % Derivative wrt sigmay                        
                         covGrady = covGrad.*Kx;
-                        gy = sheatKernGradient(sigmay, lengthY, sy1, sy2, qm, ...
-                            gammaqm, wz1gqm, wz2gqm, m, mp, covGrady);
+                        gy = sheatKernGradientErfc(sigmay, lengthY, sy1, sy2, qm, ...
+                            gammaqm, z1gqm, z2gqm, m, mp, covGrady);
                         gy = gy/(pn2qm2*pnp2qmp2);
                         gy = -(1/sqrt(2*poissKern.inverseWidthY^3))*gy;
                         g(2) = g(2) + gy;

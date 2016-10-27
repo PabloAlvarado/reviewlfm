@@ -47,7 +47,8 @@ The two-dimensional Poisson equation in a rectangular Cartesian
 coordinate sytem has the form
 
 \begin{align}\label{eq:poisson:dif:linear}
-\frac{\partial^2 v(x,y)}{\partial x^2} +  \frac{\partial^2 v(x,y)}{\partial y^2} = -\sum_{\forall i} s_{i}f_i(x,y)
+\frac{\partial^2 v(x,y)}{\partial x^2} +  \frac{\partial^2
+  v(x,y)}{\partial y^2} = -  f(x,y)
 \end{align}
 
 \section{Solving the Poisson equation}
@@ -57,18 +58,18 @@ particular boundary conditions. For a first boundary value
 problem with domain 
 $0\leq x\leq a$ , $0\leq y\leq b$, and conditions given by
 \begin{align*}
-v(x=0, y) &= f_1(y)\\
-v(x=a,y) &= f_2(y) \\
-v(x,y=0) &= f_3(x) \\
-v(x,y=b) &= f_4(x)
+v(x=0, y) &= g_1(y)\\
+v(x=a,y) &= g_2(y) \\
+v(x,y=0) &= g_3(x) \\
+v(x,y=b) &= g_4(x)
 \end{align*}
 the solution to this equation is given by \cite{Polyanin:Handbook02}
 \begin{align}\label{eq:sol:poisson:dif:linear}
 \begin{split}
-v(x,y)&=\sum_{\forall i}s_{i} \int_{0}^{a}\int_{0}^{b}f_i(\xi,\eta)G(x, y,\xi,\eta)\dif{\eta}\dif{\xi}\\
-      &+ \int_0^bf_1(\eta)H_1(x, y, \eta)\dif\eta
-      -\int_0^bf_2(\eta)H_2(x, y, \eta)\dif\eta \\
- &+ \int_0^af_3(\xi)H_3(x, y, \xi)\dif\xi -\int_0^af_4(\eta)H_4(x, y, \xi)\dif\xi,
+v(x,y)&=\int_{0}^{a}\int_{0}^{b}f(\xi,\eta)G(x, y,\xi,\eta)\dif{\eta}\dif{\xi}\\
+      &+ \int_0^bg_1(\eta)H_1(x, y, \eta)\dif\eta
+      -\int_0^bg_2(\eta)H_2(x, y, \eta)\dif\eta \\
+ &+ \int_0^ag_3(\xi)H_3(x, y, \xi)\dif\xi -\int_0^ag_4(\eta)H_4(x, y, \xi)\dif\xi,
 \end{split}
 \end{align}
 where the Green function $G(x, y,\xi,\eta)$ and the functions $H_1(x,
@@ -87,9 +88,9 @@ H_4(x, y,\xi) = \left.\frac{\partial}{\partial\eta}G(x, y, \xi,\eta)\right|_{\et
 \end{align}
 where $p_n=\frac{n\pi}{a}$, and $q_m=\frac{m\pi}{b}$.
 
-Assuming $f_1(y) = f_2(y)= f_3(x) = f_4(x) = 0$, equation \eqref{eq:sol:poisson:dif:linear} is equal to
+Assuming $g_1(y) = g_2(y)= g_3(x) = g_4(x) = 0$, equation \eqref{eq:sol:poisson:dif:linear} is equal to
 \begin{align}
-v(x,y)= \sum_{\forall i}s_{i} \int_{0}^{a}\int_{0}^{b}f_i(\xi,\eta)G(x, y,\xi,\eta)\dif{\eta}\dif{\xi}\label{eq:sol:poisson:dif:linear:init:hom}
+v(x,y)= \int_{0}^{a}\int_{0}^{b}f(\xi,\eta)G(x, y,\xi,\eta)\dif{\eta}\dif{\xi}\label{eq:sol:poisson:dif:linear:init:hom}
 \end{align}
 where $G(x, y, \xi,\eta)$ is given by \eqref{eq:green:function}.
 
@@ -130,38 +131,33 @@ $H_3(x, y, \xi, \eta)$, and $H_4(x, y, \xi, \eta)$,
 
 \section{Covariance matrix bewteen the outputs}
 
-We assume that $f_i(x,y)$ are independent Gaussian processes with
+We assume that $f(x,y)$ is a Gaussian process with
 mean value equal to zero and covariance matrix equal to
-$K_i(x,x',y,y')=K_i(x,x')K_i(y,y')$. Since the PDE equation is
-linear, the $v_q(x,y)$ are Gaussian processes with covariance matrix
+$K(x,x',y,y')=K(x,x')K(y,y')$. Since the PDE equation is
+linear, the $v(x,y)$ is a Gaussian process with covariance function
 given by
 \begin{align}
-\cov\left[v_q(x,y),v_s(x',y')\right]=\ex\left[\sum_{\forall
-i}s_{qi}\int_0^a\int_0^bf_i(\xi,\eta)G(x,y, \xi,\eta)\dif\xi\dif\eta\right.\\
-\left.\sum_{\forall
-k}s_{sk}\int_0^{a}\int_0^bf_k(\xi',\eta')G(x',y', \xi',\eta')\dif\xi'\dif\eta'\right]
+\cov\left[v(x,y),v(x',y')\right]=\ex\left[\int_0^a\int_0^bf(\xi,\eta)G(x,y, \xi,\eta)\dif\xi\dif\eta,
+\int_0^{a}\int_0^bf(\xi',\eta')G(x',y', \xi',\eta')\dif\xi'\dif\eta'\right].
 \end{align}
-Then, the covariance $\cov\left[v_q(x,y),v_s(x',y')\right]$ is given
+Then, the covariance $\cov\left[v(x,y), v(x',y')\right]$ is given
 as
 \begin{align}\notag
-\sum_{\forall i}s_{qi}\sum_{\forall
-k}s_{sk}\int_0^a\int_0^{a}\int_0^b\int_0^bG(x,y, \xi,\eta)G(x',y',\xi',\eta')\ex\left[f_i(\xi,\eta)f_k(\xi',\eta')\right]
+\int_0^a\int_0^{a}\int_0^b\int_0^bG(x,y, \xi,\eta)G(x',y',\xi',\eta')\ex\left[f(\xi,\eta)f(\xi',\eta')\right]
 \dif\xi'\dif\xi\dif\eta'\dif\eta
 \end{align}
 With
-$\ex\left[f_i(\xi,\eta)f_k(\xi',\eta')\right]=K_{ik}(\xi,\xi',\eta,\eta')\delta_{ik}=K_{ik}(\xi,\xi')K_{ik}(\eta,\eta')\delta_{ik}$,
+$\ex\left[f(\xi,\eta)f(\xi',\eta')\right]=K(\xi,\xi',\eta,\eta')=K(\xi,\xi')K(\eta,\eta')$,
 the last expression can be written as
 \begin{align}\notag
-\sum_{\forall
-i}s_{qi}s_{si}\int_0^a\int_0^{a}\int_0^b\int_0^bG(x,y, \xi,\eta)G(x',
-  y, \xi',\eta')K_i(\xi,\xi')K_i(\eta,\eta')
+\int_0^a\int_0^{a}\int_0^b\int_0^bG(x,y, \xi,\eta)G(x',
+  y, \xi',\eta')K(\xi,\xi')K(\eta,\eta')
 \dif\xi'\dif\xi\dif\eta'\dif\eta
 \end{align}
 Using the expression \eqref{eq:green:function} for $G(x,y, \xi,\eta)$ and SE kernels for the
 covariances of the latent processes, we have
 \begin{align}\notag
-\sum_{\forall
-i}s_{qi}s_{si}\int_0^a\int_0^{a}\int_0^b\int_0^b\left\{\left[
+\int_0^a\int_0^{a}\int_0^b\int_0^b\left\{\left[
 \frac{4}{ab}\sum_{n=1}^\infty
                   \sum_{m=1}^\infty\frac{\sin\left({p_n x}\right)
 \sin\left(q_m y\right)\sin\left(p_n \xi\right)\sin\left(q_m \eta\right)}{p_n^2 + q_m^2}
@@ -176,33 +172,30 @@ i}s_{qi}s_{si}\int_0^a\int_0^{a}\int_0^b\int_0^b\left\{\left[
 
 The above expression can be separated in two different sets of integrals
 \begin{align}\notag
-\sum_{\forall i}s_{qi}s_{si}\left\{\frac{16}{(ab)^2}\sum_{\forall
+\frac{16}{(ab)^2}\sum_{\forall
   n}\sum_{\forall n'}\sum_{\forall m}\sum_{\forall m'}
 \frac{1}{(p_n^2 + q_m^2)(p_{n'}^2 + q_{m'}^2)}
 \sin\left(p_nx\right)
 \sin\left(p_{n'}x'\right) \sin\left(q_my\right)
-\sin\left(q_{m'}y'\right)\right.\times\\\notag
-\left.
+\sin\left(q_{m'}y'\right)\times\\\notag
 \left\{\int_0^a\int_0^a\sin\left(p_n\xi\right)
 \sin\left(p_{n'}\xi'\right)\exp\left[-\frac{\left(\xi-\xi'\right)^2}{\sigma^2_x}\right]\dif\xi'\dif\xi\right\}
 \left\{\int_0^b\int_0^b\sin\left(q_m \eta\right)
-\sin\left(q_{m'}\eta'\right)\exp\left[-\frac{\left(\eta-\eta'\right)^2}{\sigma^2_y}\right]\dif\eta'\dif\eta\right\}\right\}.
+\sin\left(q_{m'}\eta'\right)\exp\left[-\frac{\left(\eta-\eta'\right)^2}{\sigma^2_y}\right]\dif\eta'\dif\eta\right\}.
 \end{align}
 In this sense, we have
 \begin{align}\notag
-\cov\left[v_q(x,y),v_s(x',y')\right]=
-\sum_{\forall i}s_{qi}s_{si}\left\{\frac{16}{(ab)^2}\sum_{\forall
+\cov\left[v(x,y),v(x',y')\right]= \frac{16}{(ab)^2}\sum_{\forall
   n}\sum_{\forall n'}\sum_{\forall m}\sum_{\forall m'}
-\frac{C^x_{v_q,v_s}(n,n') \sin\left(p_nx\right)
-\sin\left(p_{n'}x'\right) C^y_{v_q,v_s}(m,m') \sin\left(q_my\right)
+\frac{C^x_{v,v}(n,n') \sin\left(p_nx\right)
+\sin\left(p_{n'}x'\right) C^y_{v,v}(m,m') \sin\left(q_my\right)
 \sin\left(q_{m'}y'\right)}{(p_n^2 + q_m^2)(p_{n'}^2 + q_{m'}^2)}
-\right\}
 \end{align}
 for which
 \begin{align}
-C^x_{v_q,v_s}(n,n')&=\int_0^a\int_0^a\sin\left(p_n\xi\right)
+C^x_{v,v}(n,n')&=\int_0^a\int_0^a\sin\left(p_n\xi\right)
 \sin\left(p_{n'}\xi'\right)\exp\left[-\frac{\left(\xi-\xi'\right)^2}{\sigma^2_x}\right]\dif\xi'\dif\xi\label{eq:Cvvnnp}\\
-C^y_{v_q,v_s}(m,m')&=\int_0^b\int_0^b\sin\left(q_m\eta\right)
+C^y_{v,v}(m,m')&=\int_0^b\int_0^b\sin\left(q_m\eta\right)
 \sin\left(q_{m'}\eta'\right)\exp\left[-\frac{\left(\eta-\eta'\right)^2}{\sigma^2_y}\right]\dif\eta'\dif\eta.
 \end{align}
 The expressions above follow an expression that has already been obtained for
@@ -212,7 +205,7 @@ space Heat equation involves the solution of the following double
 integral
 
 \begin{align}\notag
-C_{y_q,y_s}(n,m)&=\int_0^l\int_0^l\sin\left(w_n\xi\right)
+C^{x}_{v,v}(n,m)&=\int_0^l\int_0^l\sin\left(w_n\xi\right)
 \sin\left(w_m\xi'\right)\exp\left[-\frac{\left(\xi-\xi'\right)^2}{\sigma^2_x}\right]\dif\xi'\dif\xi,
 \end{align}
 where $l$ is the spatial length, $w_n= \frac{n\pi}{l}$,
@@ -220,9 +213,9 @@ $w_m=\frac{m\pi}{l}$, and $\sigma_x$ is the lenght-scale for the SE
 kernel assumed for the latent function.
 
 It can be shown \cite{Alvarez:HeatEquationReport} that the solution
-for $C_{y_q,y_s}(n,m)$ follows as
+for $C^{x}_{v,v}(n,m)$ follows as
 \begin{align}\label{eq:Cyqys_nm}
- C_{y_q,y_s}(n,m)&=
+ C^{x}_{v,v}(n,m)&=
 \begin{cases}
 \begin{aligned}
 \left(\frac{\sigma_x
@@ -237,29 +230,92 @@ for $n\neq m$, where $\gamma_n=j w_n$, $\gamma_m=j w_m$, and
 \notag \mathcal{H}(\zeta,\upsilon)&=\erf\left(\frac{\upsilon}{\sigma}+\frac{\sigma \zeta}{2}\right)-\erf\left(\frac{\sigma \zeta}{2}\right).
 %
 \end{align}
+The term $e^{\left(\frac{\gamma_m\sigma_x}{2}\right)^2}\mathcal{I}\left[\mathcal{H}
+(\gamma_m,l)\right]$ follows as
+\begin{align}\notag
+e^{\left(\frac{\gamma_m\sigma_x}{2}\right)^2}\mathcal{I}\left[\mathcal{H}
+(\gamma_m,l)\right]& = \mathcal{I}\left[e^{\left(\frac{\gamma_m\sigma_x}{2}\right)^2}\mathcal{H}
+(\gamma_m,l)\right] = \mathcal{I}\left\{e^{\left(\frac{\gamma_m\sigma_x}{2}\right)^2}\left[\erf\left(\frac{l}{\sigma_x}+\frac{\sigma_x \gamma_m}{2}\right)-\erf\left(\frac{\sigma_x \gamma_m}{2}\right)\right]\right\}\\
+%
+\notag
+&= \mathcal{I}\left\{e^{\left(\frac{\gamma_m\sigma_x}{2}\right)^2}\left[\erfc\left(\frac{\sigma_x \gamma_m}{2}\right)-\erfc\left(\frac{l}{\sigma_x}+\frac{\sigma_x \gamma_m}{2}\right)\right]\right\}\\
+%
+\notag
+&= \mathcal{I}\left\{\mathcal{W}(\sigma_x, m)\right\},
+\end{align}
+with
+\begin{align}\notag
+\mathcal{W}(\sigma_x, m) 
+&=
+  e^{\left(\frac{\gamma_m\sigma_x}{2}\right)^2}\left[\erfc\left(\frac{\sigma_x
+  \gamma_m}{2}\right)-\erfc\left(\frac{l}{\sigma_x}+\frac{\sigma_x
+  \gamma_m}{2}\right)\right] =e^{\left(\frac{\gamma_m\sigma_x}{2}\right)^2}\left[\erfc\left(z_1^{\gamma_m}\right)-\erfc\left(z_2^{\gamma_m}\right)\right],
+\end{align}
+where 
+\begin{align}\notag
+z_1^{\gamma_m} & = \frac{\sigma_x \gamma_m}{2}, \quad z_2^{\gamma_m} = \frac{l}{\sigma_x}+\frac{\sigma_x \gamma_m}{2}.
+\end{align}
+This means that
+\begin{align}\label{eq:Cyqys_nm}
+ C^{x}_{v,v}(n,m)&=
+\begin{cases}
+\begin{aligned}
+\left(\frac{\sigma_x
+l}{\sqrt{\pi}(m^2-n^2)}\right)\left\{n\mathcal{I}\left[\mathcal{W}(\sigma_x, m) \right]-\;m\mathcal{I}\left[\mathcal{W}(\sigma_x, n)\right]\right\}
+\end{aligned}  & \mbox{if }n\mbox{ and }m\mbox{ are both even or both odd}\\
+0&\mbox{otherwise}
+\end{cases}
+\end{align}
+The derivative of $C^x_{v,v}(n,m)$ with respect to $\sigma_x$ for
+$n\ne m$ follows as
+\begin{align}\label{eq:der:Cyqys_nm}
+\frac{\partial C^x_{v,v}(n,m)}{\partial \sigma_x}&=
+\left(\frac{l}{\sqrt{\pi}(m^2-n^2)}\right)\left\{n\mathcal{I}\left[\mathcal{W}(\sigma_x,
+                                                   m)\right]
+-m\mathcal{I}\left[\mathcal{W}(\sigma_x,n)\right]\right\}\notag\\
+&+\left(\frac{l\sigma_x}{\sqrt{\pi}(m^2-n^2)}\right)
+\left\{n\mathcal{I}\left[\frac{\partial\mathcal{W}(\sigma_x, m)}{\partial \sigma_x}\right]
+-m\mathcal{I}\left[\frac{\partial\mathcal{W}(\sigma_x,n)}{\partial \sigma_x}\right]\right\}.
+\end{align}
+where the derivative $\frac{\partial {\mathcal{W}}(\sigma_x,m )}{\partial \sigma_x}$ is
+\begin{align*}
+&
+   \frac{\gamma_m^2\sigma_x}{2} e^{\left(\frac{\gamma_m\sigma_x}{2}\right)^2}\left[\erfc\left(z_1^{\gamma_m}\right)-\erfc\left(z_2^{\gamma_m}\right)\right]
+   -\frac{2}{\sqrt{\pi}}
+   e^{\left(\frac{\gamma_m\sigma_x}{2}\right)^2}\left[
+\exp\left[-\left(z_1^{\gamma_m}\right)^2\right]\frac{\partial z_1^{\gamma_m}}{\partial\sigma_x}- \exp\left[-\left(z_2^{\gamma_m}\right)^2\right]\frac{\partial z_2^{\gamma_m}}{\partial\sigma_x}\right]
+\end{align*}
+with
+\begin{align*}
+\frac{\partial}{\partial \sigma_x}\big(z_1^{\gamma_m}\big)&=\frac{\gamma_m}{2}, \qquad\qquad \frac{\partial}{\partial
+\sigma_x}\big(z_2^{\gamma_m}\big)=-\frac{l}{\sigma_x^2}+\frac{\gamma_m}{2}.
+\end{align*}
 If $n=m$, the following expression must be used instead
 \begin{align*}
-C_{y_q,y_s}(n)
+C^x_{v,v}(n)
 &=\frac{\sigma_x\sqrt{\pi}\,l}{2}e^{\left(\frac{\gamma_n\sigma_x}{2}\right)^2}\left\{\mathcal{R}\left[\mathcal{H}(\gamma_n,l)\right]
 -\mathcal{I}\left[\mathcal{H}(\gamma_n,l)\right]\left[\frac{\sigma_x^2n\pi}{2l^2}+\frac{1}{n\pi}\right]\right\}
-+\frac{\sigma^2_x}{2}\left[e^{-(\frac{l}{\sigma_x})^2}\cos(n\pi)-1\right]
++\frac{\sigma^2_x}{2}\left[e^{-(\frac{l}{\sigma_x})^2}\cos(n\pi)-1\right],\\
+&=\frac{\sigma_x\sqrt{\pi}\,l}{2}\left\{e^{\left(\frac{\gamma_n\sigma_x}{2}\right)^2}\mathcal{R}\left[\mathcal{H}(\gamma_n,l)\right]
+-e^{\left(\frac{\gamma_n\sigma_x}{2}\right)^2}\mathcal{I}\left[\mathcal{H}(\gamma_n,l)\right]\left[\frac{\sigma_x^2n\pi}{2l^2}+\frac{1}{n\pi}\right]\right\}
++\frac{\sigma^2_x}{2}\left[e^{-(\frac{l}{\sigma_x})^2}\cos(n\pi)-1\right],\\
+&=\frac{\sigma_x\sqrt{\pi}\,l}{2}\left\{\mathcal{R}\left[\mathcal{W}(\sigma_x,n)\right]
+-\mathcal{I}\left[\mathcal{W}(\sigma_x,n)\right]\left[\frac{\sigma_x^2n\pi}{2l^2}+\frac{1}{n\pi}\right]\right\}+\frac{\sigma^2_x}{2}\left[e^{-(\frac{l}{\sigma_x})^2}\cos(n\pi)-1\right].
 \end{align*}
-
-In the expression for $C_{y_q,y_s}(n,n')$, the term
-$e^{\left(\frac{\gamma_n\sigma_x}{2}\right)^2}\mathcal{I}\left[\mathcal{H}
-(\gamma_n,l)\right]$ can be replaced for a more numerical stable expression given in terms
-of the complex error function $w(z)$,
-
-\begin{align}
-\notag
-e^{\left(\frac{\gamma_n\sigma_x}{2}\right)^2}\mathcal{I}\left[\mathcal{H}(\gamma_n,l)\right]&= 
-\mathcal{I}\left[w(jz_1^{\gamma_n})-e^{-\left(\frac{l}{\sigma_x}\right)^2}e^{-\gamma_nl}w(jz_2^{\gamma_n})\right],
-\end{align}
-with $z_1^{\gamma_n}=\frac{\sigma_x\gamma_n}{2}$ and $z_2^{\gamma_n}=\frac{l}{\sigma_x}+\frac{\sigma_x\gamma_n}{2}$. A similar expression for $e^{\left(\frac{\gamma_n\sigma_x}{2}\right)^2}\mathcal{R}\left[\mathcal{H}
-(\gamma_n,l)\right]$ can be obtained when $n=m$.
-
-Derivative for $C_{y_q,y_s}(n,m)$ in terms of $\sigma_x$ can be found
-in \cite{Alvarez:HeatEquationReport}.
+The derivative follows as
+\begin{align*}
+\frac{\partial C^x_{v,v}(n)}{\partial \sigma_x}
+&=\frac{\sqrt{\pi}\,l}{2}\left\{\mathcal{R}\left[\mathcal{W}(\sigma_x,
+  n)\right]
+-\mathcal{I}\left[\mathcal{W}(\sigma_x,n)\right]\left[\frac{\sigma_x^2n\pi}{2l^2}+\frac{1}{n\pi}\right]\right\}\\
+&+\frac{\sigma_x\sqrt{\pi}\,l}{2}\left\{\mathcal{R}\left[\frac{\partial\mathcal{W}(\sigma_x,
+  n)}{\partial \sigma_x}
+\right]-\mathcal{I}\left[\frac{\partial\mathcal{W}(\sigma_x, n)}{\partial \sigma_x}\right]
+\left[\frac{\sigma_x^2n\pi}{2l^2}+\frac{1}{n\pi}\right]-\mathcal{I}\left[\mathcal{W}(\sigma_x,
+  n)
+\right]\left(\frac{\sigma_xn\pi}{l^2}\right)\right\}\\
+&+\sigma_x\left[e^{-(\frac{l}{\sigma_x})^2}\cos(n\pi)-1\right]+\frac{l^2}{\sigma_x}e^{-(\frac{l}{\sigma_x})^2}\cos(n\pi).
+\end{align*}
 
 \subsection*{Gaussian processes over the boundary conditions}
 
@@ -319,29 +375,27 @@ Finally, for the fourth covariance, we get
 
 \section{Covariance matrix bewteen the outputs and the latent functions}
 
-The covariance matrix between the outputs $v_q(x,y)$ and the latent
-functions  $f_i(x,y)$
+The covariance matrix between the outputs $v(x,y)$ and the latent
+functions  $f(x,y)$
 is given by
 \begin{align}
-\cov\left[v_q(x,y),f_i(x',y')\right]=\ex\left[\sum_{\forall
-k}s_{qk}\int_0^a\int_0^bf_k(\xi,\tau)G(x, y, \xi, \eta)\dif\xi\dif\eta f_i(x',y')\right]
+\cov\left[v(x,y),f(x',y')\right]=\ex\left[\int_0^a\int_0^bf(\xi,\tau)G(x, y, \xi, \eta)\dif\xi\dif\eta f(x',y')\right]
 \end{align}
-Then, the covariance $\cov\left[v_q(x,y),f_i(x',y')\right]$ is given
+Then, the covariance $\cov\left[v(x,y),f(x',y')\right]$ is given
 as
 \begin{align}\notag
-\sum_{\forall k}s_{qk}\int_0^a\int_0^bG(x,y, \xi,\eta)\ex\left[f_k(\xi,\eta)f_i(x',y')\right]
+\int_0^a\int_0^bG(x,y, \xi,\eta)\ex\left[f(\xi,\eta)f(x',y')\right]
 \dif\xi\dif\eta
 \end{align}
 Using the factorized form for the covariance of the latent functions, the last expression can be written as
 \begin{align}\notag
-s_{qi}\int_0^a\int_0^bG(x,y, \xi,\eta)K_i(\xi,x')K_i(\eta,y')
-\dif\xi\dif\eta
+\int_0^a\int_0^bG(x,y, \xi,\eta)K(\xi,x')K(\eta,y')\dif\xi\dif\eta
 \end{align}
 With the expression \eqref{eq:green:function} for $G(x, y, \xi,\eta)$ and SE kernels for the
 covariances of the latent processes, we have
 \begin{align}\notag
 \begin{split}
-s_{qi}\int_0^a\int_0^b&\left\{\left[
+\int_0^a\int_0^b&\left\{\left[
 \frac{4}{ab}\sum_{n=1}^\infty
                   \sum_{m=1}^\infty\frac{\sin\left({p_n x}\right)
 \sin\left(q_m y\right)\sin\left(p_n \xi\right)\sin\left(q_m \eta\right)}{p_n^2 + q_m^2}\right]
@@ -351,7 +405,7 @@ s_{qi}\int_0^a\int_0^b&\left\{\left[
 Again the above expression can be separated in
 two different sets of integrals
 \begin{align}\notag
-\frac{4s_{qi}}{ab} \sum_{\forall n}\sum_{\forall m} \frac{\sin\left({p_n x}\right)
+\frac{4}{ab} \sum_{\forall n}\sum_{\forall m} \frac{\sin\left({p_n x}\right)
 \sin\left(q_m y\right)}{p_n^2 + q_m^2}
 \left\{\int_0^a\sin\left(p_n\xi\right)
 \exp\left[-\frac{\left(\xi-x'\right)^2}{\sigma^2_x}\right]\dif\xi\right\}
@@ -360,15 +414,15 @@ two different sets of integrals
 \end{align}
 We have
 \begin{align}\notag
-\cov\left[v_q(x,y),f_i(x',y')\right]=\frac{4s_{qi}}{ab}
-\sum_{\forall n}\sum_{\forall m} \frac{\sin\left({p_n x}\right) C^x_{v_q,f_i}(x',n)
-\sin\left(q_m y\right) C^y_{v_q,f_i}(y',m)}{p_n^2 + q_m^2}
+\cov\left[v(x,y),f(x',y')\right]=\frac{4}{ab}
+\sum_{\forall n}\sum_{\forall m} \frac{\sin\left({p_n x}\right) C^x_{v,f}(x',n)
+\sin\left(q_m y\right) C^y_{v,f}(y',m)}{p_n^2 + q_m^2}
 \end{align}
 in which
 \begin{align}\notag
-C^x_{v_q,f_i}(x',n) &= \int_0^a\sin\left(p_n\xi\right)
+C^x_{v,f}(x',n) &= \int_0^a\sin\left(p_n\xi\right)
 \exp\left[-\frac{\left(\xi-x'\right)^2}{\sigma^2_x}\right]\dif\xi\\\notag
-C^y_{v_q,f_i}(y',n) &= \int_0^b\sin\left(q_m\eta\right)
+C^y_{v,f}(y',m) &= \int_0^b\sin\left(q_m\eta\right)
 \exp\left[-\frac{\left(\eta-y'\right)^2}{\sigma^2_y}\right]\dif\eta.
 \end{align}
 A similar expression to the ones above was obtained when solving the
@@ -376,33 +430,74 @@ covariance between the output of the Heat equation and the input
 function. See \cite{Alvarez:HeatEquationReport}. That expression is
 given as
 \begin{align}
-C_{y_q,f_i}(x',n)&=\int_0^l\sin\left(w_n\xi\right)
+C^x_{v,f}(x',n)&=\int_0^l\sin\left(w_n\xi\right)
 \exp\left[-\frac{\left(\xi-x'\right)^2}{\sigma^2_x}\right]\dif\xi.\notag
 \end{align}
 Its solution follows as
 \begin{align}
-C_{y_q,f_i}(x',n)&=\frac{\sigma_x\sqrt{\pi}}{2}\exp\left(\frac{\gamma_n\sigma_x}{2}\right)^2\mathcal{I}\left[\exp\left(\gamma_nx'\right)\mathcal{H}(\gamma_n,x',l)\right],\notag
+C^x_{v,f}(x',n)&=\frac{\sigma_x\sqrt{\pi}}{2}\exp\left(\frac{\gamma_n\sigma_x}{2}\right)^2\mathcal{I}\left[\exp\left(\gamma_nx'\right)\mathcal{H}(\gamma_n,x',l)\right],\notag
 \end{align}
 where
 \begin{align}
 \notag \mathcal{H}(\zeta,\upsilon,\varphi)&=\erf\left(\frac{\upsilon}{\sigma}+\frac{\sigma \zeta}{2}\right)-\erf\left(\frac{\upsilon-\varphi}{\sigma}+\frac{\sigma \zeta}{2}\right).
 \end{align}
 
-In the expression for $C_{y_q,f_i}(x',n)$, the term
+In the expression for $C^x_{v,f}(x',n)$, the term
 $\exp\left(\frac{\gamma_n\sigma_x}{2}\right)^2\mathcal{I}\left[\exp\left(\gamma_nx'\right)\mathcal{H}(\gamma_n,x',l)\right]$
-can be replaced for a more numerical stable expression given in terms
-of the complex error function $w(z)$,
-\begin{align}
+can be written as
+
+\begin{align}\notag
+e^{\left(\frac{\gamma_n\sigma_x}{2}\right)^2}\mathcal{I}\left[e^{\gamma_nx'}\mathcal{H}(\gamma_n,x',l)\right]& = \mathcal{I}\left[e^{\left(\frac{\gamma_n\sigma_x}{2}\right)^2}e^{\gamma_nx'}\mathcal{H}(\gamma_n,x',l)\right] \\
+%
 \notag
-e^{\left(\frac{\gamma_n\sigma_x}{2}\right)^2}\mathcal{I}\left[e^{\gamma_nx'}\mathcal{H}(\gamma_n,x',l)\right]
-&=\mathcal{I}\left[e^{-\left(\frac{x'-l}{\sigma_x}\right)^2}e^{\gamma_nl}w(jz_2^{\gamma_n,x'})-e^{-\left(\frac{x'}{\sigma_x}\right)^2}
-w(jz_1^{\gamma_n,x'})\right],
+&= \mathcal{I}\left\{e^{\left(\frac{\gamma_n\sigma_x}{2}\right)^2}e^{\gamma_nx'}\left[\erf\left(\frac{x'}{\sigma_x}+\frac{\sigma_x \gamma_n}{2}\right)-\erf\left(\frac{x'-l}{\sigma_x}+\frac{\sigma_x \gamma_n}{2}\right)\right]\right\}\\
+%
+\notag
+&=
+  \mathcal{I}\left\{e^{\left(\frac{\gamma_n\sigma_x}{2}\right)^2}e^{\gamma_nx'}\left[\erfc\left(\frac{x'-l}{\sigma_x}+\frac{\sigma_x
+  \gamma_n}{2}\right)-\erfc\left(\frac{x'}{\sigma_x}+\frac{\sigma_x
+  \gamma_n}{2}\right)\right]\right\}\\
+& = \mathcal{I}\left\{e^{\left(\frac{\gamma_n\sigma_x}{2}\right)^2}e^{\gamma_nx'}\left[\erfc\left(z_2^{\gamma_n,x'}\right)-\erfc\left(z_1^{\gamma_n,x'}\right)\right]\right\}
 \end{align}
 with $z_1^{\gamma_n,x'}=\frac{x'}{\sigma_x}+\frac{\sigma_x \gamma_n}{2}$ and $z_2^{\gamma_n,x'}=\frac{x'-l}{\sigma_x}
-+\frac{\sigma_x\gamma_n}{2}$.
++\frac{\sigma_x\gamma_n}{2}$.\\
 
-The derivative for $C_{y_q,f_i}(x',n)$ in terms of $\sigma_x$ can also
-be found in \cite{Alvarez:HeatEquationReport}.
+We then get
+\begin{align}
+C^x_{v,f}(x',n)&=\frac{\sigma_x\sqrt{\pi}}{2}\mathcal{I}\left\{e^{\left(\frac{\gamma_n\sigma_x}{2}\right)^2}e^{\gamma_nx'}\left[\erfc\left(z_2^{\gamma_n,x'}\right)-\erfc\left(z_1^{\gamma_n,x'}\right)\right]\right\},\notag
+\end{align}
+
+To find the derivative for $C^x_{v,f}(x',n)$ in terms of $\sigma_x$, we
+first have
+\begin{align*}
+\frac{\partial z_1^{\gamma_n,x'}}{\partial\sigma_x}&=-\frac{x'}{\sigma^2_x}+\frac{\gamma_n}{2},\qquad\qquad
+\frac{\partial z_2^{\gamma_n,x'}}{\partial\sigma_x}=-\frac{x'-l}{\sigma^2_x}+\frac{\gamma_n}{2}.
+\end{align*}
+The derivative follows
+\begin{align}
+\frac{\partial C^x_{v,f}(x',n) }{\partial \sigma_x}&=\frac{\sqrt{\pi}}{2}\mathcal{I}\left[\widetilde{\mathcal{W}}(\sigma_x)\right]+
+\frac{\sigma_x\sqrt{\pi}}{2}\mathcal{I}\left[\frac{\partial \widetilde{\mathcal{W}}(\sigma_x)}{\partial \sigma_x}\right],
+\end{align}
+where 
+\begin{align*}
+\widetilde{\mathcal{W}}(\sigma_x) = e^{\left(\frac{\gamma_n\sigma_x}{2}\right)^2}e^{\gamma_nx'}\left[\erfc\left(z_2^{\gamma_n,x'}\right)-\erfc\left(z_1^{\gamma_n,x'}\right)\right].
+\end{align*}
+The derivative $\frac{\partial \widetilde{\mathcal{W}}(\sigma_x)}{\partial \sigma_x}$ is
+\begin{align*}
+&
+   \frac{\gamma_n^2\sigma_x}{2} e^{\left(\frac{\gamma_n\sigma_x}{2}\right)^2}e^{\gamma_nx'}\left[\erfc\left(z_2^{\gamma_n,x'}\right)-\erfc\left(z_1^{\gamma_n,x'}\right)\right]
+   -\frac{2}{\sqrt{\pi}}
+   e^{\left(\frac{\gamma_n\sigma_x}{2}\right)^2}e^{\gamma_nx'}\left[
+\exp\left[-\left(z_2^{\gamma_n,x'}\right)^2\right]\frac{\partial z_2^{\gamma_n,x'}}{\partial\sigma_x}- \exp\left[-\left(z_1^{\gamma_n,x'}\right)^2\right]\frac{\partial z_1^{\gamma_n,x'}}{\partial\sigma_x}\right]
+\end{align*}
+
+
+
+
+
+
+
+
 
 \small{
 \bibliographystyle{unsrt}

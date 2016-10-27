@@ -84,22 +84,47 @@ cK = 4/(lengthX*lengthY);
 g1 = zeros(1,3);
 g2 = zeros(1,2);
 
+%%%%% Code with Faddeeva_w
+% for n=1:nterms
+%     [Kx, wzx1, wzx2] = srbfhKernCompute(sigmax, lengthX, sx1, sx2, ...
+%             pn, gammapn, n);
+%     covGrady = covGrad.*Kx;        
+%     for m=1:nterms
+%         [Ky, wzy1, wzy2] = srbfhKernCompute(sigmay, lengthY, sy1, sy2, ...
+%             qm, gammaqm, m);        
+%         covGradx = covGrad.*Ky;        
+%         pn2qm2 = pn(n)^2 + qm(m)^2;
+%         gx = srbfhKernGradient(sigmax, lengthX, sx1, sx2, pn, ...
+%             gammapn, n, covGradx, wzx1, wzx2);        
+%         gx = gx/pn2qm2;
+%         gx = -(1/sqrt(2*poissKern.inverseWidthX^3))*gx; % Transforms to the derivative of the inverse width
+%         g1(1) = g1(1) + gx;
+%         gy = srbfhKernGradient(sigmay, lengthY, sy1, sy2, qm, ...
+%             gammaqm, m, covGrady, wzy1, wzy2);
+%         gy = gy/pn2qm2;
+%         gy = -(1/sqrt(2*poissKern.inverseWidthY^3))*gy; % Transforms to the derivative of the inverse width
+%         g1(2) = g1(2) + gy;
+%         sK = sK + (Kx.*Ky)/pn2qm2;
+%     end
+% end
+
+%%%%% Code with Faddeeva_erfc
 for n=1:nterms
-    [Kx, wzx1, wzx2] = srbfhKernCompute(sigmax, lengthX, sx1, sx2, ...
+    [Kx, erfcx1, erfcx2] = srbfhKernComputeErfc(sigmax, lengthX, sx1, sx2, ...
             pn, gammapn, n);
     covGrady = covGrad.*Kx;        
     for m=1:nterms
-        [Ky, wzy1, wzy2] = srbfhKernCompute(sigmay, lengthY, sy1, sy2, ...
+        [Ky, erfcy1, erfcy2] = srbfhKernComputeErfc(sigmay, lengthY, sy1, sy2, ...
             qm, gammaqm, m);        
         covGradx = covGrad.*Ky;        
         pn2qm2 = pn(n)^2 + qm(m)^2;
-        gx = srbfhKernGradient(sigmax, lengthX, sx1, sx2, pn, ...
-            gammapn, n, covGradx, wzx1, wzx2);        
+        gx = srbfhKernGradientErfc(sigmax, lengthX, sx1, sx2, pn, ...
+            gammapn, n, covGradx, erfcx1, erfcx2);        
         gx = gx/pn2qm2;
         gx = -(1/sqrt(2*poissKern.inverseWidthX^3))*gx; % Transforms to the derivative of the inverse width
         g1(1) = g1(1) + gx;
-        gy = srbfhKernGradient(sigmay, lengthY, sy1, sy2, qm, ...
-            gammaqm, m, covGrady, wzy1, wzy2);
+        gy = srbfhKernGradientErfc(sigmay, lengthY, sy1, sy2, qm, ...
+            gammaqm, m, covGrady, erfcy1, erfcy2);
         gy = gy/pn2qm2;
         gy = -(1/sqrt(2*poissKern.inverseWidthY^3))*gy; % Transforms to the derivative of the inverse width
         g1(2) = g1(2) + gy;

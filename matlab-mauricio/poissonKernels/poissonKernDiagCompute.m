@@ -39,28 +39,28 @@ pn = ((1:nterms)*(pi/lengthX))';
 gammapn = sqrt(-1)*pn;
 z1gpn = sigmax*gammapn/2;
 z2gpn = lengthX/sigmax + z1gpn;
-wz1gpn = wofzPoppe(sqrt(-1)*z1gpn);
-wz2gpn = wofzPoppe(sqrt(-1)*z2gpn);
+%wz1gpn = wofzPoppe(sqrt(-1)*z1gpn);
+%wz2gpn = wofzPoppe(sqrt(-1)*z2gpn);
 
 % Precompute some terms for spatial variable Y
 qm = ((1:nterms)*(pi/lengthY))';
 gammaqm = sqrt(-1)*qm;
 z1gqm = sigmay*gammaqm/2;
 z2gqm = lengthY/sigmay + z1gqm;
-wz1gqm = wofzPoppe(sqrt(-1)*z1gqm);
-wz2gqm = wofzPoppe(sqrt(-1)*z2gqm);
+%wz1gqm = wofzPoppe(sqrt(-1)*z1gqm);
+%wz2gqm = wofzPoppe(sqrt(-1)*z2gqm);
 
 % Constant tmer in front of the kernel
 
-ck = 16/((lengthX^lengthY)^2);
+ck = 16/((lengthX*lengthY)^2);
 
 for n=1:nterms
     for m=1:nterms
         for np=1:nterms
             for mp=1:nterms
                 if (mod(n+np,2)==0) && (mod(m+mp,2)==0)
-                    Cvvx = computeCvv(sigmax, lengthX, gammapn, wz1gpn, wz2gpn, n, np);
-                    Cvvy = computeCvv(sigmay, lengthY, gammaqm, wz1gqm, wz2gqm, m, mp);
+                    Cvvx = computeCvv(sigmax, lengthX, gammapn, z1gpn, z2gpn, n, np);
+                    Cvvy = computeCvv(sigmay, lengthY, gammaqm, z1gqm, z2gqm, m, mp);
                     pn2qm2 = pn(n)^2 + qm(m)^2;
                     pnp2qmp2 = pn(np)^2 + qm(mp)^2;
                     const = (Cvvx*Cvvy)/(pn2qm2*pnp2qmp2);                    

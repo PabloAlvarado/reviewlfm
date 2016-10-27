@@ -75,9 +75,9 @@ gammaqm = sqrt(-1)*qm;
 cK = 4/(lengthX*lengthY);
 
 for n=1:nterms
-    Kx = srbfhKernCompute(sigmax, lengthX, sx1, sx2, pn, gammapn, n);
+    Kx = srbfhKernComputeErfc(sigmax, lengthX, sx1, sx2, pn, gammapn, n);
     for m=1:nterms        
-        Ky = srbfhKernCompute(sigmay, lengthY, sy1, sy2, qm, gammaqm, m);
+        Ky = srbfhKernComputeErfc(sigmay, lengthY, sy1, sy2, qm, gammaqm, m);
         pn2qm2 = pn(n)^2 + qm(m)^2;
         K = K + (Kx.*Ky)/(pn2qm2);
     end
