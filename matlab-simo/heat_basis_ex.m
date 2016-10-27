@@ -1,6 +1,5 @@
 %
-% Solve inverse heat equation in 2d using basis
-% function approach.
+% Solve inverse heat equation in 2d using basis function approach.
 %
 
     %%
