@@ -77,21 +77,23 @@ if nargin < 3 && ~strcmp(heatKern.pde, 'cos')
     beta = decay + diff*(w.^2);    
     z1 = sigmax*gamma/2;
     z2 = lengthX/sigmax + z1;
-    wz1 = wofzPoppe(sqrt(-1)*z1);
-    wz2 = wofzPoppe(sqrt(-1)*z2);
+%     wz1 = wofzPoppe(sqrt(-1)*z1);
+%     wz2 = wofzPoppe(sqrt(-1)*z2);
     cK = 4/(lengthX^2);    
     if isPointwise
         for i=1:nterms
             heatKern.sim.decay = beta(i);            
             Kt = simXsimKernCompute(heatKern.sim, heatKern.sim, t1, t1);
-            Ks = sheatKernCompute(sigmax, lengthX, s1, s1, w, gamma, wz1, wz2, i, i);
+            % Ks = sheatKernCompute(sigmax, lengthX, s1, s1, w, gamma, wz1, wz2, i, i);
+            Ks = sheatKernComputeErfc(sigmax, lengthX, s1, s1, w, gamma, z1, z2, i, i);
             K = K + Kt.*Ks;            
             for j=1:i-1
                 if  mod(i+j,2)==0
                     heatKern.sim.decay = beta(i);
                     heatKernTempo.sim.decay = beta(j);
                     Kt = simXsimKernCompute(heatKern.sim, heatKernTempo.sim, t1, t1);
-                    Ks = sheatKernCompute(sigmax, lengthX, s1, s1, w, gamma, wz1, wz2, i, j);
+                    % Ks = sheatKernCompute(sigmax, lengthX, s1, s1, w, gamma, wz1, wz2, i, j);
+                    Ks = sheatKernComputeErfc(sigmax, lengthX, s1, s1, w, gamma, z1, z2, i, j);
                     K = K + Kt.*Ks + (Kt').*(Ks');
                 end
             end
@@ -100,14 +102,16 @@ if nargin < 3 && ~strcmp(heatKern.pde, 'cos')
         for i=1:nterms
             heatKern.sim.decay = beta(i);            
             Kt = simXsimKernCompute(heatKern.sim, heatKern.sim, t1, t1);
-            Ks = sheatKernCompute(sigmax, lengthX, s1, s1, w, gamma, wz1, wz2, i, i);
+            % Ks = sheatKernCompute(sigmax, lengthX, s1, s1, w, gamma, wz1, wz2, i, i);
+            Ks = sheatKernComputeErfc(sigmax, lengthX, s1, s1, w, gamma, z1, z2, i, i);
             K = K + kron(Kt,Ks);            
             for j=1:i-1
                 if  mod(i+j,2)==0
                     heatKern.sim.decay = beta(i);
                     heatKernTempo.sim.decay = beta(j);
                     Kt = simXsimKernCompute(heatKern.sim, heatKernTempo.sim, t1, t1);
-                    Ks = sheatKernCompute(sigmax, lengthX, s1, s1, w, gamma, wz1, wz2, i, j);
+                    %Ks = sheatKernCompute(sigmax, lengthX, s1, s1, w, gamma, wz1, wz2, i, j);
+                    Ks = sheatKernComputeErfc(sigmax, lengthX, s1, s1, w, gamma, z1, z2, i, j);
                     K = K + kron(Kt,Ks) + kron(Kt', Ks');
                 end
             end

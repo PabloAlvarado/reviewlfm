@@ -95,14 +95,16 @@ else
         for i=1:nterms
             heatKern.sim.decay = beta(i);
             Kt = simXrbfKernCompute(heatKern.sim, rbfhKern.rbf, t1, t2);
-            Ks = srbfhKernCompute(sigmax, lengthX, s1, s2, w, gamma, i);
+            %Ks = srbfhKernCompute(sigmax, lengthX, s1, s2, w, gamma, i);
+            Ks = srbfhKernComputeErfc(sigmax, lengthX, s1, s2, w, gamma, i);
             K = K + Kt.*Ks;
         end
     else
         for i=1:nterms
             heatKern.sim.decay = beta(i);
             Kt = simXrbfKernCompute(heatKern.sim, rbfhKern.rbf, t1, t2);
-            Ks = srbfhKernCompute(sigmax, lengthX, s1, s2, w, gamma, i);
+            %Ks = srbfhKernCompute(sigmax, lengthX, s1, s2, w, gamma, i);
+            Ks = srbfhKernComputeErfc(sigmax, lengthX, s1, s2, w, gamma, i);
             K = K + kron(Kt,Ks);
         end
     end
