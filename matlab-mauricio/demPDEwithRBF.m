@@ -8,14 +8,14 @@ close all
 s = RandStream('mt19937ar', 'Seed', 1e8);
 RandStream.setGlobalStream(s);
 
-nterms = 5;  % Number of terms in the Fourier solutions
+nterms = 10;  % Number of terms in the Fourier solutions
 
-if exist(['dataPDEwithRBF' num2str(nterms) 'terms.mat'], 'file')
-    load(['dataPDEwithRBF' num2str(nterms) 'terms.mat'])
-else
+% if exist(['dataPDEwithRBF' num2str(nterms) 'terms.mat'], 'file')
+%     load(['dataPDEwithRBF' num2str(nterms) 'terms.mat'])
+% else
     % Generate Samples from the model
-    Nx = 40; % Number of space points
-    Nt = 40; % Number of time points
+    Nx = 30; % Number of space points
+    Nt = 30; % Number of time points
     t = linspace(0, 1, Nt)';
     lengthX = 5; % Length of domain in X
     x = linspace(0, lengthX, Nx)';
@@ -53,7 +53,7 @@ else
     Kff = K(Nx*Nt+1:end, Nx*Nt+1:end);
     Kuu = K(1:Nx*Nt, 1:Nx*Nt);
     Kuf = K(1:Nx*Nt, Nx*Nt+1:end);
-end
+%end
 % Now, we plot the covariance matrix Kff
 figure
 imagesc(t, x, Kff)
@@ -95,7 +95,7 @@ indexk = sort(index(1:Nk));
 fk = f(indexk);
 txk = tx(indexk, :);
 % We add some noise to the measurements fk,
-sigma2 = 0.01*var(f);
+sigma2 = 0.00001*var(f);
 yk = fk +  sqrt(sigma2)*randn(Nk, 1);
 close all
 surf(tgrid, xgrid, F)
@@ -131,4 +131,4 @@ title('Predicted variance of the latent force')
 
 mse_error = mean((mean_pred_u - u).^2);
 
-save(['dataPDEwithRBF' num2str(nterms) 'terms.mat'])
+%save(['dataPDEwithRBF' num2str(nterms) 'terms.mat'])

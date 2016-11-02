@@ -661,11 +661,14 @@ Fig.~\ref{reg_ex} shows an example of Gaussian process regression. \simo{Explain
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=\columnwidth]{reg_ex}
+\includegraphics[width=\columnwidth]{toyGPoutput}
 % where an .eps filename suffix will be assumed under latex,
 % and a .pdf suffix will be assumed for pdflatex; or what has been declared
 % via \DeclareGraphicsExtensions.
-\caption{GP regression example (placeholder)}
+\caption{Example of Gaussian process regression. The solid line is the
+predictive mean, and the shaded region represents two standard
+deviations away from the predictive mean. The dots are the observed
+data $\{y_k\}_{k=1}^n$.}
 \label{reg_ex}
 \end{figure}
 
@@ -2053,6 +2056,30 @@ originally developed for numerically stabilizing the computation the eigenvalues
 
 
 \subsection{A PDE Model}
+In this example, we illustrate the performance of the latent force
+models for a the Heat equation with one space variable. 
+
+We refer to equation  XX. Figure XX illustrates a physical setup where
+the input  $u(\cdot)$ represents a heat source that moves across space
+an time, irradiating the heat over a flut surface where the heat $f(\cdot)$ is
+actually measured.
+
+
+We assume that the source $u(x, t)$ follows a Gaussian process with
+squared-exponentiated (SE) covariance
+function that separates in the spatial and time dimensions,
+\begin{align*}
+k(x-x', t -t') = \exp\Bigg[-\frac{(x-x')^2}{\sigma^2_x}\Bigg]\exp\Bigg[-\frac{(t-t')^2}{\sigma^2_t}\Bigg],
+\end{align*}
+where $\sigma_x$, and $\sigma_t$ are the length-scales along the
+spatial, and time variables, respectively. 
+Assuming boundary conditions, and initial condition equal to zero, the
+corresponding Green's function in \cite{Polyanin:Handbook02} can be
+used to compute analitycally the covariances  $k_{f,f}$ and $k_{f,u}$.
+% 
+For the state-space solution, we use a basis like XX. 
+
+
 %
 \simo{Heat equation with closed form Green's function and basis functions. Covariance functions RBF \& Matern.}
 
