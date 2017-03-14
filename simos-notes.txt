@@ -448,13 +448,36 @@ i.e.
   Output_U = H_U Input_U
   Output_F = H_F Input_F
 
-Then the composite system is (continuous-time) observable and controllable if the subsystems are and if no pole of H_F is a zero of H_U and vice versa. [should find reference for this]
+Then the composite system is (continuous-time) observable and controllable if the subsystems are and if no pole of H_F is a zero of H_U and vice versa. [should find reference for this - but this only works for single latent force and measurement!] [IS THIS REALLY EVEN TRUE, PROBABLY NOT?]
+
+http://www.ece.rutgers.edu/~gajic/psfiles/chap5.pdf
 
 http://www.ece.rutgers.edu/~gajic/psfiles/chap5traCO.pdf
 
+Then the corresponding discrete-time system will be controllable and observable provided that the sampling rate is non-pathological:
+
+Ding, F., Qiu, L., & Chen, T. (2009). Reconstruction of continuous-time systems from their non-uniformly sampled discrete-time systems. Automatica, 45(2), 324-332.
 http://www.sciencedirect.com.libproxy.aalto.fi/science/article/pii/S0005109808004457
 
-Then the corresponding discrete-time system will be controllable and observable provided that the sampling rate is non-pathological - see above.
+which seems to be based on the book of Chen/Francis (1996) and article of Kalman (1963).
+
+
+Some results on the observability and controllability of composite systems:
+
+Chen, C. T., & Desoer, C. (1967). Controllability and observability of composite systems. IEEE Transactions on Automatic Control, 12(4), 402-409.
+
+Davison, E., & Wang, S. (1975). New results on the controllability and observability of general composite systems. IEEE Transactions on Automatic Control, 20(1), 123-128.
+http://ieeexplore.ieee.org.libproxy.aalto.fi/stamp/stamp.jsp?arnumber=1100857
+
+which use e.g. theorems from
+
+H.H. Rosenbrock, “State-Space and Multivariable Theory,” T. Nelson, London, 1970.
+
+
+Counter-examples of non-sufficiency of cascade observability of both systems is given in
+Gilbert, E. G. (1963). Controllability and observability in multivariable control systems. Journal of the Society for Industrial and Applied Mathematics, Series A: Control, 1(2), 128-151.
+The paper also discusses the property that pole-zero cancellation will make the system unobservable
+http://people.duke.edu/~hpgavin/SystemID/References/Gilbert-JSIAM-1963.pdf
 
 A problematic case is e.g.
 
@@ -476,18 +499,11 @@ are given by eigenvalues of A and the zeros are determined via
 
   det([Is-A B; -C 0]) = 0
 
-Reference:
+which works only if we have a single latent force model.
 
-@article{emami1982computation,
-  title={Computation of zeros of linear multivariable systems},
-  author={Abbas Emami-Naeini and Paul Van~Dooren},
-  journal={Automatica},
-  volume={18},
-  number={4},
-  pages={415--430},
-  year={1982},
-}
-https://www.researchgate.net/profile/Paul_Van_Dooren/publication/222465804_Computation_of_zeros_of_linear_multivariable_systems/links/0912f50f693ab7d2a0000000.pdf
+Something is here:
+
+https://www.researchgate.net/publication/245320516_Poles_and_zeros_of_linear_multivariable_systems_A_survey_of_the_algebraic_geometric_and_complex-variable_theory
 
 For u above we get
 
@@ -500,6 +516,47 @@ For f we get
   det([s*eye(2)-[0 1; -1 -2] ([0;1]); -[1 1] 0]) = s + 1 (zero at -1)
 
 Thus provided that for all eigenvalues lambda^u_i of A_u we have det([Is-A_f -B_f; C_f 0]) != 0 and for all eigenvalues lambda^f_j of A_f we have det([Is-A_u -B_u; C_u 0]) != 0 then the system is observable.
+
+**
+
+In Davidson & Wang we have the following.
+
+The system
+
+  [dx1/dt]   [ A1 E  ] [ x1 ]   [ B1 ]
+  [      ] = [       ] [    ] + [    ] u
+  [dx2/dt]   [ 0  A2 ] [ x2 ]   [ B2 ]
+
+              [ x1 ]
+  y = [C1 C2] [    ] 
+              [ x2 ]
+
+with x1 \in R^n1, x2 \in R^n2 is controllable if
+
+a) (A2,B2) is controllable
+
+       [ A1 - lam_i^1 I       E        B1  ]
+b) rank[                                   ] = n1 + n2
+       [    0            A2 - lam_^1 I  B2 ]
+
+for all eigenvalues lam_i^1 of A1
+
+and observable if
+
+c) (C1,A1) is observable
+
+       [ A1 - lam_i^2 I       E        ]
+       [                               ]
+d) rank[    0            A2 - lam_^2 I ] = n1 + n2
+       [                               ]
+       [    C1                C2       ]
+
+In our control case we have B2 = 0 and hence (A2,B2) is not controllable not the full system. 
+
+In the estimation case we can assume (C1,A1) to be observable. 
+
+
+** 
 
 We can also directly consider continuous-time observability and controllability conditions for 
 
@@ -548,6 +605,11 @@ ans =
      3
 
 Thus the system is not observable.
+
+
+**
+
+
 
 **
 
