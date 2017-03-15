@@ -217,7 +217,7 @@
 %\ifCLASSOPTIONcompsoc
 %  \usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
 %\else
-%  \usepackage[caption=false,font=footnotesize]{subfig}
+\usepackage[caption=false,font=footnotesize]{subfig}
 %\fi
 % subfig.sty, written by Steven Douglas Cochran, is the modern replacement
 % for subfigure.sty, the latter of which is no longer maintained and is
@@ -496,7 +496,7 @@ where $u(t)$ and $f(t)$ are unknown an $c(t)$ is a control function (known or to
 \end{split}
 \end{equation}
 %
-The aim of this article is to consider the unknown force or input $u$ as unknown and model it as a non-parametric Gaussian process model \cite{Rasmussen+Williams:2006} with a given covariance function in order to estimate, or in machine learning terms, {\em learn} $f$ and $u$. This kind of models are called latent force models (LFM) \cite{Alvarez+Lawrence:2009,Alvarez:2010,Alvarez+Luengo+Lawrence:2013} in machine learning literature. In addition to learning problem on the LFMs, we also consider the problem of controlling the LFM using the control function $c(t)$. In particular, we consider the problem of optimal linear stochastic control design for this type of models.
+The aim of this article is to consider the unknown force or input $u$ as unknown and model it as a non-parametric Gaussian process model \cite{Rasmussen+Williams:2006} with a given covariance function in order to estimate, or in machine learning terms, {\em learn} $f$ and $u$. This kind of models are called latent force models (LFM) \cite{Alvarez+Luengo+Lawrence:2009,Alvarez:2010,Alvarez+Luengo+Lawrence:2013} in machine learning literature. In addition to learning problem on the LFMs, we also consider the problem of controlling the LFM using the control function $c(t)$. In particular, we consider the problem of optimal linear stochastic control design for this type of models.
 
 The present problem is also closely related to so called input estimation problem that has previously been addressed in target tracking literature (e.g. \cite{Bar-Shalom+Li+Kirubarajan:2001}) by replacing the input or force with a white or colored noise. However, here we will specifically concentrate on the machine learning point of view which allows for encoding prior information into the driving force as well as the use of modern machine learning methods for coping with the related hyperparameter estimation problems and model extensions.
 
@@ -677,7 +677,7 @@ data $\{y_k\}_{k=1}^n$.}
 %
 %\simo{Mauricio writes but Simo will then contribute}
 
-A canonical example of a linear latent force model (LFM) \cite{Alvarez+Lawrence:2009,Alvarez+Luengo+Lawrence:2013} is the following:
+A canonical example of a linear latent force model (LFM) \cite{Alvarez+Luengo+Lawrence:2009,Alvarez+Luengo+Lawrence:2013} is the following:
 %
 \begin{eqnarray}
   &u(t) \sim \mathcal{GP}(0,k(t - t')), \label{eq:lgp1} \\
@@ -765,7 +765,7 @@ variance $\sigma^2_{u^*|\mathbf{y}}$,
 \end{align*}
 
 The approach introduced by
-\cite{Alvarez+Lawrence:2009,Alvarez+Luengo+Lawrence:2013} conveniently
+\cite{Alvarez+Luengo+Lawrence:2009,Alvarez+Luengo+Lawrence:2013} conveniently
 reduces the original LFM into an Gaussian process regression problem
 with a modified covariance function. However, this approach requires
 that we need to solve the impulse response $h$ and then compute the
@@ -2043,6 +2043,13 @@ control example.
 
 \subsection{An ODE Model}
 %
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\columnwidth]{massSpringDamper}
+\caption{A mass-spring-damper system to illustrate a latent force model with ordinary differential equations.}
+\label{mass:spring:damper:figure}
+\end{figure}
+
 Our first illustrative example corresponds to the second order
 differential model described in equation \eqref{eq:sde0}. Figure
 \ref{mass:spring:damper:figure} shows a mass-spring-damper system
@@ -2063,42 +2070,61 @@ k(t -t') = \sigma_t^2\exp\Bigg[-\frac{(t-t')^2}{\ell^2_t}\Bigg],
 \end{align*}
 it is possible to obtain closed-form solutions for $k_{f,f'}(t,t')$
 and $k_{f,u}$ (see Eq. \eqref{eq:fucov})
-\ref{Alvarez+Luengo+Lawrence:2013}.
+\cite{Alvarez+Luengo+Lawrence:2009}.
  
 As an example, we assume that the input source $u(t)$ is given as
 \begin{align*}
-u(t) = \sin(0.37t +1.22) + \sin(0.29t + 0.38),
+u(t) = \sin(0.73t +1.22) + \sin(0.29t + 0.38),
 \end{align*}
-where $t\in [0,50]$. Figure XX shows the input $u(t)$ computed for
+where $t\in [0,50]$. The dahsed line in Figure \ref{ode2:source:subfig:mlgp}  shows the input $u(t)$ computed for
 $N=5000$ points equally distributed in the input domain. 
 
-Parameters for the ODE are $\lambda = 0.1$, and $\gamma = 1$. The
-output function $f(t)$ obtained by solving the differential equation
-is shown in Figure XX. We randomly choose $n=500$ points for $f(t)$
-for training, evaluated at $\{t_k\}_{k=1}^n$, and add Gaussian noise
-$\epsilon_k$ with zero mean and variance equal to $1e-4$, to get
+Parameters for the ODE are $\lambda = 0.1$, and $\gamma = 1$. The output function $f(t)$ obtained by solving the
+differential equation is shown in Figure \ref{ode2:output:subfig:mlgp} as a dashed line. 
+We uniformly choose $n=50$ time points $\{t_k\}_{k=1}^n$ within the interval $t\in [0,50]$, together with their
+corresponding function evaluations $\{f_k\}_{k=1}^n$, as part of the training data. For the training points, we add Gaussian noise
+$\epsilon_k$ with zero mean and variance equal to $0.09$, to get
 measurements $\{y_k\}_{k=1}^n$. We assume that the parameters
 $\lambda$, $\gamma$, and the variance for $\epsilon_k$ are known, and
 only estimate the parameters $\sigma_t^2$,
 and $\ell^2_t$ of the kernel function $k(t-t')$.
 
+Results of inference for the latent function $u(t)$ are shown in Figure \ref{ode2:source:subfig:mlgp}.
 
-
-
-
-\simo{Simple spring model with RBF. Compare the computational complexities and easiness of implementation.}
-
-\simo{Mauricio starts by explaining the setup.}
-
-\begin{figure}[!t]
+\begin{figure}[!ht]
 \centering
-\includegraphics[width=\columnwidth]{placeholder1}
-% where an .eps filename suffix will be assumed under latex,
-% and a .pdf suffix will be assumed for pdflatex; or what has been declared
-% via \DeclareGraphicsExtensions.
-\caption{Simulation Results (placeholder 1)}
-\label{fig_sim}
-\end{figure}
+   \subfloat[ODE output $f(t)$ and measurements $\{y_k\}_{k=1}^n$. The dashed line is the ground truth output $f(t)$
+   obtained by solving the ODE, and the dots
+   represent the noisy measurements $\{y_k\}_{k=1}^n$. The solid line is the predictive mean $f(t_*)$, and the grey
+   region represents the predictive uncertainty, two standard deviations away from the mean prediction.\label{ode2:output:subfig:mlgp}]{%
+       \includegraphics[width=\columnwidth]{toyODE2output}
+         }\\
+   %\hfill
+     \subfloat[Ground truth and predicted source $u(t)$. The dashed line is the ground truth source $u(t)$. The solid
+     line is the mean posterior for  $u^*$, while the shaded region covers two standard deviation away from the mean. \label{ode2:source:subfig:mlgp}]{%
+       \includegraphics[width=\columnwidth]{toyODE2source}
+     }
+     \caption{In \ref{ode2:output:subfig:mlgp}, the ground truth output function $f(t)$, the noisy observations
+       $\{y_k\}_{k=1}^n$, and the predictive distribution for the output process for the ODE
+       example. In \ref{ode2:source:subfig:mlgp}, the ground truth source and the posterior distribution for $u^*$.}
+     \label{fig:dummy}
+   \end{figure}
+
+
+%\simo{Simple spring model with RBF. Compare the computational complexities and easiness of implementation.}
+
+%\simo{Mauricio starts by explaining the setup.}
+
+
+% \begin{figure}[!t]
+% \centering
+% \includegraphics[width=\columnwidth]{placeholder1}
+% % where an .eps filename suffix will be assumed under latex,
+% % and a .pdf suffix will be assumed for pdflatex; or what has been declared
+% % via \DeclareGraphicsExtensions.
+% \caption{Simulation Results (placeholder 1)}
+% \label{fig_sim}
+% \end{figure}
 
 
 \subsection{A PDE Model}
@@ -2142,6 +2168,22 @@ For the state-space solution, we use a basis like XX.
 \end{figure}
 
 \subsection{A PDE Model II}
+
+In this example, we model the 2D Poisson equation where our aim is to infer the unknown input field $u(x,y)$ from noisy
+observations $y_k$, as in Eq. \eqref{eq:sde0}. In a similar way to previous examples, we assume that the source follows
+a GP prior with an SE covariance. The input space consists of two space variables that we refer to as $x$
+and $y$. The covariance function for the source is given as
+\begin{align*}
+k(x-x', y -y') = \exp\Bigg[-\frac{(x-x')^2}{\sigma^2_x}\Bigg]\exp\Bigg[-\frac{(y-y')^2}{\sigma^2_y}\Bigg],
+\end{align*}
+where $\sigma_x$, and $\sigma_y$ are the length-scales along the
+spatial dimensions.
+
+Assuming boundary conditions equal to zero, we can once more use the corresponding Green's function (see
+\cite{Polyanin:Handbook02} for mathematical details) to compute covariance functions for the output
+$k_{f,f}(x,y,x',y')$, and between the output and the latent source $k_{f,u}(x,y,x',y')$.
+
+
 
 \simo{Mauricio writes the Poisson 2D example here and we use both series expansion and closed-form methods here. We leave the state-space version out because, as discussed a few sections ago, it is not at all suitable in this case.}
 
