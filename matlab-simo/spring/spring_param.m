@@ -11,7 +11,7 @@
   b = 0.1;
   tt = (1:N)*dt;
   meas_step = 10;
-  sd = 0.01;
+  sd = 0.3;
   
   %
   % Unknown input
