@@ -2074,14 +2074,14 @@ and $k_{f,u}$ (see Eq. \eqref{eq:fucov})
  
 As an example, we assume that the input source $u(t)$ is given as
 \begin{align*}
-u(t) = \sin(0.73t +1.22) + \sin(0.29t + 0.38),
+u(t) = \sin(0.73t - 0.64) + \sin(0.29t- 0.64),
 \end{align*}
 where $t\in [0,50]$. The dahsed line in Figure \ref{ode2:source:subfig:mlgp}  shows the input $u(t)$ computed for
 $N=5000$ points equally distributed in the input domain. 
 
 Parameters for the ODE are $\lambda = 0.1$, and $\gamma = 1$. The output function $f(t)$ obtained by solving the
 differential equation is shown in Figure \ref{ode2:output:subfig:mlgp} as a dashed line. 
-We uniformly choose $n=50$ time points $\{t_k\}_{k=1}^n$ within the interval $t\in [0,50]$, together with their
+We uniformly choose $n=500$ time points $\{t_k\}_{k=1}^n$ within the interval $t\in [0,50]$, together with their
 corresponding function evaluations $\{f_k\}_{k=1}^n$, as part of the training data. For the training points, we add Gaussian noise
 $\epsilon_k$ with zero mean and variance equal to $0.09$, to get
 measurements $\{y_k\}_{k=1}^n$. We assume that the parameters
@@ -2097,12 +2097,12 @@ Results of inference for the latent function $u(t)$ are shown in Figure \ref{ode
    obtained by solving the ODE, and the dots
    represent the noisy measurements $\{y_k\}_{k=1}^n$. The solid line is the predictive mean $f(t_*)$, and the grey
    region represents the predictive uncertainty, two standard deviations away from the mean prediction.\label{ode2:output:subfig:mlgp}]{%
-       \includegraphics[width=\columnwidth]{toyODE2output}
+       \includegraphics[width=0.45\textwidth]{toyODE2output}
          }\\
    %\hfill
      \subfloat[Ground truth and predicted source $u(t)$. The dashed line is the ground truth source $u(t)$. The solid
      line is the mean posterior for  $u^*$, while the shaded region covers two standard deviation away from the mean. \label{ode2:source:subfig:mlgp}]{%
-       \includegraphics[width=\columnwidth]{toyODE2source}
+       \includegraphics[width=0.45\textwidth]{toyODE2source}
      }
      \caption{In \ref{ode2:output:subfig:mlgp}, the ground truth output function $f(t)$, the noisy observations
        $\{y_k\}_{k=1}^n$, and the predictive distribution for the output process for the ODE
@@ -2127,50 +2127,50 @@ Results of inference for the latent function $u(t)$ are shown in Figure \ref{ode
 % \end{figure}
 
 
+% \subsection{A PDE Model}
+% In this example, we illustrate the performance of the latent force
+% models for a the Heat equation with one space variable. 
+
+% We refer to equation  XX. Figure XX illustrates a physical setup where
+% the input  $u(\cdot)$ represents a heat source that moves across space
+% an time, irradiating the heat over a flut surface where the heat $f(\cdot)$ is
+% actually measured.
+
+
+% We assume that the source $u(x, t)$ follows a Gaussian process with
+% squared-exponentiated (SE) covariance
+% function that separates in the spatial and time dimensions,
+% \begin{align*}
+% k(x-x', t -t') = \exp\Bigg[-\frac{(x-x')^2}{\sigma^2_x}\Bigg]\exp\Bigg[-\frac{(t-t')^2}{\sigma^2_t}\Bigg],
+% \end{align*}
+% where $\sigma_x$, and $\sigma_t$ are the length-scales along the
+% spatial, and time variables, respectively. 
+% Assuming boundary conditions, and initial condition equal to zero, the
+% corresponding Green's function in \cite{Polyanin:Handbook02} can be
+% used to compute analitycally the covariances  $k_{f,f}$ and $k_{f,u}$.
+% % 
+% For the state-space solution, we use a basis like XX. 
+
+
+% %
+% \simo{Heat equation with closed form Green's function and basis functions. Covariance functions RBF \& Matern.}
+
+% \simo{Mauricio starts by explaining the setup.}
+
+% \begin{figure}[!t]
+% \centering
+% \includegraphics[width=\columnwidth]{placeholder2}
+% % where an .eps filename suffix will be assumed under latex,
+% % and a .pdf suffix will be assumed for pdflatex; or what has been declared
+% % via \DeclareGraphicsExtensions.
+% \caption{Simulation Results (placeholder 2)}
+% \label{fig_sim}
+% \end{figure}
+
 \subsection{A PDE Model}
-In this example, we illustrate the performance of the latent force
-models for a the Heat equation with one space variable. 
-
-We refer to equation  XX. Figure XX illustrates a physical setup where
-the input  $u(\cdot)$ represents a heat source that moves across space
-an time, irradiating the heat over a flut surface where the heat $f(\cdot)$ is
-actually measured.
-
-
-We assume that the source $u(x, t)$ follows a Gaussian process with
-squared-exponentiated (SE) covariance
-function that separates in the spatial and time dimensions,
-\begin{align*}
-k(x-x', t -t') = \exp\Bigg[-\frac{(x-x')^2}{\sigma^2_x}\Bigg]\exp\Bigg[-\frac{(t-t')^2}{\sigma^2_t}\Bigg],
-\end{align*}
-where $\sigma_x$, and $\sigma_t$ are the length-scales along the
-spatial, and time variables, respectively. 
-Assuming boundary conditions, and initial condition equal to zero, the
-corresponding Green's function in \cite{Polyanin:Handbook02} can be
-used to compute analitycally the covariances  $k_{f,f}$ and $k_{f,u}$.
-% 
-For the state-space solution, we use a basis like XX. 
-
-
-%
-\simo{Heat equation with closed form Green's function and basis functions. Covariance functions RBF \& Matern.}
-
-\simo{Mauricio starts by explaining the setup.}
-
-\begin{figure}[!t]
-\centering
-\includegraphics[width=\columnwidth]{placeholder2}
-% where an .eps filename suffix will be assumed under latex,
-% and a .pdf suffix will be assumed for pdflatex; or what has been declared
-% via \DeclareGraphicsExtensions.
-\caption{Simulation Results (placeholder 2)}
-\label{fig_sim}
-\end{figure}
-
-\subsection{A PDE Model II}
 
 In this example, we model the 2D Poisson equation where our aim is to infer the unknown input field $u(x,y)$ from noisy
-observations $y_k$, as in Eq. \eqref{eq:sde0}. In a similar way to previous examples, we assume that the source follows
+observations $y_k$, as in Eq. \eqref{eq:sde0}. We assume that the source follows
 a GP prior with an SE covariance. The input space consists of two space variables that we refer to as $x$
 and $y$. The covariance function for the source is given as
 \begin{align*}
@@ -2179,7 +2179,7 @@ k(x-x', y -y') = \exp\Bigg[-\frac{(x-x')^2}{\sigma^2_x}\Bigg]\exp\Bigg[-\frac{(y
 where $\sigma_x$, and $\sigma_y$ are the length-scales along the
 spatial dimensions.
 
-Assuming boundary conditions equal to zero, we can once more use the corresponding Green's function (see
+Assuming boundary conditions equal to zero, we can use the corresponding Green's function (see
 \cite{Polyanin:Handbook02} for mathematical details) to compute covariance functions for the output
 $k_{f,f}(x,y,x',y')$, and between the output and the latent source $k_{f,u}(x,y,x',y')$.
 
