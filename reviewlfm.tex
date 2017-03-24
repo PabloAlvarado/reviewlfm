@@ -387,11 +387,10 @@
         Mauricio~A.~\'Alvarez, 
         and~Neil~D.~Lawrence% <-this % stops a space
 \thanks{Simo~S\"arkk\"a is with the Department of Electrical Engineering and Automation (EEA), Aalto University, Rakentajanaukio 2, 02150 Espoo, Finland (simo.sarkka@aalto.fi).}% <-this % stops a space
-\thanks{Mauricio A. \'Alvarez is with the Department of Electrical Engineering,
-Universidad Tecnol\'ogica de Pereira, Colombia, 660003.}% <-this % stops a space
-\thanks{Neil D. Lawrence is with the Department of Computer Science, University of Sheffield,
-Sheffield, UK S1 4DP and with The Sheffield Institute for Translational Neuroscience,
-Sheffield, UK S10 2HQ.}% <-this % stops a space
+\thanks{Mauricio A. \'Alvarez is with the Department of Computer Science, University of Sheffield,
+Sheffield, UK S1 4DP}% <-this % stops a space
+\thanks{Neil D. Lawrence is with Amazon, Cambridge, UK and the Department of Computer Science, University of Sheffield,
+Sheffield, UK S1 4DP}% <-this % stops a space
 \thanks{Manuscript received XXX; revised XXX.}}
 
 
@@ -2181,8 +2180,66 @@ spatial dimensions.
 
 Assuming boundary conditions equal to zero, we can use the corresponding Green's function (see
 \cite{Polyanin:Handbook02} for mathematical details) to compute covariance functions for the output
-$k_{f,f}(x,y,x',y')$, and between the output and the latent source $k_{f,u}(x,y,x',y')$.
+$k_{f,f}(x,y,x',y')$, and between the output and the latent source $k_{f,u}(x,y,x',y')$. We can then use GP regression
+expressions to infer the posterior distribution $p(u^*|\mathbf{y})$.
 
+In this example, the input field $u(x,y)$ is given by
+\begin{align*}
+u(x, y) & = 100\exp\left\{- \frac{\left[(x + 0.8)^2 + (y - 0.8)^2\right]}{s^2}\right\} \\
+         & + 100\exp\left\{- \frac{\left[(x - 0.7)^2 + (y + 0.9)^2\right]}{s^2}\right\},
+\end{align*}
+where $s^2 = 1$.
+Figure XX shows the input source in the domain $[-2, 2]\times [-2,2]$.
+
+\begin{figure*}[!ht]
+\centering
+   \subfloat[
+    %ODE output $f(t)$ and measurements $\{y_k\}_{k=1}^n$. The dashed line is the ground truth output $f(t)$
+   %obtained by solving the ODE, and the dots
+   %represent the noisy measurements $\{y_k\}_{k=1}^n$. The solid line is the predictive mean $f(t_*)$, and the grey
+   %region represents the predictive uncertainty, two standard deviations away from the mean prediction.
+\label{pde:poisson:latent:gt}]{%
+       \includegraphics[width=0.33\textwidth]{toyPDElatentGT}
+         }
+     \subfloat[
+     %Ground truth and predicted source $u(t)$. The dashed line is the ground truth source $u(t)$. The solid
+     %line is the mean posterior for  $u^*$, while the shaded region covers two standard deviation away from the mean. 
+\label{pde:poisson:latent:gt:contourn}]{%
+       \includegraphics[width=0.3\textwidth]{toyPDElatentGTContourn}
+     }
+    \subfloat[
+     %Ground truth and predicted source $u(t)$. The dashed line is the ground truth source $u(t)$. The solid
+     %line is the mean posterior for  $u^*$, while the shaded region covers two standard deviation away from the mean. 
+    \label{pde:poisson:output:gt}]{%
+       \includegraphics[width=0.33\textwidth]{toyPDEoutputGT}
+     }\\
+\subfloat[
+    %ODE output $f(t)$ and measurements $\{y_k\}_{k=1}^n$. The dashed line is the ground truth output $f(t)$
+   %obtained by solving the ODE, and the dots
+   %represent the noisy measurements $\{y_k\}_{k=1}^n$. The solid line is the predictive mean $f(t_*)$, and the grey
+   %region represents the predictive uncertainty, two standard deviations away from the mean prediction.
+\label{pde:poisson:latent:pr}]{%
+       \includegraphics[width=0.33\textwidth]{toyPDElatentPR}
+         }
+     \subfloat[
+     %Ground truth and predicted source $u(t)$. The dashed line is the ground truth source $u(t)$. The solid
+     %line is the mean posterior for  $u^*$, while the shaded region covers two standard deviation away from the mean. 
+\label{pde:poisson:latent:pr:contourn}]{%
+       \includegraphics[width=0.3\textwidth]{toyPDElatentPRContourn}
+     }
+    \subfloat[
+     %Ground truth and predicted source $u(t)$. The dashed line is the ground truth source $u(t)$. The solid
+     %line is the mean posterior for  $u^*$, while the shaded region covers two standard deviation away from the mean. 
+    \label{pde:poisson:output:pr}]{%
+       \includegraphics[width=0.33\textwidth]{toyPDEoutputPR}
+     }
+
+     \caption{In \ref{ode2:output:subfig:mlgp}, the ground truth output function $f(t)$, the noisy observations
+       $\{y_k\}_{k=1}^n$, and the predictive distribution for the output process for the ODE
+       example. In \ref{ode2:source:subfig:mlgp}, the ground truth source and the posterior distribution for $u^*$.
+     }
+     \label{fig:dummy}
+   \end{figure*}
 
 
 \simo{Mauricio writes the Poisson 2D example here and we use both series expansion and closed-form methods here. We leave the state-space version out because, as discussed a few sections ago, it is not at all suitable in this case.}
