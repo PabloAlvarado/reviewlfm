@@ -29,7 +29,7 @@
     
     se_cov  = @(t) s^2 * exp(-t.^2/2/ell^2);
 
-%    order = 4;
+%    order = 6;
 %    [Bgp,Agp] = se_taylor(order,s,ell);
     [Bgp,Agp] = se_pade(4,8,s,ell)
     [Fgp,Lgp,qgp,Hgp] = ratspec_to_ss(Bgp,Agp);
@@ -163,10 +163,15 @@
     ind = find(~isnan(Y));
 
     subplot(2,1,1);
-    plot(T,ks_x_mu,T(ind),Y(ind),'.')
+    plot(T,ks_x_mu,'r',T(ind),Y(ind),'b.',...
+         T,ks_x_mu+1.96*sqrt(kf_x_V),'r--',T,ks_x_mu-1.96*sqrt(kf_x_V),'r--')
+
 
     subplot(2,1,2);
-    plot(T,ks_u_mu,'r--',T,u_ext)
+    plot(T,ks_u_mu,'r',T,u_ext,'-.',...
+         T,ks_u_mu+1.96*sqrt(kf_u_V),'r--',T,ks_u_mu-1.96*sqrt(kf_u_V),'r--')
+    legend('Estimate','Truth');
+    title('Force');
     
     
     

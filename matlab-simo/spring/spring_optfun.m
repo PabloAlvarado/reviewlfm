@@ -4,6 +4,8 @@ function nlog_lh = spring_se_optfun(s_ell,sd,b,dt,Y)
     s = s_ell(1);
     ell = s_ell(2);
 
+%    order = 6;
+%    [Bgp,Agp] = se_taylor(order,s,ell);
     [Bgp,Agp] = se_pade(4,8,s,ell);
     [Fgp,Lgp,qgp,Hgp] = ratspec_to_ss(Bgp,Agp);
     [Fgp,Lgp,Hgp] = ss_balance(Fgp,Lgp,Hgp);
