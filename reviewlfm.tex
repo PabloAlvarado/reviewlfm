@@ -2110,6 +2110,11 @@ Results of inference for the latent function $u(t)$ are shown in Figure \ref{ode
    \end{figure}
 
 
+The Mean Squared Error (MSE) between the ground truth source $u(t)$, and the inferred mean source $u^*(t)$ is equal to $0.0036$. The MSE
+between the ground truth output $f(t)$ and the mean predicted output $f^*(t)$ evaluated at the test input points is
+$0.0040$.
+
+
 %\simo{Simple spring model with RBF. Compare the computational complexities and easiness of implementation.}
 
 %\simo{Mauricio starts by explaining the setup.}
@@ -2241,6 +2246,10 @@ Figure XX shows the input source in the domain $[-2, 2]\times [-2,2]$.
      \label{fig:dummy}
    \end{figure*}
 
+
+The MSE between the ground truth source $u(x,y)$, and the inferred mean source $u^*(x,y)$ is equal to $0.5153$. The MSE
+between the ground truth output $f(x,y)$ and the mean predicted output $f^*(x,y)$ evaluated at the test input points is
+$8.3354\times 10^{-4}$.
 
 \simo{Mauricio writes the Poisson 2D example here and we use both series expansion and closed-form methods here. We leave the state-space version out because, as discussed a few sections ago, it is not at all suitable in this case.}
 
