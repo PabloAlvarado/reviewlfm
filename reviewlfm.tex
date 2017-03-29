@@ -1175,10 +1175,11 @@ where $\nabla^2 = \partial^2 / \partial x_1^2 + \cdots + \partial^2 / \partial x
 
 State-space realizations of spatio-temporal oscillating fields have been discussed in \cite{Solin+Sarkka:2013}. The implementation of divergence-free covariance functions for magnetic field modeling have been recently presented in \cite{Solin:2015}.
 
-\simo{Should add a visualization of this idea here}
 
 \subsection{Covariance functions implied by state-space models}
 %
+\simo{Simo: Check if we need to add or remove something}
+
 The covariance function of $u(t)$ can be expressed as
 %
 \begin{equation}
@@ -1470,7 +1471,7 @@ However, it turns out that although we can indeed estimate the process $f$ easil
 
 \subsection{Detectability and Observability of Latent Force Models}
 
-\simo{Say something for intro}
+\simo{Simo: Say something for intro and then put the actual theorems to the place.}
 
 \begin{theorem}
   Assume that we have a latent force model which has the following state space representation:
@@ -1568,15 +1569,15 @@ The corresponding discrete-time system is observable if the conditions (a) and (
 
 \simo{Write/comment the corresponding theorem for PDEs using \cite{Curtain:2012}}
 
-\subsection{PDE Methods for State-Space PDEs}
-
-\simo{Discuss the use of Hilbert-space methods, FEM, and finite differences}
+%\subsection{PDE Methods for State-Space PDEs}
+%
+%\simo{Discuss the use of Hilbert-space methods, FEM, and finite differences}
 
 \section{Stochastic Control of Latent Force Models}
 %
 %\simo{We could also discuss the use of LFMs in control. The state-space representation allows for the use of classical LQ-control theory for this. As the latent forces are modeled as stationary GPs, it implies that the model will not be controllable (from the force), but certainly it will be stabilizable. }
 
-\simo{Say something for intro}
+\simo{Simo: Say something for intro and finite the missing parts}
 
 \subsection{Controlled Basic LFMs}
 %
@@ -1796,7 +1797,7 @@ Note that although the system is stabilizable also by setting the second term to
 
 \subsection{Stabilizability and Non-Controllability of Controlled LFMs}
 %
-\simo{Say something for intro}
+\simo{Simo: Say something for intro and put the actual texts here.}
 
 \begin{theorem} \label{the:stab}
 Assume that we have a controlled latent force model, which has the following state-space form:
@@ -1861,7 +1862,7 @@ where we have written $\mathbf{K}_c = \begin{pmatrix} \mathbf{K}_f & \mathbf{K}_
 
 \subsection{Operators in Measurement Model}
 
-\simo{Discuss how things work when we have operators in the measurement model as well. In fact everything is already in the SigProcMag article, so this can be brief.}
+\simo{Simo: Discuss how things work when we have operators in the measurement model as well. In fact everything is already in the SigProcMag article, so this can be brief.}
 
 
 
@@ -1888,6 +1889,8 @@ where we have written $\mathbf{K}_c = \begin{pmatrix} \mathbf{K}_f & \mathbf{K}_
 %
 \subsection{Non-linear Models}
 
+\simo{Mauricio: double check your text.}
+
 When the input force is modelled as a non-linear transformation of a Gaussian process \cite{Lawrence:gpsim2007a,
 Gao:latent08, Titsias:BMC:2012}, it is necessary to resort to an approximation in order to compute the posterior
 distribution for $u^*$ given $\mathbf{y}$, or the predictive distribution for $f^*$ given $\mathbf{y}$.
@@ -1902,14 +1905,7 @@ derivatives for the terms involved are then computed on a grid using Riemann qua
 authors provide a Markov Chain Monte Carlo (MCMC) procedure to compute the posterior distribution for $u(t)$, as well
 as posterior distributions for any parameters appearing as part of the impulse response.
 
-\mauricio{We could go into more details here if we want. I was checking previous published papers and this is really
-the only non-linear model that has been proposed before, in the context of LFMs for regression. The non-linearity in the
-differential equation has not been published before}.
-
-
-\simo{Non-linear models in state-space form here}
-
-\simo{Something about non-linear stochastic control here}
+\simo{Simo: Add non-linear models in state-space form here. Something about non-linear stochastic control here}
 
 
 \subsection{Switching LFMs}
@@ -1926,13 +1922,13 @@ In \cite{Alvarez:switched11}, the authors use second order differential operator
 basic movements (also known as motor primitives) from a multivariate time series coming from a robot arm playing table
 tennis.
 
-\mauricio{I just realized we should define a letter for the number of datapoints. I was using little n, but now I see
-that little n it's been used for the order of the differential operator}
+\simo{Both: find references}
 
-\simo{Both write}
 
 \subsection{Stable State-Space Realization of $u$}
 %
+\simo{Think if we actually need this}
+
 In this section we discuss stable representation of the rational spectral densities needed to $u$. Recall that the first step in the construction of the state-space model is spectral factorization (see, e.g., \cite{Hartikainen+Sarkka:2010, Sarkka+Hartikainen:2012, Sarkka+Solin+Hartikainen:2013}) which means that given a rational spectral density $S(\omega)$, we find a real rational function
 %
 \begin{equation}
@@ -2061,6 +2057,8 @@ control example.
 \label{mass:spring:damper:figure}
 \end{figure}
 
+\simo{Mauricio: Finish the descriptions}
+
 Our first illustrative example corresponds to the second order
 differential model described in equation \eqref{eq:sde0}. Figure
 \ref{mass:spring:damper:figure} shows a mass-spring-damper system
@@ -2185,6 +2183,9 @@ $0.0040$.
 
 \subsection{A PDE Model}
 
+\simo{Mauricio: Finish the descriptions}
+
+
 In this example, we model the 2D Poisson equation where our aim is to infer the unknown input field $u(x,y)$ from noisy
 observations $y_k$, as in Eq. \eqref{eq:sde0}. We assume that the source follows
 a GP prior with an SE covariance. The input space consists of two space variables that we refer to as $x$
@@ -2283,11 +2284,11 @@ $8.3354\times 10^{-4}$.
 
 \subsection{LQ Control of ODE LFMs}
 
-\simo{State-space control of string model with comparison to non-LFM control.}
+\simo{Simo: State-space control of string model with comparison to non-LFM control.}
 
 \subsection{LQ Control of PDE LFMs}
 
-\simo{State-space control of the heat equation with the same input as we used above. If this works well then it would be beneficial to expand the control section and even change the title to include "control".}
+\simo{Simo: State-space estimation and control of the heat equation with the same input as we used above. If this works well then it would be beneficial to expand the control section and even change the title to include "control".}
 
 
 %\subsection{\simo{\st{A Periodic Model}}}
