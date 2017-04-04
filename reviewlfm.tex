@@ -496,7 +496,7 @@ where $u(t)$ and $f(t)$ are unknown an $c(t)$ is a control function (known or to
 \end{split}
 \end{equation}
 %
-The aim of this article is to consider the unknown force or input $u$ as unknown and model it as a non-parametric Gaussian process model \cite{Rasmussen+Williams:2006} with a given covariance function in order to estimate, or in machine learning terms, {\em learn} $f$ and $u$. This kind of models are called latent force models (LFM) \cite{Alvarez+Luengo+Lawrence:2009,Alvarez:2010,Alvarez+Luengo+Lawrence:2013} in machine learning literature. In addition to learning problem on the LFMs, we also consider the problem of controlling the LFM using the control function $c(t)$. In particular, we consider the problem of optimal linear stochastic control design for this type of models.
+The aim of this article is to consider the unknown force or input $u$ as unknown and model it as a non-parametric Gaussian process model \cite{Rasmussen+Williams:2006} with a given covariance function in order to estimate, or in machine learning terms, {\em learn} $f$ and $u$. This kind of models are called latent force models (LFM) \cite{Alvarez+Luengo+Lawrence:2009,Alvarez:switched2011,Alvarez+Luengo+Lawrence:2013} in machine learning literature. In addition to learning problem on the LFMs, we also consider the problem of controlling the LFM using the control function $c(t)$. In particular, we consider the problem of optimal linear stochastic control design for this type of models.
 
 The present problem is also closely related to so called input estimation problem that has previously been addressed in target tracking literature (e.g. \cite{Bar-Shalom+Li+Kirubarajan:2001}) by replacing the input or force with a white or colored noise. However, here we will specifically concentrate on the machine learning point of view which allows for encoding prior information into the driving force as well as the use of modern machine learning methods for coping with the related hyperparameter estimation problems and model extensions.
 
@@ -868,7 +868,10 @@ f(\mathbf{x}) & = \int_{\mathcal{X}} H(\mathbf{x}, \mathbf{z})\,
 \end{align*}
 %
 where $\mathcal{X}$ is the input domain of integration, and $g(\mathbf{x})$ is the solution due to the boundary
-conditions. For simplicity in the presentation, we assume that the boundary conditions are zero, but the boundary conditions could also be incorporated. In this case the Green's function $H(\mathbf{x}, \mathbf{z})$, with suitable boundary conditions, can be written in closed form.  \simo{Mauricio: Find a citation for this closed form expression}
+conditions. For simplicity in the presentation, we assume that the boundary conditions are zero, but the boundary
+conditions could also be incorporated. In this case the Green's function $H(\mathbf{x}, \mathbf{z})$, with suitable
+boundary conditions, can be written in closed form. The expression for this Green's function can be found in \cite{Polyanin:Handbook02}. 
+%\simo{Mauricio: Find a citation for this closed form expression}
 
 For the GP regression view of latent force models, we put a GP prior over $u(\mathbf{x})$,
 \begin{align*}
@@ -908,7 +911,7 @@ f(\mathbf{x},t) & = \int_{t_0}^t \int_{\mathcal{X}} H(\mathbf{x}, t;  \mathbf{z}
                 u(\mathbf{z},s)\,d\mathbf{z}\,ds
 \end{align*}
 %
-and again the Green's function $H$ it can be written in closed form. \simo{Mauricio: Find a reference for this}
+and again the Green's function $H$ it can be written in closed form. See \cite{Polyanin:Handbook02} for the particular expression. 
 
 In this case the Green's function is also the kernel of so called operator exponential (exponential semigroup) of the operator:
 %
@@ -2052,13 +2055,11 @@ control example.
 %
 \begin{figure}[!t]
 \centering
-\includegraphics[width=\columnwidth]{massSpringDamper}
+\includegraphics[width=0.3\textwidth]{massSpringDamper}
 \caption{A mass-spring-damper system to illustrate a latent force model with ordinary differential equations.}
 \label{mass:spring:damper:figure}
 \end{figure}
-
-\simo{Mauricio: Finish the descriptions}
-
+%\simo{Mauricio: Finish the descriptions}
 Our first illustrative example corresponds to the second order
 differential model described in equation \eqref{eq:sde0}. Figure
 \ref{mass:spring:damper:figure} shows a mass-spring-damper system
@@ -2118,11 +2119,13 @@ Results of inference for the latent function $u(t)$ are shown in Figure \ref{ode
        example. In \ref{ode2:source:subfig:mlgp}, the ground truth source and the posterior distribution for $u^*$.}
      \label{fig:dummy}
    \end{figure}
-
-
 The Mean Squared Error (MSE) between the ground truth source $u(t)$, and the inferred mean source $u^*(t)$ is equal to $0.0036$. The MSE
 between the ground truth output $f(t)$ and the mean predicted output $f^*(t)$ evaluated at the test input points is
 $0.0040$.
+
+The results above were obtained using the GP regression point of view of LFMs. However, we also ran the same experiment
+using the state space formulation for LFMs. As it should be expected, the results obtained were very similar. 
+
 
 
 %\simo{Simple spring model with RBF. Compare the computational complexities and easiness of implementation.}
@@ -2182,8 +2185,48 @@ $0.0040$.
 % \end{figure}
 
 \subsection{A PDE Model}
+%\simo{Mauricio: Finish the descriptions}
 
-\simo{Mauricio: Finish the descriptions}
+
+\begin{figure*}[!ht]
+\centering
+   \subfloat[Ground truth source function $u(x,y)$
+   \label{pde:poisson:latent:gt}]{%
+       \includegraphics[width=0.33\textwidth]{toyPDElatentGT}
+         }
+     \subfloat[Contourns of the surface in Fig. \ref{pde:poisson:latent:gt} 
+\label{pde:poisson:latent:gt:contourn}]{%
+       \includegraphics[width=0.3\textwidth]{toyPDElatentGTContourn}
+     }
+    \subfloat[Output function $f(x,y)$. 
+    \label{pde:poisson:output:gt}]{%
+       \includegraphics[width=0.33\textwidth]{toyPDEoutputGT}
+     }\\
+\subfloat[Mean prediction for $u^*(x,y)$.
+\label{pde:poisson:latent:pr}]{%
+       \includegraphics[width=0.33\textwidth]{toyPDElatentPR}
+         }
+     \subfloat[Contourns of the surface in Fig. \ref{pde:poisson:latent:pr} 
+     \label{pde:poisson:latent:pr:contourn}]{%
+       \includegraphics[width=0.3\textwidth]{toyPDElatentPRContourn}
+     }
+    \subfloat[Mean prediction for $f^*(x,y)$     
+    \label{pde:poisson:output:pr}]{%
+       \includegraphics[width=0.33\textwidth]{toyPDEoutputPR}
+     }
+
+     \caption{The upper row shows the ground truth data for the 2D PDE Poisson example: the input source
+       (Fig. \ref{pde:poisson:latent:gt}); contourns of the ground truth input source
+       \ref{pde:poisson:latent:gt:contourn}; ground truth for the output function
+       (Fig. \ref{pde:poisson:output:gt}). Noisy observations are shown as red crosses in
+       Fig. \ref{pde:poisson:output:gt}. The lower row shows the predicted mean function
+       $\mathbb{E}[u^*(x,y)|\mathbf{y}]$ (Fig. \ref{pde:poisson:latent:pr}); contourns of the predicted mean function
+       (Fig. \ref{pde:poisson:latent:pr:contourn}); the predicted mean output $\mathbb{E}[f^*(x,y)|\mathbf{y}]$ 
+      (Fig. \ref{pde:poisson:output:pr}). Noisy observations are again shown as red crosses in Fig. \ref{pde:poisson:output:pr}. 
+     }
+     \label{fig:dummy}
+   \end{figure*}
+
 
 
 In this example, we model the 2D Poisson equation where our aim is to infer the unknown input field $u(x,y)$ from noisy
@@ -2207,64 +2250,31 @@ u(x, y) & = 100\exp\left\{- \frac{\left[(x + 0.8)^2 + (y - 0.8)^2\right]}{s^2}\r
          & + 100\exp\left\{- \frac{\left[(x - 0.7)^2 + (y + 0.9)^2\right]}{s^2}\right\},
 \end{align*}
 where $s^2 = 1$.
-Figure XX shows the input source in the domain $[-2, 2]\times [-2,2]$.
-
-\begin{figure*}[!ht]
-\centering
-   \subfloat[
-    %ODE output $f(t)$ and measurements $\{y_k\}_{k=1}^n$. The dashed line is the ground truth output $f(t)$
-   %obtained by solving the ODE, and the dots
-   %represent the noisy measurements $\{y_k\}_{k=1}^n$. The solid line is the predictive mean $f(t_*)$, and the grey
-   %region represents the predictive uncertainty, two standard deviations away from the mean prediction.
-\label{pde:poisson:latent:gt}]{%
-       \includegraphics[width=0.33\textwidth]{toyPDElatentGT}
-         }
-     \subfloat[
-     %Ground truth and predicted source $u(t)$. The dashed line is the ground truth source $u(t)$. The solid
-     %line is the mean posterior for  $u^*$, while the shaded region covers two standard deviation away from the mean. 
-\label{pde:poisson:latent:gt:contourn}]{%
-       \includegraphics[width=0.3\textwidth]{toyPDElatentGTContourn}
-     }
-    \subfloat[
-     %Ground truth and predicted source $u(t)$. The dashed line is the ground truth source $u(t)$. The solid
-     %line is the mean posterior for  $u^*$, while the shaded region covers two standard deviation away from the mean. 
-    \label{pde:poisson:output:gt}]{%
-       \includegraphics[width=0.33\textwidth]{toyPDEoutputGT}
-     }\\
-\subfloat[
-    %ODE output $f(t)$ and measurements $\{y_k\}_{k=1}^n$. The dashed line is the ground truth output $f(t)$
-   %obtained by solving the ODE, and the dots
-   %represent the noisy measurements $\{y_k\}_{k=1}^n$. The solid line is the predictive mean $f(t_*)$, and the grey
-   %region represents the predictive uncertainty, two standard deviations away from the mean prediction.
-\label{pde:poisson:latent:pr}]{%
-       \includegraphics[width=0.33\textwidth]{toyPDElatentPR}
-         }
-     \subfloat[
-     %Ground truth and predicted source $u(t)$. The dashed line is the ground truth source $u(t)$. The solid
-     %line is the mean posterior for  $u^*$, while the shaded region covers two standard deviation away from the mean. 
-\label{pde:poisson:latent:pr:contourn}]{%
-       \includegraphics[width=0.3\textwidth]{toyPDElatentPRContourn}
-     }
-    \subfloat[
-     %Ground truth and predicted source $u(t)$. The dashed line is the ground truth source $u(t)$. The solid
-     %line is the mean posterior for  $u^*$, while the shaded region covers two standard deviation away from the mean. 
-    \label{pde:poisson:output:pr}]{%
-       \includegraphics[width=0.33\textwidth]{toyPDEoutputPR}
-     }
-
-     \caption{In \ref{ode2:output:subfig:mlgp}, the ground truth output function $f(t)$, the noisy observations
-       $\{y_k\}_{k=1}^n$, and the predictive distribution for the output process for the ODE
-       example. In \ref{ode2:source:subfig:mlgp}, the ground truth source and the posterior distribution for $u^*$.
-     }
-     \label{fig:dummy}
-   \end{figure*}
+Figure \ref{pde:poisson:latent:gt} shows a 3D description of the input source in the domain $[-2, 2]\times
+[-2,2]$. Figure \ref{pde:poisson:latent:gt:contourn} shows contourns of the same input source. Figure
+\ref{pde:poisson:output:gt} corresponds to the output function $f(t)$ obtained by solving the Poisson equation with an
+input source given by the function in Figure \ref{pde:poisson:latent:gt}.
 
 
-The MSE between the ground truth source $u(x,y)$, and the inferred mean source $u^*(x,y)$ is equal to $0.5153$. The MSE
-between the ground truth output $f(x,y)$ and the mean predicted output $f^*(x,y)$ evaluated at the test input points is
-$8.3354\times 10^{-4}$.
 
-\simo{Mauricio writes the Poisson 2D example here and we use both series expansion and closed-form methods here. We leave the state-space version out because, as discussed a few sections ago, it is not at all suitable in this case.}
+   The output function is made of $17,956$ observation points distributed in a grid of $134\times 134$ inputs uniformly
+   organized in the input domain. From those observations, we randomly choose $n=1000$ spatial points with their
+   corresponding function evaluations $\{f_k\}_{k=1}^n$ as part of the data used to estimate the parameters $\sigma_x^2$
+   and $\sigma_y^2$. Furthermore, we add Gaussian noise with variance $0.01$ to the function evaluations, and obtain the
+   noisy observations $\{y_k\}_{k=1}^n$. Figure \ref{pde:poisson:output:gt} shows the noisy observations as red crosses.
+   For obtaining estimates of $\sigma_x^2$ and $\sigma_y^2$, we maximize the marginal log-likelihood function with
+   respect to the parameters.
+
+Figure \ref{pde:poisson:latent:pr} shows the mean prediction of the distribution $p(u^*|\mathbf{y})$. Figure
+\ref{pde:poisson:latent:pr:contourn} shows contourns for the estimated mean function. We notice that the mean predictive
+function $\mathbb{E}[u^*(x,y)|\mathbf{y}]$ is qualitatively similar to the ground truth function $u(x,y)$. Figure
+\ref{pde:poisson:output:pr} shows the mean of the predictive distribution $p(f^*(x,y)|\mathbf{y})$. We note the
+similarity between the ground truth in Figure \ref{pde:poisson:output:gt} and the mean prediction in Figure
+\ref{pde:poisson:output:pr}.  Furthermore, the MSE between the ground truth source $u(x,y)$, and the inferred mean source $u^*(x,y)$
+is equal to $0.5153$. The MSE between the ground truth output $f(x,y)$ and the mean predicted output $f^*(x,y)$
+evaluated at the test input points is $8.3354\times 10^{-4}$.
+
+% \simo{Mauricio writes the Poisson 2D example here and we use both series expansion and closed-form methods here. We leave the state-space version out because, as discussed a few sections ago, it is not at all suitable in this case.}
 
 %\begin{equation}
 %\begin{split}
@@ -2282,11 +2292,22 @@ $8.3354\times 10^{-4}$.
 %\end{equation}
 %
 
-\subsection{LQ Control of ODE LFMs}
+% \subsection{LQ Control of ODE LFMs}
 
-\simo{Simo: State-space control of string model with comparison to non-LFM control.}
+% \simo{Simo: State-space control of string model with comparison to non-LFM control.}
 
 \subsection{LQ Control of PDE LFMs}
+
+Figure \ref{cartoon:heatpde} is a cartoon representation of a heat source moving across a 2D spatial field.
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.3\textwidth]{heatpde}
+\caption{A cartoon representation of a heat source moving across a 2D spatial field.}
+\label{cartoon:heatpde}
+\end{figure}
+
+
 
 \simo{Simo: State-space estimation and control of the heat equation with the same input as we used above. If this works well then it would be beneficial to expand the control section and even change the title to include "control".}
 
