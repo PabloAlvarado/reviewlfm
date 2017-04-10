@@ -594,17 +594,27 @@ The aim of this article is to consider the problem of inferring the functions $f
 
 In this section, we \ldots \simo{To be completed}
 
-\simo{Mauricio: check the notation on inputs $\mathbf{x}$ vs. $\mathbf{x},t$ vs. $t$}
+%\simo{Mauricio: check the notation on inputs $\mathbf{x}$ vs. $\mathbf{x},t$ vs. $t$ DONE}
 
 \subsection{Gaussian process regression}\label{sec:gp:regression}
 %
 
-A Gaussian process (GP) is a stochastic process with the property that any finite number of random variables taken from that process follows a multivariate Gaussian distribution \cite{Rasmussen+Williams:2006, Shanmugan:randomSignals:88}. In machine learning \cite{Rasmussen+Williams:2006}, Gaussian processes are commonly used as prior distributions over functions $f: \mathbb{R}^d\rightarrow \mathbb{R}$. When used for regression, the GP encodes the uncertainty we have over a function, before seeing the data. Once we have specified a particular relationship between the function and the data we observe, we can update our beliefs over the function using the Bayesian theorem, and compute the posterior distribution.
+A Gaussian process (GP) is a stochastic process with the property that any finite number of random variables taken from
+that process follows a multivariate Gaussian distribution \cite{Rasmussen+Williams:2006, Shanmugan:randomSignals:88}. In
+machine learning \cite{Rasmussen+Williams:2006}, Gaussian processes are commonly used as prior distributions over
+functions $f: \mathbb{R}^d\rightarrow \mathbb{R}$. When used for regression, the GP encodes the uncertainty we have over
+a function, before seeing the data. Once we have specified a particular relationship between the function and the data
+we observe, we can update our beliefs over the function using the Bayesian theorem, and compute the posterior
+distribution. 
 
-Consider predicting the value of an unknown function $y = f(x)$ at a certain test point $(y^*, x^*)$. The prediction
+Although the dimensionality of the input domain could be greater than one, i.e. $d>1$, in what follows we use $d=1$ and
+refer to the time domain. Later one, the input domain will refer to a purely spatial domain, i.e. the
+Poisson equation, or to a spatio-temporal domain, i.e. the Heat equation. 
+
+Consider predicting the value of an unknown function $y = f(t)$ at a certain test point $(y^*, t^*)$. The prediction
 is based on a finite set of previously seen data points or training samples
-$\mathcal{D}=\{(x_1, y_1), \ldots, (x_n, y_n)\}$. For temporal processes, the variable $x$ can conveniently be
-replaced for $t$.
+$\mathcal{D}=\{(t_1, y_1), \ldots, (t_n, y_n)\}$. 
+%For temporal processes, the variable $x$ can conveniently be replaced for $t$.
 
 Under the Gaussian process assumption, the joint distribution between $y_1, \ldots, y_n$ and $y^*$ follows a Gaussian
 distribution. Using $\mathbf{y}$ to denote the set of training outputs $y_1, \ldots, y_n$, and $\mathbf{t}$ the set
@@ -660,27 +670,34 @@ where
 \end{align*}
 being $\mathbf{I}\in\mathbb{R}^{n\times n}$ the identity matrix.
 
-Fig.~\ref{reg_ex} shows an example of Gaussian process regression. \simo{Mauricio: Explain more.}
+Fig.~\ref{reg_ex} shows an example of Gaussian process regression. The dashed line is an unknown function $f(t)$. The
+dots correspond to noisy observed data $\mathcal{D} = \{t_k,y_k\}_{k=1}^n$. The solid line is the posterior mean
+$\mu_{f(t^*)|\mathbf{y}}$ computed at several test inputs, and the shaded region represents two standard deviations
+(obtained from $\sigma^2_{f(t^*)|\mathbf{y}}$) away from the posterior mean.
 
-\simo{Mauricio: explain how we can also estimate the parameters using ML, MAP, or some fancier method such as MCMC, slice-samplings, CCD.}
-
+%\simo{Mauricio: Explain more. DONE}
+%\simo{Mauricio: explain how we can also estimate the parameters using ML, MAP, or some fancier method such as MCMC,
+%slice-samplings, C%CD. DONE}
 \begin{figure}[!t]
 \centering
 \includegraphics[width=\columnwidth]{toyGPoutput}
 % where an .eps filename suffix will be assumed under latex,
 % and a .pdf suffix will be assumed for pdflatex; or what has been declared
 % via \DeclareGraphicsExtensions.
-\caption{Example of Gaussian process regression. The solid line is the
-predictive mean, and the shaded region represents two standard
-deviations away from the predictive mean. The dots are the observed
-data $\{y_k\}_{k=1}^n$.}
+\caption{Example of Gaussian process regression.  The dashed line represents the unknown function $f(t)$. The dots are
+  the observed data $\{t_k, y_k\}_{k=1}^n$. The solid line is the posterior mean $\mu_{f(t^*)|\mathbf{y}}$, and the
+  shaded region represents two standard deviations away from the predictive mean.}
 \label{reg_ex}
 \end{figure}
 
+An additional element that is usually considered in GP regression is the estimation of the parameters of the covariance
+function $k(t,t')$, also known as hyperparameters. There are different ways in which those hyperparameters can be
+estimated, including maximization of the log-marginal likelihood \cite{Rasmussen+Williams:2006}, maximum a posteriori
+\cite{Murphy:2012:MLP}, and Markov chain Monte Carlo \cite{FilipponeML13}.
 
 \subsection{GP Regression Solution to Basic LFM Inference}\label{sec:gp:regression:lfm}
 %
-\simo{Mauricio: check the notation}
+%\simo{Mauricio: check the notation: DONE}
 
 A canonical example of a linear latent force model (LFM) \cite{Alvarez+Luengo+Lawrence:2009,Alvarez+Luengo+Lawrence:2013} is the following:
 %
@@ -851,12 +868,12 @@ Similar to the case of ordinary differential equations, we can associate a Green
 operator \cite{Myintu:LPDEBook:2006, Polyanin:Handbook02}.\footnote{The presentation here refers to boundary value
 problems.}
 Let $H(\mathbf{x}, \mathbf{x}')$ be the Green's function for a
-particular linear partial differential operator, where $\mathbf{x}\in\mathbb{R}^p$ is a general input vector that could
-include different types of input variables. For example, the vector $\mathbf{x}$ could refer to
-coordinates $x$ and $y$ for the Laplace equation in two spatial dimensions, or to coordinate $x$ and time
+particular linear partial differential operator, where $\mathbf{x}$ is a general input vector that could
+include different types of input variables, as we mentioned before. For example, the vector $\mathbf{x}$ could refer to
+coordinates $x$ and $y$ for the Poisson equation in two spatial dimensions, or to coordinate $x$ and time
 $t$ for the Heat equation in one spatial dimension.
 
-For example, the Laplace equation is given as
+For example, the Poisson equation is given as
 \begin{align*}
   \nabla^2 f(\mathbf{x}) = u(\mathbf{x}).
 \end{align*}
@@ -871,7 +888,7 @@ where $\mathcal{X}$ is the input domain of integration, and $g(\mathbf{x})$ is t
 conditions. For simplicity in the presentation, we assume that the boundary conditions are zero, but the boundary
 conditions could also be incorporated. In this case the Green's function $H(\mathbf{x}, \mathbf{z})$, with suitable
 boundary conditions, can be written in closed form. The expression for this Green's function can be found in \cite{Polyanin:Handbook02}. 
-%\simo{Mauricio: Find a citation for this closed form expression}
+%\simo{Mauricio: Find a citation for this closed form expression DONE}
 
 For the GP regression view of latent force models, we put a GP prior over $u(\mathbf{x})$,
 \begin{align*}
@@ -1080,16 +1097,16 @@ Although in general the covariances $\mathrm{Cov}(u_i,u_{i'})$ can only be compu
 
 \subsection{Hyperparameter Learning in LFMs}
 
-\simo{Mauricio: just explain that we can use the ordinary GP hyperparameter learning once we have the covariance functions.}
+%\simo{Mauricio: just explain that we can use the ordinary GP hyperparameter learning once we have the covariance
+%functions. DONE}
 
 Expressions for the covariance functions $k_{f}(t,t')$,
 $k_{f}(\mathbf{x}, \mathbf{x}', t-t')$, and
 $k_{f}(\mathbf{x}, \mathbf{x}')$ involve the parameters of the
 differential equations, and the hyperparameters of the covariance
-function of the latent process $u(\cdot)$. A common practice in GP
-regression is to estimate these parameters by maximizing the marginal
-likelihood of a given data set \cite{Rasmussen+Williams:2006}. More recently, there have been
-attempts to estimate these parameters using Markov Chain Monte Carlo,
+function of the latent process $u(\cdot)$. In principle, those hyperparameters can be estimated using any of the methods mentioned in
+the section on GP regression. In the context of latent force modesl, there have been more recent
+attempts to estimate these hyperparameters using Markov Chain Monte Carlo,
 by including priors for the parameters of the differential equations
 and the covariance function of the latent process
 \cite{Titsias:control:vars:2009, Titsias:BMC:2012}.
@@ -1892,7 +1909,7 @@ where we have written $\mathbf{K}_c = \begin{pmatrix} \mathbf{K}_f & \mathbf{K}_
 %
 \subsection{Non-linear Models}
 
-\simo{Mauricio: double check your text.}
+%\simo{Mauricio: double check your text: DONE}
 
 When the input force is modelled as a non-linear transformation of a Gaussian process \cite{Lawrence:gpsim2007a,
 Gao:latent08, Titsias:BMC:2012}, it is necessary to resort to an approximation in order to compute the posterior
@@ -2059,7 +2076,7 @@ control example.
 \caption{A mass-spring-damper system to illustrate a latent force model with ordinary differential equations.}
 \label{mass:spring:damper:figure}
 \end{figure}
-%\simo{Mauricio: Finish the descriptions}
+%\simo{Mauricio: Finish the descriptions DONE}
 Our first illustrative example corresponds to the second order
 differential model described in equation \eqref{eq:sde0}. Figure
 \ref{mass:spring:damper:figure} shows a mass-spring-damper system
