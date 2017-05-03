@@ -477,7 +477,7 @@ Differential equations, Latent force models, state space representations.
 
 %\IEEEPARstart{I}{n} machine learning, there has been a recent interest to combine non-parametric statistical models with first-principles physical differential equation models. The motivation to do that is that although non-parametric statistical models such as Gaussian processes \cite{Rasmussen+Williams:2006} are well-suited for expressing very loose assumptions on the modeled functions (such as smoothness and length scale), encoding physical knowledge into them is hard. In many applications, we are faced with problems in which we have plenty of data and a physical model, and we want to use statistical inference either to estimate the parameters of those physical models or to perform inference over unknown functions or variables related to the physical model. This setup appears frequently in modern physics, biology, chemistry, geology, and many other scientific disciplines for which the description of physical phenomena is done through differential equations. To deal with these kinds of problems, we recently introduced latent force models (LFM) \cite{Alvarez+Lawrence:2009,Alvarez:2010,Alvarez+Luengo+Lawrence:2013}, which are general models that allow the incorporation of differential equations into data-driven non-parametric models -- or non-parametric models into differential equation models.
 
-\simo{{\em Notation:} $n$ is the number of data points, $p$ is the input ($\mathbf{x}$) dimension, $d$ is the vector output dimensionality, $s$ for order of ODE or state-space or half-order of spectral density denominator (these are the same things), $r$ for the half-order of spectral density numerator, $k$ is the discrete time index, if we have space and time, $n = n_x \, n_t$ for data points in time and space (for a grid). Todo: check the operator fonts.}
+%\simo{{\em Notation:} $n$ is the number of data points, $p$ is the input ($\mathbf{x}$) dimension, $d$ is the vector output dimensionality, $s$ for order of ODE or state-space or half-order of spectral density denominator (these are the same things), $r$ for the half-order of spectral density numerator, $k$ is the discrete time index, if we have space and time, $n = n_x \, n_t$ for data points in time and space (for a grid). Todo: check the operator fonts.}
 
 \IEEEPARstart{C}{onsider} a second order differential equation model of a physical system of the form
 %
@@ -488,7 +488,7 @@ Differential equations, Latent force models, state space representations.
 \label{eq:sde0}
 \end{equation}
 %
-where $u(t)$ and $f(t)$ are unknown an $c(t)$ is a control function (known or to be optimized). Further assume that we measure the function $f(t)$ via noisy measurements at discrete instants of time $t_1,t_2,\ldots$:
+where the functions $u(t)$ and $f(t)$ are unknown an $c(t)$ is a control function (known or to be optimized). Further assume that we measure the function $f(t)$ via noisy measurements at discrete instants of time $t_1,t_2,\ldots$:
 %
 \begin{equation}
 \begin{split}
@@ -496,21 +496,9 @@ where $u(t)$ and $f(t)$ are unknown an $c(t)$ is a control function (known or to
 \end{split}
 \end{equation}
 %
-The aim of this article is to consider the unknown force or input $u$ as unknown and model it as a non-parametric Gaussian process model \cite{Rasmussen+Williams:2006} with a given covariance function in order to estimate, or in machine learning terms, {\em learn} $f$ and $u$. This kind of models are called latent force models (LFM) \cite{Alvarez+Luengo+Lawrence:2009,Alvarez:switched2011,Alvarez+Luengo+Lawrence:2013} in machine learning literature. In addition to learning problem on the LFMs, we also consider the problem of controlling the LFM using the control function $c(t)$. In particular, we consider the problem of optimal linear stochastic control design for this type of models.
+The aim of this article is to consider the unknown force or input $u$ as unknown and model it as a non-parametric Gaussian process model \cite{Rasmussen+Williams:2006} with a given covariance function in order to estimate, or in machine learning terms, {\em learn} $f$ and $u$. This kind of models are called latent force models (LFM) \cite{Alvarez+Luengo+Lawrence:2009,Alvarez:2010,Alvarez+Luengo+Lawrence:2013,Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012} in machine learning literature. In addition to learning problem on the LFMs, we also consider the problem of controlling the LFM using the control function $c(t)$. In particular, we consider the problem of optimal linear stochastic control design for this type of models.
 
-The present problem is also closely related to so called input estimation problem that has previously been addressed in target tracking literature (e.g. \cite{Bar-Shalom+Li+Kirubarajan:2001}) by replacing the input or force with a white or colored noise. However, here we will specifically concentrate on the machine learning point of view which allows for encoding prior information into the driving force as well as the use of modern machine learning methods for coping with the related hyperparameter estimation problems and model extensions.
-
-A different kind of example of a problem studied in this article is the Poisson equation
-%
-\begin{equation}
-\begin{split}
-  \nabla^2 f(\mathbf{x}) &= u(\mathbf{x}) \\
-  y_k &= f(\mathbf{x}_k) + \epsilon_k,
-\end{split}
-\label{eq:sde0}
-\end{equation}
-%
-where again the function $f$ and the force field $u$ are unknown. The difference is that here is no concept of time in this equation. However, the problem of estimating the function $f$ and the force field $u$ from the observations $y_k$ is still well defined.
+The present problem is also closely related to so called input estimation problem that has previously been addressed in target tracking literature (e.g. \cite{Bar-Shalom+Li+Kirubarajan:2001}) by replacing the input or force with a white or colored noise. However, here we will specifically concentrate on the machine learning point of view which allows for encoding prior information into the driving force as well as the use of modern machine learning methods for coping with the related hyperparameter estimation problems and model extensions. Another connection 
 
 Other examples of problem of interest are spatio-temporal partial differential equations driven by (structured) Gaussian processes. An example of this kind of model is the heat equation
 %
@@ -526,26 +514,37 @@ Other examples of problem of interest are spatio-temporal partial differential e
 %
 where again the aim is to learn both the Gaussian force field $u(\mathbf{x},t)$ and the function $f(\mathbf{x},t)$ from the noisy observations $y_k$. 
 
-In both temporal models \eqref{eq:sde0} and spatio-temporal models \eqref{eq:spde0} we also consider the associated stochastic control problem: how can we simultaneously learn the functions $f$ and $u$, and design an optimal stochastic controller $c$ which uses the learning outcome optimally. It turns out that this problem can be recasted as a classical stochastic control problem in an augmented state-space provided that we convert the Gaussian process input model into an equivalent stochastic state-space representation \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012}.
+In both temporal models \eqref{eq:sde0} and spatio-temporal models \eqref{eq:spde0} we also consider the associated stochastic control problem: how can we simultaneously learn the functions $f$ and $u$, and design an optimal stochastic controller $c$ which uses the learning outcome optimally. It turns out that this problem can be recasted as a classical stochastic control problem (e.g., \cite{Maybeck:1982b}) in an augmented state-space provided that we convert the Gaussian process input model into an equivalent stochastic state-space representation \cite{Hartikainen+Sarkka:2010,Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012}.
+
+A different kind of example of a problem studied in this article is the Poisson equation
+%
+\begin{equation}
+\begin{split}
+  \nabla^2 f(\mathbf{x}) &= u(\mathbf{x}) \\
+  y_k &= f(\mathbf{x}_k) + \epsilon_k,
+\end{split}
+\label{eq:poisson0}
+\end{equation}
+%
+where again the function $f$ and the force field $u$ are unknown. The difference is that here is no concept of time in this equation. However, the problem of estimating the function $f$ and the force field $u$ from the observations $y_k$ is still well defined.
 
 
 %LFMs can be derived from two different perspectives: the covariance function perspective \cite{Alvarez+Lawrence:2009,Alvarez+Luengo+Lawrence:2013} and the state-space perspective \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012}. The former approach can be seen as a machine learning point of view (cf. \cite{Rasmussen+Williams:2006}) to LFMs whereas the latter approach is a signal processing point of view (cf. \cite{Sarkka+Solin+Hartikainen:2013,Sarkka:2013}). Both of these approaches have their own advantages and disadvantages in terms of flexibility, ease of implementation, and computational complexity. In this paper, we analyze both of these points of view to latent force models as well as present new computational methods which aim to combine the best sides of both points of view. 
 
 % \simo{Explain here what has been done before and what is actually new here.}
 
-The new contributions of this article are:
-%
-\begin{itemize}
-\item \simo{Unified treatment of batch and state space.}
-\item \simo{Particle differential equation methods.}
-\item \simo{Control problems.}
-\item \simo{Detectability and stabilizability.}
-\end{itemize}
+%The new contributions of this article are:
+%%
+%\begin{itemize}
+%\item \simo{Unified treatment of batch and state space.}
+%\item \simo{Particle differential equation methods.}
+%\item \simo{Control problems.}
+%\item \simo{Detectability and stabilizability.}
+%\end{itemize}
 
 \subsection{General problem formulation}
 %
-%\simo{Explain what kind of models in general we consider and what we wish to do with them.}
-More generally, the latent force models considered in this article can be seen to belong to the following three classes:
+The models considered in this article can be seen to belong to the following three classes:
 %
 \begin{enumerate}
 \item Basic latent force models which are ordinary differential equations (ODEs) driven by Gaussian input processes $u(t)$ and control inputs $c(t)$. They can be written in form
@@ -555,7 +554,7 @@ More generally, the latent force models considered in this article can be seen t
 \end{equation}
 %
 where the linear operator $\mathcal{L}\equiv a_n \, \frac{d}{dt^{n}} + \cdots + a_1 \, \frac{d}{dt} + a_0$ for some fixed constants $a_i, i=0,\ldots,n$. This kind of models can typically be rewritten in 
-\emph{state-space form}. We will return to that later in this article.
+\emph{state-space form}. %We will return to that later in this article.
 
 \item We also consider are dynamic partial and pseudo differential equation (PDE) based models that can generally be written in form
 %
@@ -569,7 +568,7 @@ where $\mathcal{L}$ is a linear operator in space and time. The input Gaussian p
   \mathcal{L}\equiv \mathcal{A}_n \, \frac{d}{dt^{n}} + \cdots + \mathcal{A}_1 \, \frac{d}{dt} + \mathcal{A}_0,
 \end{equation}
 %
-where $\mathcal{A}_0,\ldots,\mathcal{A}_n$ are some spatial partial differential or pseudo-differential operators. This kind of models can often be also written in form of \emph{spatio-temporal state-space models}, which we shall consider later in this article.
+where $\mathcal{A}_0,\ldots,\mathcal{A}_n$ are some spatial partial differential or pseudo-differential operators. This kind of models can often be also written in form of \emph{spatio-temporal state-space models}. %, which we shall consider later in this article.
 
 \item As a static special case of the above models we have the following class of partial and pseudo differential equation (PDE) models driven by spatial Gaussian processes $u(\mathbf{x})$:
 %
@@ -599,26 +598,15 @@ In this section, we \ldots \simo{To be completed}
 \subsection{Gaussian process regression}\label{sec:gp:regression}
 %
 
-A Gaussian process (GP) is a stochastic process with the property that any finite number of random variables taken from
-that process follows a multivariate Gaussian distribution \cite{Rasmussen+Williams:2006, Shanmugan:randomSignals:88}. In
-machine learning \cite{Rasmussen+Williams:2006}, Gaussian processes are commonly used as prior distributions over
-functions $f: \mathbb{R}^d\rightarrow \mathbb{R}$. When used for regression, the GP encodes the uncertainty we have over
-a function, before seeing the data. Once we have specified a particular relationship between the function and the data
-we observe, we can update our beliefs over the function using the Bayesian theorem, and compute the posterior
-distribution. 
+A Gaussian process (GP) is a stochastic process with the property that any finite number of random variables taken from that process follows a multivariate Gaussian distribution \cite{Rasmussen+Williams:2006, Shanmugan:randomSignals:88}. In machine learning \cite{Rasmussen+Williams:2006}, Gaussian processes are commonly used as prior distributions over functions $f: \mathbb{R}^d\rightarrow \mathbb{R}$. When used for regression, the GP encodes the uncertainty we have over a function, before seeing the data. Once we have specified a particular relationship between the function and the data we observe, we can update our beliefs over the function using the Bayesian theorem, and compute the posterior distribution. 
 
-Although the dimensionality of the input domain could be greater than one, i.e. $d>1$, in what follows we use $d=1$ and
-refer to the time domain. Later one, the input domain will refer to a purely spatial domain, i.e. the
-Poisson equation, or to a spatio-temporal domain, i.e. the Heat equation. 
+Although the dimensionality of the input domain could be greater than one, that is, $d>1$, in what follows we use $d=1$ and refer to it as the time domain. Later on, the input domain will refer to a purely spatial domain (as in the Poisson equation), or to a spatio-temporal domain, (as in the heat equation). 
 
-Consider predicting the value of an unknown function $y = f(t)$ at a certain test point $(y^*, t^*)$. The prediction
-is based on a finite set of previously seen data points or training samples
-$\mathcal{D}=\{(t_1, y_1), \ldots, (t_n, y_n)\}$. 
+Let us now consider predicting the value of an unknown function $y = f(t)$ at a certain test point $(y^*, t^*)$. The prediction is based on a finite set of previously seen data points or training samples
+$\mathcal{D}=\{(t_1, y_1), \ldots, (t_n, y_n)\}$. Assume that $f(t)$ is moded as a priori Gaussian process with zero mean and a covariance function $k(t,t')$.
 %For temporal processes, the variable $x$ can conveniently be replaced for $t$.
 
-Under the Gaussian process assumption, the joint distribution between $y_1, \ldots, y_n$ and $y^*$ follows a Gaussian
-distribution. Using $\mathbf{y}$ to denote the set of training outputs $y_1, \ldots, y_n$, and $\mathbf{t}$ the set
-of training inputs $t_1, \ldots, t_n$, we have
+Under the Gaussian process assumption, the joint distribution between $y_1, \ldots, y_n$ and $y^*$ follows a Gaussian distribution. Using $\mathbf{y}$ to denote the set of training outputs $y_1, \ldots, y_n$, and $\mathbf{t}$ the set of training inputs $t_1, \ldots, t_n$, we have
 \begin{align*}
 \begin{pmatrix}
 \mathbf{y}\\
@@ -699,7 +687,7 @@ estimated, including maximization of the log-marginal likelihood \cite{Rasmussen
 %
 %\simo{Mauricio: check the notation: DONE}
 
-A canonical example of a linear latent force model (LFM) \cite{Alvarez+Luengo+Lawrence:2009,Alvarez+Luengo+Lawrence:2013} is the following:
+Let us now consider the inclusion of a differential equation model to the Gaussian process regression. which leads to a simple latent force model. A canonical example of a linear latent force model (LFM) \cite{Alvarez+Luengo+Lawrence:2009,Alvarez+Luengo+Lawrence:2013} is the following:
 %
 \begin{eqnarray}
   &u(t) \sim \mathcal{GP}(0,k(t - t')), \label{eq:lgp1} \\
@@ -786,18 +774,18 @@ variance $\sigma^2_{u^*|\mathbf{y}}$,
 + \sigma^2\mathbf{I}\right]^{-1}\mathbf{k}_{f,u}(\mathbf{t}, t^*).
 \end{align*}
 
-The approach introduced by
+This approach introduced by
 \cite{Alvarez+Luengo+Lawrence:2009,Alvarez+Luengo+Lawrence:2013} conveniently
 reduces the original LFM into an Gaussian process regression problem
-with a modified covariance function. However, this approach requires
+with a modified covariance function. However, the approach requires
 that we need to solve the impulse response $h$ and then compute the
 covariance functions via \eqref{eq:fcov}, and \eqref{eq:fucov}.  If we can obtain closed form
 expressions for them, then the inference procedure becomes very
 easy. Otherwise numerical computations are needed.
 
-\subsection{State-Space ODE LFMs}
+\subsection{State-Space ODE LFMs} \label{sec:ss_de_lfms}
 %
-We can also rewrite the basic LFM differential equation \eqref{eq:difeq1} in state-space form \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012} by defining a state vector $\mathbf{f} = (f, df/dt,\ldots,d^{n-1}f/dt^{n-1})$ and writing
+A convenient way to compute the impulse responses required for the GP inference on LFMs is to rewrite the differential equation in state-space form, which allows us to express the impulse response in terms of matrix exponential function. We can rewrite the basic LFM differential equation \eqref{eq:difeq1} in state-space form \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012} by defining a state vector $\mathbf{f} = (f, df/dt,\ldots,d^{n-1}f/dt^{n-1})$ and writing
 %
 \begin{equation}
 \begin{split}
@@ -857,21 +845,39 @@ and we can pick up the covariance function of $f(t)$ from the matrix via
 \label{eq:fcov2}
 \end{equation}
 %
-This representation has the advantage that it is easy to numerically approximate the matrix exponential and hence the analytical computation of the impulse response becomes unnecessary. However, we still need to compute the integrals in \eqref{eq:vfcov} somehow. If closed form solution is not available (which surpricing often is), then the computations need to be done via numerical integration.
+The required cross-variance $k_{f,u}$ can be compute by form noting that
+%
+\begin{equation}
+\begin{split}
+  &\mathbf{K}_{\mathbf{f},u}(t - t')
+%  \\ &
+  =
+  \int_{-\infty}^{t} 
+  \mathbf{H}(t - s) \, \mathbf{B}_f \, k(s - t') \, ds,
+\end{split}
+\label{eq:vfucov}
+\end{equation}
+%
+which further gives
+%
+\begin{equation}
+\begin{split}
+  k_{f,u}(t,t') &=
+  \mathbf{C}_f \, \mathbf{K}_{\mathbf{f},u}(t - t').
+\end{split}
+\label{eq:fucov2}
+\end{equation}
+
+These representations have the advantage that it is easy to numerically approximate the matrix exponential and hence the analytical computation of the impulse response becomes unnecessary. However, we still need to compute the integrals in \eqref{eq:vfcov} and \eqref{eq:vfucov} somehow. If closed form solution is not available (which surprising often is), then the computations need to be done via numerical integration.
+
+Later in this article we consider state-space methods which also convert the variance function $k(t,t')$ into a (stochastic) differential equation form. In that kind of formulation we are able to avoid the numerical integration altogether and replace it with matrix exponential computations and solutions to Lyapunov equations, which are numerically easier tasks.
 
 
-\simo{Simo: Explain how to get $k_{f,u}$}
+%\simo{Simo: Explain how to get $k_{f,u}$}
 
 \subsection{Partial Differential Equation Based LFMs}
 %
-Similar to the case of ordinary differential equations, we can associate a Green's function to a linear partial differential
-operator \cite{Myintu:LPDEBook:2006, Polyanin:Handbook02}.\footnote{The presentation here refers to boundary value
-problems.}
-Let $H(\mathbf{x}, \mathbf{x}')$ be the Green's function for a
-particular linear partial differential operator, where $\mathbf{x}$ is a general input vector that could
-include different types of input variables, as we mentioned before. For example, the vector $\mathbf{x}$ could refer to
-coordinates $x$ and $y$ for the Poisson equation in two spatial dimensions, or to coordinate $x$ and time
-$t$ for the Heat equation in one spatial dimension.
+Similar to the case of ordinary differential equations, we can associate a Green's function to a linear partial differential operator \cite{Myintu:LPDEBook:2006, Polyanin:Handbook02}.\footnote{The presentation here refers to boundary value problems.} Let $H(\mathbf{x}, \mathbf{x}')$ be the Green's function for a particular linear partial differential operator, where $\mathbf{x}$ is a general input vector that could include different types of input variables, as we mentioned before. For example, the vector $\mathbf{x}$ could refer to coordinates $x$ and $y$ for the Poisson equation in two spatial dimensions, or to coordinate $x$ and time $t$ for the Heat equation in one spatial dimension.
 
 For example, the Poisson equation is given as
 \begin{align*}
@@ -884,10 +890,7 @@ f(\mathbf{x}) & = \int_{\mathcal{X}} H(\mathbf{x}, \mathbf{z})\,
                 u(\mathbf{z})\,d\mathbf{z} + g(\mathbf{x}),
 \end{align*}
 %
-where $\mathcal{X}$ is the input domain of integration, and $g(\mathbf{x})$ is the solution due to the boundary
-conditions. For simplicity in the presentation, we assume that the boundary conditions are zero, but the boundary
-conditions could also be incorporated. In this case the Green's function $H(\mathbf{x}, \mathbf{z})$, with suitable
-boundary conditions, can be written in closed form. The expression for this Green's function can be found in \cite{Polyanin:Handbook02}. 
+where $\mathcal{X}$ is the input domain of integration, and $g(\mathbf{x})$ is the solution due to the boundary conditions. For simplicity in the presentation, we assume that the boundary conditions are zero, but the boundary conditions could also be incorporated. In this case the Green's function $H(\mathbf{x}, \mathbf{z})$, with suitable boundary conditions, can be written in closed form. The expression for this Green's function can be found in \cite{Polyanin:Handbook02}. 
 %\simo{Mauricio: Find a citation for this closed form expression DONE}
 
 For the GP regression view of latent force models, we put a GP prior over $u(\mathbf{x})$,
@@ -899,7 +902,7 @@ Covariance for $f(\mathbf{x})$ then follows a similar expression to \eqref{eq:fc
 \begin{split}
   k_{f,f}(\mathbf{x}, \mathbf{x}') &=
   \int_{\mathcal{X}}   \int_{\mathcal{X}}
-  H(\mathbf{x}, \mathbf{z}) \, H(\mathbf{x}', \mathbf{z}') \, k(\mathbf{z}, \mathbf{z}') \, d\mathbf{z} \, d\mathbf{z}'.
+  H(\mathbf{x}, \mathbf{z}) \, H(\mathbf{x}', \mathbf{z}') \, k(\mathbf{z} - \mathbf{z}') \, d\mathbf{z} \, d\mathbf{z}'.
 \end{split}
 \notag
 %\label{eq:fcov:pde}
@@ -967,9 +970,7 @@ Once we have derived the covariance functions, we can use the Gaussian process r
 
 \subsection{State-Space PDE LFMs}
 
-\simo{Simo: Discuss state-space PDEs for a few sentences in relation to the previous section}
-
-Assume that that our PDE LFM has the form
+We can also extend the ideas presented in Section~\ref{sec:ss_de_lfms} to the spatial-temporal case.  Assume that that our PDE LFM has the form
 %
 \begin{equation}
 \begin{split}
@@ -1001,99 +1002,16 @@ with
 \label{eq:vfcov}
 \end{equation}
 %
-where the operator multiplication from right is again interpreted as acting onto the variable $\mathbf{x}'$.
-
-\simo{Simo: Explain how to get $k_{f,u}$}
-
-\subsection{PDE Methods for Covariance Function Computation}
-%
-\simo{Simo: should check and add discussion and references. Also discuss point-collocation and fix the notation to something neater in the covariance computations.}
-
-\simo{Simo: Should probably shorten this and move to other part, e.g., to under discussion section.}
-
-One commonly used method for approximate solution of partial differential equations (PDEs) is the Galerkin's method which approximates the solution on a finite-dimensional spaces spanned by sets of basis functions $\{ \phi_i(\mathbf{x})~i=1,2,\ldots,N \}$ and $\{ \varphi_j(\mathbf{x})~j=1,2,\ldots,N \}$. With a suitable selections of basis functions it (in its weak formulation) leads to widely-used methods such as finite element method (FEM). As an example, let us consider the Gaussian process driven Poisson equation
+where the operator multiplication from right is again interpreted as acting onto the variable $\mathbf{x}'$. The cross-variance between $f$ and $u$ has the representation
 %
 \begin{equation}
 \begin{split}
-  \nabla^2 f(\mathbf{x}) = u(\mathbf{x})
+  k_{f,u}(\mathbf{x},\mathbf{x}';t-t') &=
+  \mathbf{C}_f \, 
+  \int_{-\infty}^{t}
+  \mathbf{\mathcal{H}}(t - s) \, \mathbf{B}_f \, k(\mathbf{x},\mathbf{x}';s - t') \, ds.
 \end{split}
 \end{equation}
-%
-Let us now assume, for example, that we are working in a compact subspace $\Omega \subset \mathbb{R}^p$ and define a Hilbert space with an inner product $\langle \cdot, \cdot \rangle$ such that $\{ \phi_i(\mathbf{x})~i=1,2,\ldots,N \}$ are orthonormal with respect to the inner product. We can now approximate $f$ via the series expansion
-%
-\begin{equation}
-\begin{split}
-   f(\mathbf{x}) &= \sum_{i=1}^N f_i \, \phi_i(\mathbf{x}) \\
-\end{split}
-\end{equation}
-%
-where $f_i = \langle f, \phi_i \rangle$, which leads to the approximate Laplace equation
-%
-\begin{equation}
-\begin{split}
-  \sum_{i=1}^N f_i \, \nabla^2 \phi_i(\mathbf{x}) = u(\mathbf{x})
-\end{split}
-\end{equation}
-%
-Taking inner products with respect to the set $\{ \varphi_i(\mathbf{x})~j=1,2,\ldots,N \}$ then gives the system of equations
-%
-\begin{equation}
-\begin{split}
-  \sum_{i=1}^N f_i \, \langle \nabla^2 \phi_i, \varphi_1 \rangle &= u_1 \\
-  &\vdots \\
-  \sum_{i=1}^N f_i \, \langle \nabla^2 \phi_i, \varphi_N \rangle &= u_N \\
-\end{split}
-\end{equation}
-%
-where $u_j = \langle u, \varphi_Nj\rangle$, which can be further written in form
-%
-\begin{equation}
-\begin{split}
-  \mathbf{D} \, \mathbf{f} &= \mathbf{u},
-\end{split}
-\label{eq:disc_pde}
-\end{equation}
-%
-where $[\mathbf{D}]_{ji} = \langle \nabla^2 \phi_i, \varphi_j \rangle$, $\mathbf{f} = \begin{pmatrix} f_1 & \cdots & f_N \end{pmatrix}^T$, and $\mathbf{u} = \begin{pmatrix} u_1 & \cdots & u_N  \end{pmatrix}^T$. Note that if we define the inner product suitably, we can sometimes integrate by parts to give $\langle \nabla^2 \phi_i, \varphi_j \rangle \to -\langle \nabla \phi_i, \nabla \varphi_j \rangle$ which leads to weak formulations of the problem. However, this aspect is not considered here further.
-
-By defining a matrix $\mathbf{G} = \mathbf{D}^{-1}$ \eqref{eq:disc_pde} then leads to the following approximate representation for the covariance function of $f$:
-%
-% f = G u
-% E[f f^T] = G E[u u^T] G^T = sum_ii' G_*i E[u_i u_i'] G_*i'
-% 
-% 
-\begin{equation}
-\begin{split}
-  k_f(\mathbf{x},\mathbf{x}')
-  \approx \sum_{i,j,i',j'=1}^N \phi_j(\mathbf{x}) \, [\mathbf{G}]_{ji} \, \mathrm{Cov}(u_i,u_{i'}) \, 
-    [\mathbf{G}]_{j'i'} \, \phi_{j'}(\mathbf{x}').
-\end{split}
-\end{equation}
-%
-and the cross-covariance can be approximated, for example, as
-%
-\begin{equation}
-\begin{split}
-  k_{f,u}(\mathbf{x},\mathbf{x}')
-  \approx \sum_{i,j,i',j'=1}^N \phi_j(\mathbf{x}) \, [\mathbf{G}]_{ji} \, \mathrm{Cov}(u_i,u_{i'}) \, 
-    [\mathbf{G}]_{j'i'} \, \nabla^2 \phi_{j'}(\mathbf{x}').
-\end{split}
-\label{eq:pde_kfu}
-\end{equation}
-%
-If we further select $\varphi_j = \phi_i$, we can also use the approximation
-%
-\begin{equation}
-\begin{split}
-  k_{f,u}(\mathbf{x},\mathbf{x}')
-  \approx \sum_{i,j,i',j'=1}^N \phi_j(\mathbf{x}) \, [\mathbf{G}]_{ji} \, \mathrm{Cov}(u_i,u_{i'}) \, \phi_{j'}(\mathbf{x}').
-\end{split}
-\label{eq:pde_kfu2}
-\end{equation}
-%
-Finite-difference methods also lead to an equation of the form \eqref{eq:disc_pde} where the vectors $\mathbf{f}$ and $\mathbf{u}$ contain the values of the processes at certain grid points, and the matrix $\mathbf{D}$ is a discrete approximation to the operator (e.g. Laplacian). The covariance function and cross-covariance approximations of the grid points are then given as $\mathbf{K}_f = \mathbf{G} \, \mathrm{Cov}(\mathbf{u},\mathbf{u}) \, \mathbf{G}^T$ and $\mathbf{K}_{f,u} = \mathbf{G} \, \mathrm{Cov}(\mathbf{u},\mathbf{u})$, respectively.
-
-Although in general the covariances $\mathrm{Cov}(u_i,u_{i'})$ can only be computed by explicit (numerical) integration, these covariance can sometimes be approximated very efficiently. When we use the eigenfunctions of the Laplacian operator as the basis and when the covariance function is stationary, we can approximate the covariances via point-wise evaluations of the spectral density of $u$ \cite{Solin+Sarkka:2016}. With this basis the case of translation invariant operators also becomes particularly easy, because the matrix $\mathbf{G}$ also becomes diagonal.
 
 \subsection{Hyperparameter Learning in LFMs}
 
@@ -1101,19 +1019,14 @@ Although in general the covariances $\mathrm{Cov}(u_i,u_{i'})$ can only be compu
 %functions. DONE}
 
 Expressions for the covariance functions $k_{f}(t,t')$,
-$k_{f}(\mathbf{x}, \mathbf{x}', t-t')$, and
-$k_{f}(\mathbf{x}, \mathbf{x}')$ involve the parameters of the
-differential equations, and the hyperparameters of the covariance
-function of the latent process $u(\cdot)$. In principle, those hyperparameters can be estimated using any of the methods mentioned in
-the section on GP regression. In the context of latent force modesl, there have been more recent
-attempts to estimate these hyperparameters using Markov Chain Monte Carlo,
-by including priors for the parameters of the differential equations
-and the covariance function of the latent process
-\cite{Titsias:control:vars:2009, Titsias:BMC:2012}.
+$k_{f}(\mathbf{x}, \mathbf{x}', t-t')$, and $k_{f}(\mathbf{x}, \mathbf{x}')$ involve the parameters of the differential equations, and the hyperparameters of the covariance function of the latent process $u(\cdot)$. Once we have formed the GP model with the modified covariance function, those hyperparameters can be estimated using any of the methods mentioned in the section on GP regression. In the context of latent force models, there have been more recent
+attempts to estimate these hyperparameters using Markov Chain Monte Carlo, by including priors for the parameters of the differential equations and the covariance function of the latent process \cite{Titsias:control:vars:2009, Titsias:BMC:2012}.
 
 
 
 \section{Latent Force Models as Stochastic State-Space Models}
+
+In this section \ldots \simo{To be completed}
 
 \subsection{GPs in state-space form}
 As shown in \cite{Hartikainen+Sarkka:2010,Sarkka+Solin+Hartikainen:2013,Sarkka+Piche:2014} many covariance function based models of the form
@@ -2053,6 +1966,96 @@ originally developed for numerically stabilizing the computation the eigenvalues
 %\subsection{Separable Covariance Functions}
 %
 %\simo{Simo: Add some tips and tricks for separable covariance functions.}
+
+\subsection{PDE Methods for Covariance Function Computation}
+%
+\simo{Simo: should check and add discussion and references. Also discuss point-collocation and fix the notation to something neater in the covariance computations.}
+
+\simo{Simo: Should probably shorten this and move to other part, e.g., to under discussion section.}
+
+One commonly used method for approximate solution of partial differential equations (PDEs) is the Galerkin's method which approximates the solution on a finite-dimensional spaces spanned by sets of basis functions $\{ \phi_i(\mathbf{x})~i=1,2,\ldots,N \}$ and $\{ \varphi_j(\mathbf{x})~j=1,2,\ldots,N \}$. With a suitable selections of basis functions it (in its weak formulation) leads to widely-used methods such as finite element method (FEM). As an example, let us consider the Gaussian process driven Poisson equation
+%
+\begin{equation}
+\begin{split}
+  \nabla^2 f(\mathbf{x}) = u(\mathbf{x})
+\end{split}
+\end{equation}
+%
+Let us now assume, for example, that we are working in a compact subspace $\Omega \subset \mathbb{R}^p$ and define a Hilbert space with an inner product $\langle \cdot, \cdot \rangle$ such that $\{ \phi_i(\mathbf{x})~i=1,2,\ldots,N \}$ are orthonormal with respect to the inner product. We can now approximate $f$ via the series expansion
+%
+\begin{equation}
+\begin{split}
+   f(\mathbf{x}) &= \sum_{i=1}^N f_i \, \phi_i(\mathbf{x}) \\
+\end{split}
+\end{equation}
+%
+where $f_i = \langle f, \phi_i \rangle$, which leads to the approximate Laplace equation
+%
+\begin{equation}
+\begin{split}
+  \sum_{i=1}^N f_i \, \nabla^2 \phi_i(\mathbf{x}) = u(\mathbf{x})
+\end{split}
+\end{equation}
+%
+Taking inner products with respect to the set $\{ \varphi_i(\mathbf{x})~j=1,2,\ldots,N \}$ then gives the system of equations
+%
+\begin{equation}
+\begin{split}
+  \sum_{i=1}^N f_i \, \langle \nabla^2 \phi_i, \varphi_1 \rangle &= u_1 \\
+  &\vdots \\
+  \sum_{i=1}^N f_i \, \langle \nabla^2 \phi_i, \varphi_N \rangle &= u_N \\
+\end{split}
+\end{equation}
+%
+where $u_j = \langle u, \varphi_Nj\rangle$, which can be further written in form
+%
+\begin{equation}
+\begin{split}
+  \mathbf{D} \, \mathbf{f} &= \mathbf{u},
+\end{split}
+\label{eq:disc_pde}
+\end{equation}
+%
+where $[\mathbf{D}]_{ji} = \langle \nabla^2 \phi_i, \varphi_j \rangle$, $\mathbf{f} = \begin{pmatrix} f_1 & \cdots & f_N \end{pmatrix}^T$, and $\mathbf{u} = \begin{pmatrix} u_1 & \cdots & u_N  \end{pmatrix}^T$. Note that if we define the inner product suitably, we can sometimes integrate by parts to give $\langle \nabla^2 \phi_i, \varphi_j \rangle \to -\langle \nabla \phi_i, \nabla \varphi_j \rangle$ which leads to weak formulations of the problem. However, this aspect is not considered here further.
+
+By defining a matrix $\mathbf{G} = \mathbf{D}^{-1}$ \eqref{eq:disc_pde} then leads to the following approximate representation for the covariance function of $f$:
+%
+% f = G u
+% E[f f^T] = G E[u u^T] G^T = sum_ii' G_*i E[u_i u_i'] G_*i'
+% 
+% 
+\begin{equation}
+\begin{split}
+  k_f(\mathbf{x},\mathbf{x}')
+  \approx \sum_{i,j,i',j'=1}^N \phi_j(\mathbf{x}) \, [\mathbf{G}]_{ji} \, \mathrm{Cov}(u_i,u_{i'}) \, 
+    [\mathbf{G}]_{j'i'} \, \phi_{j'}(\mathbf{x}').
+\end{split}
+\end{equation}
+%
+and the cross-covariance can be approximated, for example, as
+%
+\begin{equation}
+\begin{split}
+  k_{f,u}(\mathbf{x},\mathbf{x}')
+  \approx \sum_{i,j,i',j'=1}^N \phi_j(\mathbf{x}) \, [\mathbf{G}]_{ji} \, \mathrm{Cov}(u_i,u_{i'}) \, 
+    [\mathbf{G}]_{j'i'} \, \nabla^2 \phi_{j'}(\mathbf{x}').
+\end{split}
+\label{eq:pde_kfu}
+\end{equation}
+%
+If we further select $\varphi_j = \phi_i$, we can also use the approximation
+%
+\begin{equation}
+\begin{split}
+  k_{f,u}(\mathbf{x},\mathbf{x}')
+  \approx \sum_{i,j,i',j'=1}^N \phi_j(\mathbf{x}) \, [\mathbf{G}]_{ji} \, \mathrm{Cov}(u_i,u_{i'}) \, \phi_{j'}(\mathbf{x}').
+\end{split}
+\label{eq:pde_kfu2}
+\end{equation}
+%
+Finite-difference methods also lead to an equation of the form \eqref{eq:disc_pde} where the vectors $\mathbf{f}$ and $\mathbf{u}$ contain the values of the processes at certain grid points, and the matrix $\mathbf{D}$ is a discrete approximation to the operator (e.g. Laplacian). The covariance function and cross-covariance approximations of the grid points are then given as $\mathbf{K}_f = \mathbf{G} \, \mathrm{Cov}(\mathbf{u},\mathbf{u}) \, \mathbf{G}^T$ and $\mathbf{K}_{f,u} = \mathbf{G} \, \mathrm{Cov}(\mathbf{u},\mathbf{u})$, respectively.
+
+Although in general the covariances $\mathrm{Cov}(u_i,u_{i'})$ can only be computed by explicit (numerical) integration, these covariance can sometimes be approximated very efficiently. When we use the eigenfunctions of the Laplacian operator as the basis and when the covariance function is stationary, we can approximate the covariances via point-wise evaluations of the spectral density of $u$ \cite{Solin+Sarkka:2016}. With this basis the case of translation invariant operators also becomes particularly easy, because the matrix $\mathbf{G}$ also becomes diagonal.
 
 
 
