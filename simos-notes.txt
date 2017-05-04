@@ -883,3 +883,8 @@ and thus
     { exp((t-t') A) Q(t'), if t > t'
 
 where Q(t) was defined in (49) and can be efficently computed with matrix fractions. This representation could further be simplified by using the fact that u(t) is stationary also in this joint model. 
+
+****
+
+Assume (a) that the joint system (A,C) is observable, and (b) the
+observations are not critically sampled, then 
