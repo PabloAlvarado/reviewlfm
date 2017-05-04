@@ -1353,16 +1353,41 @@ Although there is no time-variable, we can redefine one of the spatial variables
 %
 However, this kind of equations without builtin physical time-dependence need to more care than physically time dependent equations as will be illustrated in the following.
 
-It would now be tempting to move the term $\nabla^2 f(\mathbf{x},t)$ to the right hand side and form a state-space form via defining the state as $(\mathbf{f},\partial f/\partial t)$. However, this will not lead to a valid state-space model, because the corresponding operator matrix will not correspond to a time-stable system (cf. \cite{Sarkka+Solin+Hartikainen:2013}). This can be easiest seen by taking the spatial Fourier transform of \eqref{ipoisson} which gives
+It would now be tempting to move the term $\nabla^2 f(\mathbf{x},t)$ to the right hand side and form a state-space form via defining the state as $\mathbf{f} = (f,\partial f/\partial t)$, which formally gives:
+%
+%   d2f/dt2 = -D^2 f + u
+% 
+%    df1/dt = f2
+%    df2/dt = -D^2 f1 + u
 %
 \begin{equation}
 \begin{split}
-  \frac{\partial^2 \tilde{u}(i \boldmath{\omega}_x,t)}{\partial t^2}
-  = \| \boldmath{\omega}_x \|^2 \tilde{u}(i \boldmath{\omega}_x,t) + \tilde{u}(i \boldmath{\omega}_x,t)
+  \frac{\partial \mathbf{f}(\mathbf{x},t)}{\partial t} &= 
+       \begin{pmatrix} 
+        0 & 1 \\ 
+        -\nabla^2 & 0
+      \end{pmatrix} \, \mathbf{f}(\mathbf{x},t)
+      + \begin{pmatrix} 0 \\ 1 \end{pmatrix} \, u(\mathbf{x},t).
+\end{split}
+\label{eq:noncausal-ss}
+\end{equation}
+%
+However, this is not a valid state-space model, because it is not causal. This can be easiest seen by taking the spatial Fourier transform of \eqref{eq:noncausal-ss} which gives
+%
+\begin{equation}
+\begin{split}
+%  \frac{\partial^2 \tilde{u}(i \boldmath{\omega}_x,t)}{\partial t^2}
+%  = \| \boldmath{\omega}_x \|^2 \tilde{u}(i \boldmath{\omega}_x,t) + \tilde{u}(i \boldmath{\omega}_x,t)
+  \frac{\partial \tilde{\mathbf{f}}(i \boldmath{\omega}_\mathbf{x},t)}{\partial t} &= 
+       \begin{pmatrix} 
+        0 & 1 \\ 
+        \| \boldmath{\omega}_{\mathbf{x}} \|^2 & 0
+      \end{pmatrix} \, \tilde{\mathbf{f}}(i \boldmath{\omega}_\mathbf{x},t)
+      + \begin{pmatrix} 0 \\ 1 \end{pmatrix} \, \tilde{u}(i \boldmath{\omega}_\mathbf{x},t).
 \end{split}
 \end{equation}
 %
-which can be seen to correspond to a unstable system.
+which can be seen to correspond to a unstable system, because the transition matrix has the positive eigenvalue $\| \boldmath{\omega}_{\mathbf{x}} \|$, which implies a diverging solution.
 
 In order to form a valid state-space model, let us take time-space Fourier transform of \eqref{ipoisson} which gives
 %
@@ -2076,12 +2101,9 @@ Although in general the covariances $\mathrm{Cov}(u_i,u_{i'})$ can only be compu
 
 \section{Experimental Results}
 
-In this section, we illustrate the latent force model framework in four different problems: a second order
-ordinary differential equation, a Heat equation in one spatial
-dimension, a Poisson equation in two spatial dimensions, and an LQ
-control example. 
+In this section, we illustrate the latent force model framework in four different problems: a second order ordinary differential equation modeling a spring with and without control, a Poisson equation in two spatial dimensions, and an controlled heat source in two dimensions.
 
-\subsection{An ODE Model}
+\subsection{Inference on GP driven spring}
 %
 \begin{figure}[!t]
 \centering
@@ -2089,30 +2111,20 @@ control example.
 \caption{A mass-spring-damper system to illustrate a latent force model with ordinary differential equations.}
 \label{mass:spring:damper:figure}
 \end{figure}
-%\simo{Mauricio: Finish the descriptions DONE}
-Our first illustrative example corresponds to the second order
-differential model described in equation \eqref{eq:sde0}. Figure
-\ref{mass:spring:damper:figure} shows a mass-spring-damper system
-being forced by a latent function $u(t)$. The output $f(t)$ is also
-shown in the figure and represents the position of the body with a
-particular reference. From the point of view of Gaussian process
-regression, we can compute the covariance function for $k_{f,f}(t,t')$
-in equation \eqref{eq:fcov} using the following Green's function 
+
+Our first illustrative example corresponds to the second order differential equation model described in equation \eqref{eq:sde0} with no control $c(t) = 0$. Figure~\ref{mass:spring:damper:figure} shows a mass-spring-damper system being forced by a latent function $u(t)$, which an example of a physical system that with such a model. The output $f(t)$ is also shown in the figure and represents the position of the body with a particular reference. For this model, we can compute the covariance function for $k_{f,f}(t,t')$ in equation \eqref{eq:fcov} using the following Green's function 
 \begin{align}\label{Greens:ODE:2}
 h(t-s) & = \frac{1}{\omega}\exp(-\alpha(t-s))\sin(\omega(t-s)),
 \end{align} 
 where $\omega = \sqrt{4\gamma - \lambda^2}/2$, and $\alpha =
 \lambda/2$. 
-If the covariance function $k(t-t')$ for the latent process $u(t)$  is an
-squared-exponentiated (SE) covariance of the form 
+If the covariance function $k(t-t')$ for the latent process $u(t)$  is a squared exponential (SE) covariance of the form 
 \begin{align*}
 k(t -t') = \sigma_t^2\exp\Bigg[-\frac{(t-t')^2}{\ell^2_t}\Bigg],
 \end{align*}
-it is possible to obtain closed-form solutions for $k_{f,f'}(t,t')$
-and $k_{f,u}$ (see Eq. \eqref{eq:fucov})
-\cite{Alvarez+Luengo+Lawrence:2009}.
+it is possible to obtain closed-form solutions for $k_{f,f'}(t,t')$ and $k_{f,u}$ (see Eq. \eqref{eq:fucov}) \cite{Alvarez+Luengo+Lawrence:2009}.
  
-As an example, we assume that the input source $u(t)$ is given as
+We assume that the input source $u(t)$ is given as
 \begin{align*}
 u(t) = \sin(0.73t - 0.64) + \sin(0.29t- 0.64),
 \end{align*}
@@ -2128,8 +2140,6 @@ measurements $\{y_k\}_{k=1}^n$. We assume that the parameters
 $\lambda$, $\gamma$, and the variance for $\epsilon_k$ are known, and
 only estimate the parameters $\sigma_t^2$,
 and $\ell^2_t$ of the kernel function $k(t-t')$.
-
-Results of inference for the latent function $u(t)$ are shown in Figure \ref{ode2:source:subfig:mlgp}.
 
 \begin{figure}[!ht]
 \centering
@@ -2149,72 +2159,19 @@ Results of inference for the latent function $u(t)$ are shown in Figure \ref{ode
        example. In \ref{ode2:source:subfig:mlgp}, the ground truth source and the posterior distribution for $u^*$.}
      \label{fig:dummy}
    \end{figure}
-The Mean Squared Error (MSE) between the ground truth source $u(t)$, and the inferred mean source $u^*(t)$ is equal to $0.0036$. The MSE
-between the ground truth output $f(t)$ and the mean predicted output $f^*(t)$ evaluated at the test input points is
-$0.0040$.
 
-The results above were obtained using the GP regression point of view of LFMs. However, we also ran the same experiment
-using the state space formulation for LFMs. As it should be expected, the results obtained were very similar. 
+Results of inference for the latent function $u(t)$ are shown in Figure \ref{ode2:source:subfig:mlgp}. The mean squared error (MSE) between the ground truth source $u(t)$, and the inferred mean source $u^*(t)$ is equal to $0.0036$. The MSE between the ground truth output $f(t)$ and the mean predicted output $f^*(t)$ evaluated at the test input points is $0.0040$. As can be seen in the figure, the estimate is very close to the truth and the error quantiles are realistic.
 
+The results above were obtained by explicitly computing the modified covariance function corresponding to the LFM. However, the result of using the equivalent state-space representation is practically the same, except for the minor differences due to the Pad\'o approximation required for the SE covariance function. Hence we do not show the state-space result here (it would be visually indistinguishable).
 
+\subsection{Controlled ODE Model}
 
-%\simo{Simple spring model with RBF. Compare the computational complexities and easiness of implementation.}
+To demonstrate the benefit of the state-space representation and the modeling of the force as GP we consider the model \eqref{eq:sde0} with linear closed loop optimal control design for $c(t)$. 
 
-%\simo{Mauricio starts by explaining the setup.}
+\simo{Controlled spring model where we discuss the online estimation of latent GP as well as the benefit of it to control.}
 
 
-% \begin{figure}[!t]
-% \centering
-% \includegraphics[width=\columnwidth]{placeholder1}
-% % where an .eps filename suffix will be assumed under latex,
-% % and a .pdf suffix will be assumed for pdflatex; or what has been declared
-% % via \DeclareGraphicsExtensions.
-% \caption{Simulation Results (placeholder 1)}
-% \label{fig_sim}
-% \end{figure}
-
-
-% \subsection{A PDE Model}
-% In this example, we illustrate the performance of the latent force
-% models for a the Heat equation with one space variable. 
-
-% We refer to equation  XX. Figure XX illustrates a physical setup where
-% the input  $u(\cdot)$ represents a heat source that moves across space
-% an time, irradiating the heat over a flut surface where the heat $f(\cdot)$ is
-% actually measured.
-
-
-% We assume that the source $u(x, t)$ follows a Gaussian process with
-% squared-exponentiated (SE) covariance
-% function that separates in the spatial and time dimensions,
-% \begin{align*}
-% k(x-x', t -t') = \exp\Bigg[-\frac{(x-x')^2}{\sigma^2_x}\Bigg]\exp\Bigg[-\frac{(t-t')^2}{\sigma^2_t}\Bigg],
-% \end{align*}
-% where $\sigma_x$, and $\sigma_t$ are the length-scales along the
-% spatial, and time variables, respectively. 
-% Assuming boundary conditions, and initial condition equal to zero, the
-% corresponding Green's function in \cite{Polyanin:Handbook02} can be
-% used to compute analitycally the covariances  $k_{f,f}$ and $k_{f,u}$.
-% % 
-% For the state-space solution, we use a basis like XX. 
-
-
-% %
-% \simo{Heat equation with closed form Green's function and basis functions. Covariance functions RBF \& Matern.}
-
-% \simo{Mauricio starts by explaining the setup.}
-
-% \begin{figure}[!t]
-% \centering
-% \includegraphics[width=\columnwidth]{placeholder2}
-% % where an .eps filename suffix will be assumed under latex,
-% % and a .pdf suffix will be assumed for pdflatex; or what has been declared
-% % via \DeclareGraphicsExtensions.
-% \caption{Simulation Results (placeholder 2)}
-% \label{fig_sim}
-% \end{figure}
-
-\subsection{A PDE Model}
+\subsection{Inference on Poisson equation}
 %\simo{Mauricio: Finish the descriptions}
 
 
@@ -2326,7 +2283,7 @@ evaluated at the test input points is $8.3354\times 10^{-4}$.
 
 % \simo{Simo: State-space control of string model with comparison to non-LFM control.}
 
-\subsection{LQ Control of PDE LFMs}
+\subsection{Controlled heat equation}
 
 Figure \ref{cartoon:heatpde} is a cartoon representation of a heat source moving across a 2D spatial field.
 
