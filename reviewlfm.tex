@@ -999,10 +999,10 @@ with
   \mathbf{\mathcal{H}}(t - s) \, \mathbf{B}_f \, k(\mathbf{x},\mathbf{x}';s - s') \,
   \mathbf{B}_f^T \, \mathbf{\mathcal{H}}^T(t' - s') \, ds \, ds',
 \end{split}
-\label{eq:vfcov}
+\label{eq:vfcov_pde}
 \end{equation}
 %
-where the operator multiplication from right is again interpreted as acting onto the variable $\mathbf{x}'$. The cross-variance between $f$ and $u$ has the representation
+where the operator multiplication from right is interpreted as acting onto the variable $\mathbf{x}'$. The cross-variance between $f$ and $u$ has the representation
 %
 \begin{equation}
 \begin{split}
@@ -1015,8 +1015,7 @@ where the operator multiplication from right is again interpreted as acting onto
 
 \subsection{Hyperparameter Learning in LFMs}
 
-%\simo{Mauricio: just explain that we can use the ordinary GP hyperparameter learning once we have the covariance
-%functions. DONE}
+\simo{Mauricio: Should rewrite the text below to be a bit more specific. The Titsias references are also old and not even related (?).}
 
 Expressions for the covariance functions $k_{f}(t,t')$,
 $k_{f}(\mathbf{x}, \mathbf{x}', t-t')$, and $k_{f}(\mathbf{x}, \mathbf{x}')$ involve the parameters of the differential equations, and the hyperparameters of the covariance function of the latent process $u(\cdot)$. Once we have formed the GP model with the modified covariance function, those hyperparameters can be estimated using any of the methods mentioned in the section on GP regression. In the context of latent force models, there have been more recent
@@ -1028,7 +1027,7 @@ attempts to estimate these hyperparameters using Markov Chain Monte Carlo, by in
 
 In this section \ldots \simo{To be completed}
 
-\subsection{GPs in state-space form}
+\subsection{Temporal GPs in state-space form}
 As shown in \cite{Hartikainen+Sarkka:2010,Sarkka+Solin+Hartikainen:2013,Sarkka+Piche:2014} many covariance function based models of the form
 %
 \begin{equation}
@@ -1073,7 +1072,9 @@ where $\lambda=\sqrt{2\nu}/\ell$.
 
 Although the commonly used squared exponential covariance function does not have an exact state-space representation, it can be easily it can be approximated with such using a simple Taylor series expansions or Pad\'e approximants in Fourier domain \cite{Sarkka+Piche:2014}. State-space representations of periodic covariance functions have been considered in \cite{Solin+Sarkka:2014a}, and rational quadratic and general scale mixtures of Gaussians in \cite{Solin+Sarkka:2014b}.
 
-It is also possible to extend this concept to spatio-temporal covariance functions of the form $k(\mathbf{x} - \mathbf{x}', t-t')$, which in turn gives covariance functions $k(\mathbf{x} - \mathbf{x}')$ as a special case, because we can always reinterpret one of the components of $\mathbf{x}$ as time. The methods to form these infinite-dimensional state-space representations have been considered in \cite{Sarkka+Hartikainen:2012,Sarkka+Solin+Hartikainen:2013}. 
+\subsection{Spatio-temporal GPs in state-space form}
+
+It is also possible to extend the above concepts to spatio-temporal covariance functions of the form $k(\mathbf{x} - \mathbf{x}', t-t')$, which in turn gives covariance functions $k(\mathbf{x} - \mathbf{x}')$ as a special case, because we can always reinterpret one of the components of $\mathbf{x}$ as time. The methods to form these infinite-dimensional state-space representations have been considered in \cite{Sarkka+Hartikainen:2012,Sarkka+Solin+Hartikainen:2013}. 
 
 The conversion of spatio-temporal covariance function into state-space form leads to a system of the form
 %
@@ -1086,7 +1087,22 @@ The conversion of spatio-temporal covariance function into state-space form lead
 \label{eq:ssu2}
 \end{equation}
 %
-where $\mathbf{\mathcal{A}}_u$ is a matrix of linear operators (typically pseudo-differential operators) acting on the $\mathbf{x}$-variable and $w(\mathbf{x},t)$ is a time-white spatio-temporal Gaussian process. This representation can be obtained by an extension the spectral factorization based method for the temporal case. 
+where $\mathbf{\mathcal{A}}_u$ is a matrix of linear operators (typically pseudo-differential operators) acting on the $\mathbf{x}$-variable and $w(\mathbf{x},t)$ is a time-white spatio-temporal Gaussian process.
+
+The representation can be obtained, for example, by an extension of the spectral factorization based method to the temporal case. We can first form the joint space-time spectral density $S(\boldsymbol{\omega}_{\mathbf{x}},\omega_t)$ and approximate it as
+%
+\begin{equation}
+\begin{split}
+  S(\boldsymbol{\omega}_{\mathbf{x}},\omega_t)
+  \approx   \frac{d_0(\boldsymbol{\omega}_{\mathbf{x}})
+  + d_1(\boldsymbol{\omega}_{\mathbf{x}}) \, \omega_t^2
+  + \cdots + d_r(\boldsymbol{\omega}_{\mathbf{x}}) \, \omega_t^{2r}}
+  {c_0(\boldsymbol{\omega}_{\mathbf{x}}) + c_1(\boldsymbol{\omega}_{\mathbf{x}}) \, \omega_t^2
+  + \cdots + c_s(\boldsymbol{\omega}_{\mathbf{x}}) \, \omega_t^{2s}}.
+\end{split}
+\end{equation}
+%
+The spectral factorization in variable $\omega_t$ then leads to a temporal state space model, where the matrices depend on the spatial frequency $\boldsymbol{\omega}_{\mathbf{x}}$. A spatial inverse Fourier transform then transforms the terms into linear operators leading to a model of the form \eqref{eq:ssu2}. More details can be found in \cite{Sarkka+Solin+Hartikainen:2013}.
 
 For example, the spatio-temporal Mat\'ern covariance function with a suitable parametrization leads to the following representation \cite{Sarkka+Solin+Hartikainen:2013}:
 %
@@ -1106,60 +1122,10 @@ For example, the spatio-temporal Mat\'ern covariance function with a suitable pa
 %
 where $\nabla^2 = \partial^2 / \partial x_1^2 + \cdots + \partial^2 / \partial x_p^2$ and $\sqrt{\cdot}$ in the matrix $\mathbf{\mathcal{A}}_u$ denotes an operator square root.
 
-State-space realizations of spatio-temporal oscillating fields have been discussed in \cite{Solin+Sarkka:2013}. The implementation of divergence-free covariance functions for magnetic field modeling have been recently presented in \cite{Solin:2015}.
+State-space realizations of spatio-temporal oscillating fields have been discussed in \cite{Solin+Sarkka:2013}. The implementation of divergence-free covariance functions for magnetic field modeling have been recently presented in \cite{Solin:2015}. It is worth noting that fixing the GP to be realized as its causal version via the spectral factorization can also cause problems when the GP is combined with a suitable non-causal PDE. This is discussed in Section~\ref{sec:poisson-problem}.
 
 
-\subsection{Covariance functions implied by state-space models}
-%
-\simo{Simo: Check if we need to add or remove something}
-
-The covariance function of $u(t)$ can be expressed as
-%
-\begin{equation}
-\begin{split}
-  k(\tau) = \begin{cases}
-    \mathbf{C}_u \, \mathbf{P}^u_\infty \, \exp(\tau \, \mathbf{A}_u)^T \, \mathbf{C}_u^T &,
-    \text{ if } \tau \ge 0 \\
-    \mathbf{C}_u \, \exp(-\tau \, \mathbf{A}_u) \, \mathbf{P}^u_\infty \, \mathbf{C}_u &,
-    \text{ if } \tau < 0.
-  \end{cases}
-\end{split}
-\end{equation}
-%
-where $\tau = t' - t$, and $\mathbf{P}^u_\infty$ is the solution to
-%
-\begin{equation}
-\begin{split}
-  \mathbf{A}_u \, \mathbf{P}^u_\infty + \mathbf{P}^u_\infty \, \mathbf{A}_u^T
-  + \mathbf{B}_u \, q_u \, \mathbf{B}_u^T = 0.
-\end{split}
-\end{equation}
-%
-The corresponding spatio-temporal covariance function of $u(\mathbf{x},t)$ is (with matrix-like interpretation of operating with a linear operator from the right):
-%
-\begin{equation}
-\begin{split}
-  k(\mathbf{x},\mathbf{x}';\tau) = \begin{cases}
-    \mathbf{C}_u \, \mathcal{P}^u_\infty \, \exp(\tau \, \mathcal{A}_u)^T \, \mathbf{C}_u^T &,
-    \text{ if } \tau \ge 0 \\
-    \mathbf{C}_u \, \exp(-\tau \, \mathcal{A}_u) \, \mathcal{P}^u_\infty \, \mathbf{C}_u &,
-    \text{ if } \tau < 0.
-  \end{cases}
-\end{split}
-\end{equation}
-%
-where $\tau = t' - t$, and the operator $\mathcal{P}^u_\infty$ is the solution to
-%
-\begin{equation}
-\begin{split}
-  \mathcal{A}_u \, \mathcal{P}^u_\infty + \mathcal{P}^u_\infty \, \mathcal{A}_u^T
-  + \mathbf{B}_u \, q_u(\mathbf{x},\mathbf{x}') \, \mathbf{B}_u^T = 0.
-\end{split}
-\end{equation}
-%
-\simo{Comment that we don't necessarily need to explicitly compute these ever.}
-
-\subsection{LFMs in joint state-space form}
+\subsection{ODE LFMs in joint state-space form}
 %
 We can now combine the  state-space ODE \eqref{eq:ssgen} with the state-space representation of LFMs in the previous section to obtain an augmented state-space representation of the LFM \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012}. Thus we obtain a combined model
 %
@@ -1248,7 +1214,44 @@ where $q_c$ is the spectral density of the white noise $w(t)$. For numerical com
 
 The link to Kalman filtering results from the fact that the model \eqref{eq:dssaug} is a standard discrete-time linear Gaussian model and the Kalman filter and (Rauch--Tung--Striebel, RTS) smoother provide the equations for exact Bayesian inference on it (see, e.g., \cite{Sarkka:2013}). 
 
-\subsection{Partial differential equations in state-space form}
+Another benefit of the representation \eqref{eq:comb} is that we can compute the covariance functions corresponding to the ODE LFM without resorting to numerical integration as in \eqref{eq:fcov} and \eqref{eq:fucov}, or \eqref{eq:vfcov} and \eqref{eq:vfucov}. The joint stationary covariance function of $\mathbf{g}(t) = (\mathbf{f}(t),\mathbf{u}(t))$ can be expressed as
+%
+\begin{equation}
+\begin{split}
+  \mathbf{K}_{\mathbf{g}}(t,t') = \begin{cases}
+    \mathbf{P}_\infty \, \exp(( t - t') \, \mathbf{A})^T, &
+    \text{ if } t \ge t' \\
+    \exp((t' - t) \, \mathbf{A}) \, \mathbf{P}_\infty, &
+    \text{ if } t < t',
+  \end{cases}
+\end{split}
+\label{eq:Kg1}
+\end{equation}
+%
+where $\mathbf{P}_\infty$ is the solution to the Lyapunov equation
+%
+\begin{equation}
+\begin{split}
+  \mathbf{A} \, \mathbf{P}_\infty + \mathbf{P}_\infty \, \mathbf{A}^T
+  + \mathbf{B} \, q_c \, \mathbf{B}^T = 0.
+\end{split}
+\label{eq:Kg2}
+\end{equation}
+%
+We can then pick up the covariance function of $f$ and the cross-covariance of $f$ and $u$ as
+%
+\begin{equation}
+\begin{split}
+  k_{f,f}(t,t') = \mathbf{C} \, \mathbf{K}_{\mathbf{g}}(t,t') \, \mathbf{C}^T, \\
+  k_{f,u}(t,t') = \mathbf{C} \, \mathbf{K}_{\mathbf{g}}(t,t') \, \mathbf{D}^T, \\
+\end{split}
+\label{eq:Kg3}
+\end{equation}
+%
+where we have defined $\mathbf{D} = \begin{pmatrix} 0 & \mathbf{C}_u \end{pmatrix}$.
+
+
+\subsection{PDE LFMs in joint state-space form}
 %
 Partial differential equation models driven by Gaussian processes can also be often represented in a similar state-space form as the temporal models considered in the previous section. Consider for example the heat equation
 %
@@ -1323,6 +1326,13 @@ The discretization now proceeds analogously to the previous section, except that
 Furthermore, both the spectral density $q_c(\mathbf{x},\mathbf{x}')$ and the covariance $\mathbf{Q}(\mathbf{x},\mathbf{x}';\Delta t_k)$ become kernels in $\mathbf{x},\mathbf{x}'$. Note that above, we need to interpret the operator application from the right as operating onto the variable $\mathbf{x}'$ (cf. \cite{Sarkka+Hartikainen:2012}).
 
 The inference in the above model can be done with infinite-dimensional Kalman filters and RTS smoothers (see, \cite{Sarkka+Hartikainen:2012}). However, in practice we often use some kind of basis function expansion methods to project the equations onto a finite-dimensional sub-space which reduces the filters and smoothers to their finite-dimensional versions.
+
+The covariance functions for explicit GP inference could also be computed with the operator analogs of Equations \eqref{eq:Kg1}, \eqref{eq:Kg2}, and \eqref{eq:Kg3}.
+
+
+\subsection{Counter-example: the Poisson equation} \label{sec:poisson-problem}
+
+The state-space representation has one hard limitation in the physical model: it needs to be causal in the time-direction. Although statistics of the LFM GP do not depend on the causality of the process and thus we can always replace the LFM GP with its causal version, this is not true for a physical process as we demonstrate in this section.
 
 Sometimes we are interested in partial differential equations without time-dependence, with a prototypical example being the Poisson equation
 %
