@@ -886,5 +886,20 @@ where Q(t) was defined in (49) and can be efficently computed with matrix fracti
 
 ****
 
-Assume (a) that the joint system (A,C) is observable, and (b) the
-observations are not critically sampled, then 
+In this section, our aim is to discuss the detectability and observability of the latent force models. For the theorems, we need to assume that the joint force system has a state-space representation, because otherwise the classical observability and detectability results \simo{ref Kalman \& Anderson} are not applicable. That is, we assume that we have a latent force model which has the following state space representation
+
+[State space model here again]
+
+Clearly, if we wished to determine the detectability or observability of the given state-space representation above, then all we would need to do is a standard detectability or observability test \simo{ref. e.g. Kalman \& Anderson} directly on the joint system. However, for pratical reasons it would be desirable to be able to express these properties of the full system as function of the properties of the physical model and the GP. It turns our that this is, in general, possible for detectability, but for the observability it is hard to come up with a general theorem. Furthermore, both of these properties generally depend on the way that the system is sampled, which is to be expected, because we are still restricted by the sampling theorems of Shannon and Nyquist. For the detectability we get the following.
+
+[The theorem here without the model]
+
+Above, in Theorem III.1 we had to assume that detectability of the discretized system []. There are many ways to assure that, but one way is to demand that the continuous physical model is observable and that we are not sampling critically [ref], that is, in a way that would lead to aliasing of frequencies as in the Shannon-Nyquist theory. Although observability is a quite strong condition compared to detectability, it assures that we have the chance to reconstruct the physical system with an arbitrary precision by improving the measurement protocol, which would not be true for mere detectability. Based on this, we have the following theorem.
+
+[Theorem with detectable GP, continuous-observable ODE and non-critically sampled system [ref], which leads to detectable joint system]
+
+In general, the best way to determine the observability of the joint system is not to attempt to think of the ODE and GP separately, but explicitly consider the joint state-space model. There are numerous attempts to map the properties of this kind cascaded systems to the properties of the joint system \citep{cite a few}, but still the best way to go seems to be simply to use a standard observability tests on the joint system. The properties of the sub-systems of this kind of cascade do not alone determine the observability, because we can have phenomena like zero-pole cancellation which leads to a non-observable system even when all the subsystems are observable \simo{cite e.g. Gilbert:1963}. When we also account for the effect of sampling to observability, we get the following theorem.
+
+Theorem: Assume (a) that the continuous-time joint system (A,C) is observable, and (b) the
+observations are not critically sampled [ref], then the sampling full system is observable.
+
