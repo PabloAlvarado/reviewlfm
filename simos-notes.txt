@@ -903,3 +903,69 @@ In general, the best way to determine the observability of the joint system is n
 Theorem: Assume (a) that the continuous-time joint system (A,C) is observable, and (b) the
 observations are not critically sampled [ref], then the sampling full system is observable.
 
+*** 
+
+The aim is now to discuss the controllability and stabilizablity of state-space latent force models. We assume that the model has the form
+
+  df/dt = A_f f + B_f C_u u + B_c c
+  du/dt = A_u u + B_u w
+
+First of all, the stabilizability of the system is guaranteed solely by ensuring that the physical model part is stabilizable, because state-space representations of stationary GPs -- provided that they are properly formed -- are stable. Thus we have the following theorem.
+
+[stabilizability]
+
+However, this is not very useful in practice, because sole stabilizability says that we might have randomly wandering subprocesses in the joint system which practically prevent us from controlling the process exactly where we wish is to go. A much stronger requirement is to require that the full system controllable. However, it turns out that latent force models are never fully controllable in the present formulation, because we cannot control the subsystem corresponding to the GP force.
+
+[theorem about non-controllability]
+
+Proof. consider the system
+
+  df/dt = A_f f + B_f C_u u + B_c c
+  du/dt = A_u u
+
+it can be seen that this is in Kalman's (ref) canonical form with u being the uncontrollable part.
+
+In practice, the non-controllability of the force part is not a problem, as we are actually interested in controlling the physical system part of the model, not the force per se. It turns out that the physical system can be controllable even though the full system is not controllable. This result can be obtained as a corollary of so called output controllability (see, e.g., Ogata) as follows.
+
+[theorem here that says that if the physical system is controllable, then the full system is output controllable w.r.t. to the physical system part]
+
+Proof. consider the system
+
+  df/dt = A_f f + B_f C_u u + B_c c
+  du/dt = A_u u
+      z = [I 0] [f;u]
+
+and recall that the controllability condition for the physical system part
+
+  df/dt = A_f f + B_c c
+
+is that the following matrix has the full rank:
+
+  [B_c A_fB_c  ... A_f^{n-1}B_c ]
+
+
+Then this system is output-controllable (with output z) provided that the following matrix has full rank (see, e.g., Ogata):
+
+  dx/dt = A x + B c
+      z = C x
+
+  [CB CAB CA^2B ... CA^{n-1}B ]
+
+   CB = [I 0] [B_c;0] = B_c
+  CAB = [I 0] [A_f  B_f; 0 A_u] [B_c;0] 
+      = [A_f; 0] [B_c;0]
+      = A_f B_c
+
+We also have
+
+  [A1 B1] [A2 B2]
+  [0  C1] [0  C2]
+  = [A1*A2 A1*B2+B1*C2;
+      0    C1*C2]
+
+hence actually
+
+  CA^mB = A_f^m B_c
+
+which reduces the rank condition to controllability of the physical system.
+
