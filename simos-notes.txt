@@ -890,6 +890,22 @@ In this section, our aim is to discuss the detectability and observability of th
 
 [State space model here again]
 
+We assume that
+
+1. The physical system part, without the latent force, that is
+
+  df/dt = A_f f + B_c c
+      y = C_f f
+
+is observable.
+
+2. State state-space representation for the force is observable:
+
+  du/dt = A_u u + B_u w
+      z = C_u u
+
+3. The system is not critically sampled.
+
 Clearly, if we wished to determine the detectability or observability of the given state-space representation above, then all we would need to do is a standard detectability or observability test \simo{ref. e.g. Kalman \& Anderson} directly on the joint system. However, for pratical reasons it would be desirable to be able to express these properties of the full system as function of the properties of the physical model and the GP. It turns our that this is, in general, possible for detectability, but for the observability it is hard to come up with a general theorem. Furthermore, both of these properties generally depend on the way that the system is sampled, which is to be expected, because we are still restricted by the sampling theorems of Shannon and Nyquist. For the detectability we get the following.
 
 [The theorem here without the model]
@@ -910,11 +926,24 @@ The aim is now to discuss the controllability and stabilizablity of state-space 
   df/dt = A_f f + B_f C_u u + B_c c
   du/dt = A_u u + B_u w
 
+We have the following assumptions:
+
+1. The physical system part, without the latent force, that is
+
+  df/dt = A_f f + B_c c
+
+is controllable and hence stabilizable.
+
+2. The matrix A_u in the state-space representation for the force is stable.
+
+
 First of all, the stabilizability of the system is guaranteed solely by ensuring that the physical model part is stabilizable, because state-space representations of stationary GPs -- provided that they are properly formed -- are stable. Thus we have the following theorem.
 
 [stabilizability]
 
-However, this is not very useful in practice, because sole stabilizability says that we might have randomly wandering subprocesses in the joint system which practically prevent us from controlling the process exactly where we wish is to go. A much stronger requirement is to require that the full system controllable. However, it turns out that latent force models are never fully controllable in the present formulation, because we cannot control the subsystem corresponding to the GP force.
+The stabilizability also implies that the corresponding LQ controller is uniquely determined (Anderson & Moore, Optimal Control)
+
+However, this is not very useful in practice, because sole stabilizability says that we might have randomly wandering subprocesses in the joint system which practically prevent us from controlling the process exactly where we wish is to go. A much stronger requirement is to require that the full system controllable. Unfortunately, it turns out that latent force models are never fully controllable in the present formulation, because we cannot control the subsystem corresponding to the GP force.
 
 [theorem about non-controllability]
 
