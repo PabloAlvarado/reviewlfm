@@ -553,8 +553,14 @@ The models considered in this article can be seen to belong to the following thr
   \mathcal{L} \, f(t) = u(t) + c(t),
 \end{equation}
 %
-where the linear operator $\mathcal{L}\equiv a_n \, \frac{d}{dt^{n}} + \cdots + a_1 \, \frac{d}{dt} + a_0$ for some fixed constants $a_i, i=0,\ldots,n$. This kind of models can typically be rewritten in 
-\emph{state-space form}. %We will return to that later in this article.
+where the linear operator is typically $\mathcal{L}\equiv a_n \, \frac{d}{dt^{n}} + \cdots + a_1 \, \frac{d}{dt} + a_0$ for some fixed constants $a_i, i=0,\ldots,n$. This kind of models can often be rewritten in 
+\emph{state-space form}
+%
+\begin{equation}
+  \frac{d\mathbf{f}(t)}{dt} = \mathbf{A}_f \, \mathbf{f}(t) + \mathbf{B}_f \, \mathbf{u}(t) + \mathbf{M}_f \, \mathbf{c}(t),
+\end{equation}
+%
+which is not only equivalent to the representation above, but strictly more general model formulation; the control $\mathbf{c}$ can be a vector and it does not need to enter the system via the same route as the latent force, and the operator $\mathcal{L}$ can also be an integro-differential operator.
 
 \item We also consider are dynamic partial and pseudo differential equation (PDE) based models that can generally be written in form
 %
@@ -568,7 +574,9 @@ where $\mathcal{L}$ is a linear operator in space and time. The input Gaussian p
   \mathcal{L}\equiv \mathcal{A}_n \, \frac{d}{dt^{n}} + \cdots + \mathcal{A}_1 \, \frac{d}{dt} + \mathcal{A}_0,
 \end{equation}
 %
-where $\mathcal{A}_0,\ldots,\mathcal{A}_n$ are some spatial partial differential or pseudo-differential operators. This kind of models can often be also written in form of \emph{spatio-temporal state-space models}. %, which we shall consider later in this article.
+where $\mathcal{A}_0,\ldots,\mathcal{A}_n$ are some spatial partial differential or pseudo-differential operators. This kind of models can often be also written in form of \emph{spatio-temporal state-space models}
+
+\simo{Write down the state-space form and comment it}
 
 \item As a static special case of the above models we have the following class of partial and pseudo differential equation (PDE) models driven by spatial Gaussian processes $u(\mathbf{x})$:
 %
@@ -576,7 +584,7 @@ where $\mathcal{A}_0,\ldots,\mathcal{A}_n$ are some spatial partial differential
   \mathcal{L} \, f(\mathbf{x}) = u(\mathbf{x}),
 \end{equation}
 %
-where $\mathcal{L}$ is a spatial partial differential operator or pseudo-differential operator. For this kind of models there is no control problem per se, because there is no time dependence. 
+where $\mathcal{L}$ is a spatial partial differential operator or pseudo-differential operator. For this kind of models there is no control problem per se, because there is no time dependence.  These models do not naturally allow for a state-space representation either.
 \end{enumerate}
 
 In each of the models we obtain noisy observations of the form
@@ -585,9 +593,9 @@ In each of the models we obtain noisy observations of the form
   y_k = f(\bullet) + \epsilon_k,
 \end{equation}
 %
-where the argument $\bullet$ is either $t_k \in \mathbb{R}_+$, $(t_k,x_k) \in \mathbb{R}_+ \times \mathbb{R}^p$, or $x_k \in \mathbb{R}^d$. The measurement noise is assumed to be Gaussian $\epsilon_k \sim \mathrm{N}(0,\Sigma_k)$. We also briefly consider a number of generalizations, include linear operators in the measurement model, non-Gaussian noises, as well as switching dynamic models.
+where in the case of state-space models we have $f(\bullet) = \mathbf{C}_f \, \mathbf{f}(\bullet)$ for some given matrix $\mathbf{C}_f$. Above, the argument $\bullet$ is either $t_k \in \mathbb{R}_+$, $(t_k,x_k) \in \mathbb{R}_+ \times \mathbb{R}^p$, or $x_k \in \mathbb{R}^d$. The measurement noise is assumed to be Gaussian $\epsilon_k \sim \mathrm{N}(0,\Sigma_k)$. We also briefly consider a number of generalizations, including operators in the measurement model, non-linear measurement models, non-Gaussian noises, as well as switching dynamic models.
 
-The aim of this article is to consider the problem of inferring the functions $f(\bullet)$ and $u(\bullet)$ from a set of noisy measurements $\{ y_k \}$. We consider inference problems both in batch form and with recursive Kalman filters and smoothers. We also consider the parameter estimation problems as well as the optimal control problems on these models.
+The aim of this article is to consider the problem of inferring the functions $f(\bullet)$ and $u(\bullet)$ from a set of noisy measurements $\{ y_k \}$. We consider inference problems both in batch form and with recursive Kalman filters and smoothers. We also consider the parameter estimation problems as well as the optimal control problems (i.e., optimal selection of $\mathbf{c}(\bullet)$) in these models.
 
 \section{Latent Force Models as Gaussian Process Regression with Specific Covariance Functions}
 
