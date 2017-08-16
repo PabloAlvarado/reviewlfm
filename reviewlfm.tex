@@ -1072,6 +1072,8 @@ where $\lambda=\sqrt{2\nu}/\ell$.
 
 Although the commonly used squared exponential covariance function does not have an exact state-space representation, it can be easily it can be approximated with such using a simple Taylor series expansions or Pad\'e approximants in Fourier domain \cite{Sarkka+Piche:2014}. State-space representations of periodic covariance functions have been considered in \cite{Solin+Sarkka:2014a}, and rational quadratic and general scale mixtures of Gaussians in \cite{Solin+Sarkka:2014b}.
 
+\simo{Discussion on certain classes of non-stationary models}
+
 \subsection{Spatio-temporal GPs in state-space form}
 
 It is also possible to extend the above concepts to spatio-temporal covariance functions of the form $k(\mathbf{x} - \mathbf{x}', t-t')$, which in turn gives covariance functions $k(\mathbf{x} - \mathbf{x}')$ as a special case, because we can always reinterpret one of the components of $\mathbf{x}$ as time. The methods to form these infinite-dimensional state-space representations have been considered in \cite{Sarkka+Hartikainen:2012,Sarkka+Solin+Hartikainen:2013}. 
@@ -1123,6 +1125,8 @@ For example, the spatio-temporal Mat\'ern covariance function with a suitable pa
 where $\nabla^2 = \partial^2 / \partial x_1^2 + \cdots + \partial^2 / \partial x_p^2$ and $\sqrt{\cdot}$ in the matrix $\mathbf{\mathcal{A}}_u$ denotes an operator square root.
 
 State-space realizations of spatio-temporal oscillating fields have been discussed in \cite{Solin+Sarkka:2013}. The implementation of divergence-free covariance functions for magnetic field modeling have been recently presented in \cite{Solin:2015}. It is worth noting that fixing the GP to be realized as its causal version via the spectral factorization can also cause problems when the GP is combined with a suitable non-causal PDE. This is discussed in Section~\ref{sec:poisson-problem}.
+
+\simo{Discussion on certain classes of non-stationary models}
 
 
 \subsection{ODE LFMs in joint state-space form}
@@ -1439,10 +1443,10 @@ However, it turns out that although we can indeed estimate the process $f$ easil
 
 \subsection{Detectability and Observability of Latent Force Models}
 
-\simo{Simo: Say something for intro and then put the actual theorems to the place.}
+In this section, our aim is to discuss the detectability and observability of the latent force models. For the theorems, we need to assume that the joint force system has a state-space representation, because otherwise the classical observability and detectability results \simo{ref Kalman \& Anderson} are not applicable. We only consider finite-dimensional models which is enough for our purposes because infinite-dimensional (PDE) models anyway need to be discretized and in order to ensure the detectability and observability of the resulting models, the finite-dimensional results are sufficient. However, the reader is referred to the book of Curtain \cite{Curtain:2012} for the corresponding infinite-dimensional results.
 
-\begin{theorem}
-  Assume that we have a latent force model which has the following state space representation:
+That is, we assume that we have a latent force model which has the following state space representation
+
 \begin{equation}
 \begin{split}
   \frac{d\mathbf{g}(t)}{dt}
@@ -1450,6 +1454,7 @@ However, it turns out that although we can indeed estimate the process $f$ easil
   + \mathbf{B} \, w(t) \\
   y_k &= \mathbf{C} \, \mathbf{g}(t_k) + \epsilon_k,
 \end{split}
+\label{eq:detss}
 \end{equation}
 %
 where the matrices above are defined by (cf. \eqref{eq:ssaugmats})
@@ -1472,10 +1477,16 @@ where the matrices above are defined by (cf. \eqref{eq:ssaugmats})
 \end{split}
 \end{equation}
 %
-with $\mathbf{g} = \begin{pmatrix} \mathbf{f}, \mathbf{u} \end{pmatrix}$. 
+with $\mathbf{g} = \begin{pmatrix} \mathbf{f}, \mathbf{u} \end{pmatrix}$. In this representation we have dropped the control signal, because it does not affect the detectability and observability.
 
+It is also reasonable to assume that the state-space representation of the latent force model is stable and hence detectable. However, the physical system part itself usually is not stable. We need to assume though that it is at least detectable and preferably it should be observable. The most useful case occurs when the whole joint system is observable. The sampling procedure also affects the observability and we need to ensure that we do not get 'aliasing' kind of phenomenon analogously to sampling a signal with a sampling frequency that is below the Nyquist frequency. Let us start with the following result for detectability.
+
+\simo{I guess that we need to assume controllability w.r.t. noise as well!}
+
+\begin{lemma} \label{lem:detect}
+  Assume that we have a latent force model which has the state space representation given in \eqref{eq:detss}.
 Assume that $(\exp(\mathbf{A}_f \, \Delta t_k),\mathbf{C}_f)$ is detectable, and that the latent force $u(t)$ has a exponentially stable state space representation. Then the full system is \emph{detectable} and the Kalman filter for the model is exponentially stable.
-\end{theorem}
+\end{lemma}
 
 \begin{proof}
 %  \simo{Using the existence of gain from \cite{Anderson:1981} which causes exponential stability}
@@ -1501,41 +1512,57 @@ which will be detectable provided that there exists a bounded gain sequence $\ma
 As the process $\mathbf{u}_k$ is exponentially stable, the sequence $\tilde{\mathbf{u}}_k$ is exponentially decreasing and bounded. Hence it does not affect the stability of the first equation. Therefore, the full system will be detectable provided that there exists a gain sequence $K_k$ such that $\tilde{\mathbf{f}}_k = (\exp(\mathbf{A}_f \, \Delta t_k) - \mathbf{K}_k \, \mathbf{C}_f) \, \tilde{\mathbf{f}}_{k-1}$ is exponentially stable. The gain sequence exists, because $[\exp(\mathbf{A}_f \, \Delta t_k),\mathbf{C}_f]$ is detectable by assumption. 
 \end{proof}
 
-\simo{Could comment here that this is pretty useless in practice, but still shows that the Kalman filter will always be exponentially stable.}
+Above, in Lemma~\ref{lem:detect} we had to assume that detectability of the discretized system []. There are many ways to assure that, but one way is to demand that the continuous physical model is observable and that we are not sampling critically [ref], that is, in a way that would lead to aliasing of frequencies as in the Shannon-Nyquist theory. Although observability is a quite strong condition compared to detectability, it assures that we have the chance to reconstruct the physical system with an arbitrary precision by improving the measurement protocol, which would not be true for mere detectability. Actually, sole detectability of the system is quite useful in practice, because our estimates might still have error offsets that would be impossible to observe.
 
-\begin{theorem} \label{the:obsv}
-  Let us define transfer functions (which are rational functions of $s$) as follows:
-\begin{equation}
-\begin{split}
-  H_f(s) &= \mathbf{C}_f \, (\mathbf{I} \, s - \mathbf{A}_f)^{-1} \, \mathbf{B}_f \\
-  H_u(s) &= \mathbf{C}_u \, (\mathbf{I} \, s - \mathbf{A}_u)^{-1} \, \mathbf{B}_u.
-\end{split}
-\end{equation}
+%Therefore, it is more useful to consider the following assumptions on the system:
+%%
+%\begin{enumerate}
+%\item The continuous-time physical system part, without the latent force, that is
+%%
+%\begin{equation}
+%\begin{split}
+%  \frac{d\mathbf{f}}{dt} &= \mathbf{A}_f \, \mathbf{f} \\
+%      y &= \mathbf{C}_f \, \mathbf{f},
+%\end{split}
+%\end{equation}
+%%
+%is observable. 
 %
-Assume that (a) the pairs $(\mathbf{A}_f,\mathbf{C}_f)$ and $(\mathbf{A}_u,\mathbf{C}_u)$ are observable (as continuous-time systems), (b) the zeros of $H_f(s)$ are not equal to the poles of $H_u(s)$ and vice versa, and (c) the corresponding discrete time system is not pathologically sampled. Then corresponding discrete-time model is observable.
+%\item State state-space representation for the latent force
+%%
+%\begin{equation}
+%\begin{split}
+%  \frac{d\mathbf{u}}{dt} &= \mathbf{A}_u \, \mathbf{u} + \mathbf{B}_u \, w \\
+%      z &= \mathbf{C}_u \, \mathbf{u},
+%\end{split}
+%\end{equation}
+%%
+%is observable.
+%
+%\item The system is not critically sampled.
+%\end{enumerate}
+
+If we assume that the physical system part is observable and the sampling is not critical, we get the following detectability theorem. Note that we do not yet assume that the latent force model part would be observable although its stability already implies that it is detectable.
+%
+\begin{theorem} \label{the:detect}
+Assume that $(\mathbf{A}_f,\mathbf{C}_f)$ is observable \simo{and controllable w.r.t. noise?}, the physical system is not critically sampled, and that the latent force model part is stable. Then the full system is detectable and the Kalman filter for the model is exponentially stable.
 \end{theorem}
 
 \begin{proof}
-  \simo{To be written}
+The observability \simo{and controllability?} of the continuous time system together with the non-critical sampling ensures that the discrete-time system is also observable \simo{and controllable?} \simo{Ref to Ding et al.}. As discrete-time observability implies discrete-time detectability the result follows from Lemma~\ref{lem:detect}.
 \end{proof}
 
-\begin{corollary}
-The corresponding discrete-time system is observable if the conditions (a) and (c) in Theorem~\ref{the:obsv} are satisfied, and for all eigenvalues $\lambda^f_i$ of the matrix $\mathbf{A}_f$ and eigenvalues $\lambda^u_j$ of the matrix $\mathbf{A}_u$ we have
-%
-\begin{equation}
-\begin{split}
-  \det \begin{pmatrix}
-    \lambda^u_j \, \mathbf{I}-\mathbf{A}_f & \mathbf{B}_f \\ -\mathbf{C}_f & 0
-    \end{pmatrix} \neq 0,
-    \quad
-  \det \begin{pmatrix}
-    \lambda^f_j \, \mathbf{I}-\mathbf{A}_u & \mathbf{B}_u \\ -\mathbf{C}_u & 0
-    \end{pmatrix} \neq 0.
-\end{split}
-\end{equation}
-\end{corollary}
+Let us now consider the conditions for the observability of the full system. It turns out that in general, the best way to determine the observability of the joint system is not to attempt to think of the physical system and the latent force model separately, but explicitly consider the joint state-space model. There are numerous attempts to map the properties of this kind cascaded systems to the properties of the joint system \simo{cite a few}, but still the best way to go seems to be simply to use a standard observability tests on the joint system. The properties of the sub-systems of this kind of cascade do not alone determine the observability, because we can have phenomena like zero-pole cancellation which leads to a non-observable system even when all the subsystems are observable \simo{cite e.g. Gilbert:1963}. When we also account for the effect of sampling to observability, we get the following theorem.
 
-\simo{Write/comment the corresponding theorem for PDEs using \cite{Curtain:2012}}
+\begin{theorem} \label{the:obsv}
+Assume that the continuous-time joint system $(\mathbf{A},\mathbf{C})$ is observable, and the
+observations are not critically sampled, then the discrete-time full system is observable.
+\end{theorem} 
+
+\begin{proof}
+See \simo{Ding et al. 2009}.
+\end{proof}
+
 
 %\subsection{PDE Methods for State-Space PDEs}
 %
@@ -1761,14 +1788,11 @@ Note that although the system is stabilizable also by setting the second term to
 
 \subsection{Controlled PDE Based LFMs}
 %
-\simo{This will be a extension of the basic LFM control to PDE case. The theory is quite heavy and therefore this will be quite pragmatic and referring heavily to the books of Curtain et al.}
+\simo{This will be a extension of the basic LFM control to PDE case. The theory is quite heavy and therefore this will be quite pragmatic and referring heavily to the books of Curtain et al. Namely state the model and say that we need to anyway discretize first and then use the results in the previous section.}
 
 \subsection{Stabilizability and Non-Controllability of Controlled LFMs}
 %
-\simo{Simo: Say something for intro and put the actual texts here.}
-
-\begin{theorem} \label{the:stab}
-Assume that we have a controlled latent force model, which has the following state-space form:
+The aim is now to discuss the controllability and stabilizability of state-space latent force models. We assume that the model has the form
 %
 \begin{equation}
 \begin{split}
@@ -1795,9 +1819,12 @@ where (cf. \eqref{eq:ssaugmats})
 \end{split}
 \end{equation}
 %
-and $\mathbf{g} = \begin{pmatrix} \mathbf{f}, \mathbf{u} \end{pmatrix}$.
+and $\mathbf{g} = \begin{pmatrix} \mathbf{f}, \mathbf{u} \end{pmatrix}$. We will not explicitly consider infinite-dimensional (PDE) models, because such models need to be discretized anyway, and it is best to analyze the stabilizability and the controllability in the resulting discretized representation. For infinite-dimensional results the reader is referred to the book of Curtain \cite{Curtain:2012}.
 
-Further assume that $(\mathbf{A}_f,\mathbf{M}_f)$ is stabilizable and the latent force $u(t)$ has an exponentially stable state space representation. Then the full system is \emph{stabilizable}.
+First of all, the stabilizability of the system is guaranteed solely by ensuring that the physical model part is stabilizable, because state-space representations of stationary GPs -- provided that they are properly formed -- are stable. Thus we have the following theorem.
+
+\begin{theorem} \label{the:stab}
+Assume that $(\mathbf{A}_f,\mathbf{M}_u)$ is stabilizable and the latent force has an exponentially stable state space representation. Then the full system is \emph{stabilizable}.
 \end{theorem}
 
 \begin{proof}
@@ -1812,8 +1839,12 @@ The system is stabilizable if there exist a finite gain $\mathbf{K}_c$ such that
 \end{split}
 \end{equation}
 %
-where we have written $\mathbf{K}_c = \begin{pmatrix} \mathbf{K}_f & \mathbf{K}_u \end{pmatrix}$. Because $\tilde{\mathbf{u}}$ is exponentially decreasing and bounded, we can safely set $\mathbf{K}_u = 0$. The remainder of the system will be stabilizable if there exists a gain $\mathbf{K}_f$ such that $d\tilde{\mathbf{f}}/dt = (\mathbf{A}_f + \mathbf{M}_u \, \mathbf{K}_f) \, \tilde{\mathbf{f}}$ is exponentially stable. By our assumption on the stabilizability of $[\mathbf{A}_f,\mathbf{M}_f]$, this is true and hence the result follows.
+where we have written $\mathbf{K}_c = \begin{pmatrix} \mathbf{K}_f & \mathbf{K}_u \end{pmatrix}$. Because $\tilde{\mathbf{u}}$ is exponentially decreasing and bounded, we can safely set $\mathbf{K}_u = 0$. The remainder of the system will be stabilizable if there exists a gain $\mathbf{K}_f$ such that $d\tilde{\mathbf{f}}/dt = (\mathbf{A}_f + \mathbf{M}_u \, \mathbf{K}_f) \, \tilde{\mathbf{f}}$ is exponentially stable. By our assumption on the stabilizability of $(\mathbf{A}_f,\mathbf{M}_u)$, this is true and hence the result follows.
 \end{proof}
+
+The stabilizability also implies that the corresponding LQ controller is uniquely determined (Anderson \& Moore, Optimal Control)
+
+However, the sole stabilizability is not very useful in practice, because sole stabilizability says that we might have randomly wandering subprocesses in the joint system which practically prevent us from controlling the process exactly where we wish is to go. A much stronger requirement is to require that the full system controllable. Unfortunately, it turns out that latent force models are never fully controllable in the present formulation, because we cannot control the subsystem corresponding to the GP force.
 
 \begin{theorem}
   Latent force models are not controllable.
@@ -1823,7 +1854,17 @@ where we have written $\mathbf{K}_c = \begin{pmatrix} \mathbf{K}_f & \mathbf{K}_
   \simo{The model is already in Kalman's canonical form, where the non-controllable part is the latent force.}
 \end{proof}
 
-\simo{Write/comment the corresponding theorem for PDE models}
+In practice, the non-controllability of the force part is not a problem, as we are actually interested in controlling the physical system part of the model, not the force per se. It turns out that the physical system can be controllable even though the full system is not controllable. This result can be obtained as a corollary of so called output controllability (see, e.g., Ogata) as follows.
+
+\begin{theorem} \label{the:stab}
+Assume that $(\mathbf{A}_f,\mathbf{M}_u)$ is controllable. Then the full system is output controllable with respect to the physical system part.
+\end{theorem}
+
+\begin{proof}
+\simo{Typeset from notes}
+\end{proof}
+
+The above result is useful when the system is fully observable as well. Then it ensures that we can successfully control the physical system part although the latent force model remains uncontrollable. However, if the latent force model is not fully observable, then latent force model inherently causes disturbance to the physical system and although we can keep the system stable, the state cannot be forced to follow a given trajectory.
 
 
 \section{Extensions and Discussion}
