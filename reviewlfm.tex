@@ -551,6 +551,7 @@ The models considered in this article can be seen to belong to the following thr
 %
 \begin{equation}
   \mathcal{L} \, f(t) = u(t) + c(t),
+\label{eq:Lfuc1}
 \end{equation}
 %
 where the linear operator is typically $\mathcal{L}\equiv a_n \, \frac{d}{dt^{n}} + \cdots + a_1 \, \frac{d}{dt} + a_0$ for some fixed constants $a_i, i=0,\ldots,n$. This kind of models can often be rewritten in 
@@ -560,23 +561,32 @@ where the linear operator is typically $\mathcal{L}\equiv a_n \, \frac{d}{dt^{n}
   \frac{d\mathbf{f}(t)}{dt} = \mathbf{A}_f \, \mathbf{f}(t) + \mathbf{B}_f \, \mathbf{u}(t) + \mathbf{M}_f \, \mathbf{c}(t),
 \end{equation}
 %
-which is not only equivalent to the representation above, but strictly more general model formulation; the control $\mathbf{c}$ can be a vector and it does not need to enter the system via the same route as the latent force, and the operator $\mathcal{L}$ can also be an integro-differential operator.
+which is not only equivalent to the representation above, but strictly more general model formulation that \eqref{eq:Lfuc1}; the control $\mathbf{c}$ can be a vector and it does not need to enter the system via the same route as the latent force, and the operator $\mathcal{L}$ can also be an integro-differential operator.
 
 \item We also consider are dynamic partial and pseudo differential equation (PDE) based models that can generally be written in form
 %
 \begin{equation}
   \mathcal{L} \, f(\mathbf{x},t) = u(\mathbf{x},t) + c(\mathbf{x},t),
+\label{eq:Lfuc2}
 \end{equation}
 %
 where $\mathcal{L}$ is a linear operator in space and time. The input Gaussian process $u(\mathbf{x},t)$ and control input $c(\mathbf{x},t)$ are also space-time processes. Typically, the operator as the form
 %
 \begin{equation}
   \mathcal{L}\equiv \mathcal{A}_n \, \frac{d}{dt^{n}} + \cdots + \mathcal{A}_1 \, \frac{d}{dt} + \mathcal{A}_0,
+\label{eq:Lfuc2}
 \end{equation}
 %
 where $\mathcal{A}_0,\ldots,\mathcal{A}_n$ are some spatial partial differential or pseudo-differential operators. This kind of models can often be also written in form of \emph{spatio-temporal state-space models}
-
-\simo{Write down the state-space form and comment it}
+%
+\begin{equation}
+\begin{split}
+  \frac{\partial \mathbf{f}(\mathbf{x},t)}{\partial t}
+  &= \mathbf{\mathcal{A}}_f \, \mathbf{f}(\mathbf{x},t) + \mathbf{B}_f \, u(\mathbf{x},t) + \mathbf{M}_f \, \mathbf{c}(\mathbf{x},t),
+\end{split}
+\end{equation}
+%
+which again is strictly more general than the model \eqref{eq:Lfuc2}. 
 
 \item As a static special case of the above models we have the following class of partial and pseudo differential equation (PDE) models driven by spatial Gaussian processes $u(\mathbf{x})$:
 %
@@ -1582,7 +1592,7 @@ See \simo{Ding et al. 2009}.
 
 \simo{Simo: Say something for intro and finite the missing parts}
 
-\subsection{Controlled Basic LFMs}
+\subsection{Controlled Basic LFMs} \label{sec:controlled_basic}
 %
 Let us consider a controlled version of the state-space model with a Gaussian process input \eqref{eq:ssgen}:
 \begin{equation}
@@ -2211,11 +2221,13 @@ and $\ell^2_t$ of the kernel function $k(t-t')$.
 
 Results of inference for the latent function $u(t)$ are shown in Figure \ref{ode2:source:subfig:mlgp}. The mean squared error (MSE) between the ground truth source $u(t)$, and the inferred mean source $u^*(t)$ is equal to $0.0036$. The MSE between the ground truth output $f(t)$ and the mean predicted output $f^*(t)$ evaluated at the test input points is $0.0040$. As can be seen in the figure, the estimate is very close to the truth and the error quantiles are realistic.
 
-The results above were obtained by explicitly computing the modified covariance function corresponding to the LFM. However, the result of using the equivalent state-space representation is practically the same, except for the minor differences due to the Pad\'o approximation required for the SE covariance function. Hence we do not show the state-space result here (it would be visually indistinguishable).
+The results above were obtained by explicitly computing the modified covariance function corresponding to the LFM. However, the result of using the equivalent state-space representation is practically the same, except for the minor differences due to the Pad\'e approximation required for the SE covariance function. Hence we do not show the state-space result here (it would be visually indistinguishable).
 
 \subsection{Controlled ODE Model}
 
-To demonstrate the benefit of the state-space representation and the modeling of the force as GP we consider the model \eqref{eq:sde0} with linear closed loop optimal control design for $c(t)$. 
+To demonstrate the benefit of the state-space representation and the modeling of the force as GP we consider the model \eqref{eq:sde0} with linear closed loop optimal control design for $c(t)$. We consider two ways of designing the controller which were discussed in Section~\ref{sec:controlled_basic}: using the assumed separability design based on putting $u(t) = 0$ and a controller which is designed by taking account the existence of the latent force as described in the same section. In the experiment we use the parameters that were estimated from the open loop system considered in the previous section.
+
+
 
 \simo{Controlled spring model where we discuss the online estimation of latent GP as well as the benefit of it to control.}
 
@@ -2334,7 +2346,14 @@ evaluated at the test input points is $8.3354\times 10^{-4}$.
 
 \subsection{Controlled heat equation}
 
-Figure \ref{cartoon:heatpde} is a cartoon representation of a heat source moving across a 2D spatial field.
+In this experiment we consider a controlled heat equation of the form
+%
+\begin{equation}
+  \frac{\partial f(\mathbf{x},t)}{\partial t} = - \lambda f(\mathbf{x},t) + D \, \nabla^2 f(\mathbf{x},t)
+  + u(\mathbf{x},t) + c(\mathbf{x},t),
+\end{equation}
+%
+where $u(\mathbf{x},t)$ is an unknown latent force, $c(\mathbf{x},t)$ is the control signal, $\mathbf{x} \in \mathbb{R}^2$, and $\lambda,D > 0$ are positive constants. Figure \ref{cartoon:heatpde} is a cartoon representation of the simulated scenario which is a heat source moving across a 2D spatial field. The field is measured at a discrete grid and the measurements are corrupted by Gaussian noise. In the simulation, the latent force $u(\mathbf{x},t)$ is the heat generated by the moving source and the aim is to reconstruct $f$ and $u$ from noisy observations as well as design an optimal control signal $c(\mathbf{x},t)$, which aims to regulate the temperature $f$ to zero.
 
 \begin{figure}[!t]
 \centering
