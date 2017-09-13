@@ -1,7 +1,8 @@
 
+
 Consider the control problem
 
-  df/dt = A_f f + M_f c
+  df/dt = A_f f + M_f c + L w
    J[c] = 1/2 f^T(T) Psi f(T) + int [f^T(t) X(t) f(t) + c^T(t) U(t) c(t)] dt
 
 The solution is
@@ -12,6 +13,10 @@ The solution is
   c = -U^{-1} M_f^T K_f f
 
 the infinite-time LQ is then given by dK_f/dt = 0. 
+
+Then the value function has the form (see, e.g., Stengel)
+
+  V(t) = 1/2 f^T(t) K_f(t) f(t) + 1/2 int_t^{T} tr{ K_f(t) L Q_c L^T},
 
 ******************* 
 
@@ -46,7 +51,7 @@ which can be rewritten as
 where
 
    Psi_g = [Psi  0; 0 0]
-  X_g(t) = [X(t) 0; 0 0]
+  X_g(t) = [X_f(t) 0; 0 X_u(t)]
 
 The solution is now
 
@@ -73,7 +78,7 @@ Thus we have
 
   dK11/dt
   = -A_f^T*K11 - K11*A_f
-  + K11*M_f*U^{-1}*M_f^T*K11
+  + K11*M_f*U^{-1}*M_f^T*K11 - X_f(t)
   dK12/dt
   = -A_f^T*K12 - K11*B_f*C_u - K12*A_u
   + K11*M_f*U^{-1}*M_f^T*K12
@@ -82,16 +87,16 @@ Thus we have
   + K21*M_f*U^{-1}*M_f^T*K11
   dK22/dt
   = -C_u^T*B_f^T*K12 - A_u^T*K22 - K21*B_f*C_u - K22*A_u
-  + K21*M_f*U^{-1}*M_f^T*K12
+  + K21*M_f*U^{-1}*M_f^T*K12 - X_u(t)
 
-  K(T) = [Psi  0; 0 0]
+  K(T) = [Psi_f  0; 0 Psi_u]
 
 Clearly the equation for K11 is exactly the equation for K_f(t) hence K11 = K_f. Let us look at
 
   dK12/dt
   = -A_f^T*K12 - K11*B_f*C_u - K12*A_u + K11*M_f*U^{-1}*M_f^T*K12
 
-which does not allow for a easy solution.
+which does not allow for a easy solution. 
 
 However, in the case of infinite regulation we have
   
@@ -104,13 +109,13 @@ which is a sylvester equation and hence numerically solvable.
 For K22 we get
 
   0 = -C_u^T*B_f^T*K12 - A_u^T*K22 - K21*B_f*C_u - K22*A_u
-  + K21*M_f*U^{-1}*M_f^T*K12
+  + K21*M_f*U^{-1}*M_f^T*K12 - X_u
 
   A_u^T*K22 + K22*A_u
-  = K21*M_f*U^{-1}*M_f^T*K12 - C_u^T*B_f^T*K12 - K21*B_f*C_u
+  = K21*M_f*U^{-1}*M_f^T*K12 - C_u^T*B_f^T*K12 - K21*B_f*C_u - X_u
 
   A_u^T*K22 + K22*A_u
-  = K12'*M_f*U^{-1}*M_f^T*K12 - C_u^T*B_f^T*K12 - K12'*B_f*C_u
+  = K12'*M_f*U^{-1}*M_f^T*K12 - C_u^T*B_f^T*K12 - K12'*B_f*C_u - X_u
 
 which again is a sylvester equation (also a lyapunov equation).
 
@@ -119,6 +124,43 @@ The gain is given as
   G = U^{-1} [M_f'*K11  M_f'*K12]
 
 where the left-hand part is the basic LQ gain.
+
+The value function now has the form
+
+  V(t) = 1/2 [f;u]^T [K11 K12; K21 K22] [f;u]
+    + 1/2 int_t^{T} tr{ K(t) [0;B_u] Q_c [0;B_u]^T}
+
+Observations:
+
+- With length scale -> oo, we have A_u --> 0 and thus the equations for K12 and K22 become
+
+  (K11*M_f*U^{-1}*M_f^T-A_f^T)*K12 = K11*B_f*C_u 
+  K12 = (K11*M_f*U^{-1}*M_f^T-A_f^T)^{-1} * K11*B_f*C_u
+
+giving
+
+  G2 = U^{-1} M_f'*K12
+  = U^{-1} M_f'* (K11*M_f*U^{-1}*M_f^T-A_f^T)^{-1} * K11*B_f*C_u
+
+For K22 we the differential equation
+
+  dK22/dt
+  = -C_u^T*B_f^T*K12 - K21*B_f*C_u
+  + K21*M_f*U^{-1}*M_f^T*K12 - X_u(t)
+
+which basically tells that the stationary value of K22 does not exist. However, the system is controllable in the sense that we know that the input is constant.
+
+- With length scale --> 0 we will get
+
+  (K11*M_f*U^{-1}*M_f^T-A_f^T)*K12 - K12*A_u = K11*B_f*C_u 
+
+which gives K12 = 0 in the limit. The term K22 will also go to zero. In this case the system remains uncontrollable and even unobservable, because in practice we cannot know the value of u at any moment. The noise term in the value function also seems to remain bounded, because K22 goes to zero while the noise approaches infinity.
+
+Anyway, the eigenvalues of K seem to provide a good measure on how easily the system is controllable. 
+
+** Some more intuition
+
+Clearly the existence of finite K will be a criterion for the controllability. The K11 part just tells about the physical system part - it must be stabilizable, but controllability would be a preferred property.
 
 
 --- appendix

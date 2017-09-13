@@ -1677,6 +1677,25 @@ where $\hat{\mathbf{g}}(t)$ is the Kalman filter estimate of $\mathbf{g}(t)$ and
 %
 with the boundary condition $\mathbf{K}(T) =  \boldsymbol{\Phi}_g$.
 
+\simo{Make a theorem out of this:}
+
+\begin{equation}
+\begin{split}
+  \frac{d\mathbf{K}_{11}(t)}{dt}
+  &= -\mathbf{A}_f^T \, \mathbf{K}_{11} - \mathbf{K}_{11} \, \mathbf{A}_f
+  + \mathbf{K}_{11} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{11} \\
+  \frac{d\mathbf{K}_{12}(t)}{dt}
+  &= -\mathbf{A}_f^T \, \mathbf{K}_{12} - \mathbf{K}_{11} \, \mathbf{B}_f \, \mathbf{C}_u - \mathbf{K}_{12} \, \mathbf{A}_u
+  \\
+  &\qquad + \mathbf{K}_{11} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{12} \\
+  \frac{d\mathbf{K}_{22}(t)}{dt}
+  &= -\mathbf{C}_u^T \, \mathbf{B}_f^T \, \mathbf{K}_{12} - \mathbf{A}_u^T \, \mathbf{K}_{22}
+  - \mathbf{K}_{21} \, \mathbf{B}_f \, \mathbf{C}_u \\
+  &\qquad  - \mathbf{K}_{22} \, \mathbf{A}_u
+  + \mathbf{K}_{12}^T \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{12},
+\end{split}
+\end{equation}
+
 \simo{Discuss these:}
 %
 \begin{equation}
@@ -1987,54 +2006,55 @@ which is analytic and non-zero in the right half plane such that
 %
 where $q_c > 0$ is a constant. In practice, a viable way to find the function is by computing the roots of numerator and denominator, which appear in conjugate pairs, and construct $G(i \, omega)$ from the roots having positive imaginary parts. However, many other spectral factorization methods exist as well \cite{Ref-to-spec-fact-survey}.
 
-Given the function $G$ we can then use, for example, the following controllable canonical form (e.g., \cite{Glad+Ljung:2000}) to construct the state-space model (here $q_c$ becomes the spectral density of the white noise process $w(t)$):
+Given the function $G$ we can then use, for example, the controllable or observable canonical forms (e.g., \cite{Glad+Ljung:2000}) to construct the state-space model.
+%(here $q_c$ becomes the spectral density of the white noise process $w(t)$):
 %
-\begin{equation}
-\begin{split}
-  \frac{d\mathbf{u}(t)}{dt}
-  &= \underbrace{\begin{pmatrix}
-       0             & 1      &        &       \\
-                     & \ddots & \ddots &       \\
-                     &         &  0    &     1 \\
-   -\tilde{a}_0 & -\tilde{a}_1 & \hdots &  -\tilde{a}_{n-1}
-  \end{pmatrix}}_{\mathbf{A}_u} \, \mathbf{u}(t) 
-  + \underbrace{\begin{pmatrix}
-      0 \\
-      \vdots \\
-      0 \\
-      1
-  \end{pmatrix}}_{\mathbf{L}_u} \,
-   w(t) \\
-   u(t) &=
-   \underbrace{\begin{pmatrix} \tilde{b}_0 & \tilde{b}_1 & \cdots & \tilde{b}_m & 0 & \cdots & 0
-   \end{pmatrix}}_{\mathbf{C}_u} \, \mathbf{u}(t),
-\end{split}
-\end{equation}
-%
-or alternatively the observable canonical form
-%
-\begin{equation}
-\begin{split}
-  \frac{d\mathbf{u}(t)}{dt}
-  &= \underbrace{\begin{pmatrix}
-       0             &        &        & -\tilde{a}_0 \\
-       1             & \ddots &        & -\tilde{a}_1 \\
-                     & \ddots &  0     & \vdots   \\
-                     &        &  1     & -\tilde{a}_{n-1} \\
-  \end{pmatrix}}_{\mathbf{A}_u} \, \mathbf{u}(t) 
-  + \underbrace{\begin{pmatrix}
-      \tilde{b}_0 \\
-      \vdots \\
-      \tilde{b}_m \\
-      0 \\
-      \vdots \\
-      0
-  \end{pmatrix}}_{\mathbf{L}_u} \,
-   w(t) \\
-   u(t) &=
-   \underbrace{\begin{pmatrix} 0 & \cdots & 0 & 1 \end{pmatrix}}_{\mathbf{C}_u} \, \mathbf{u}(t)
-\end{split}
-\end{equation}
+%\begin{equation}
+%\begin{split}
+%  \frac{d\mathbf{u}(t)}{dt}
+%  &= \underbrace{\begin{pmatrix}
+%       0             & 1      &        &       \\
+%                     & \ddots & \ddots &       \\
+%                     &         &  0    &     1 \\
+%   -\tilde{a}_0 & -\tilde{a}_1 & \hdots &  -\tilde{a}_{n-1}
+%  \end{pmatrix}}_{\mathbf{A}_u} \, \mathbf{u}(t) 
+%  + \underbrace{\begin{pmatrix}
+%      0 \\
+%      \vdots \\
+%      0 \\
+%      1
+%  \end{pmatrix}}_{\mathbf{L}_u} \,
+%   w(t) \\
+%   u(t) &=
+%   \underbrace{\begin{pmatrix} \tilde{b}_0 & \tilde{b}_1 & \cdots & \tilde{b}_m & 0 & \cdots & 0
+%   \end{pmatrix}}_{\mathbf{C}_u} \, \mathbf{u}(t),
+%\end{split}
+%\end{equation}
+%%
+%or alternatively the observable canonical form
+%%
+%\begin{equation}
+%\begin{split}
+%  \frac{d\mathbf{u}(t)}{dt}
+%  &= \underbrace{\begin{pmatrix}
+%       0             &        &        & -\tilde{a}_0 \\
+%       1             & \ddots &        & -\tilde{a}_1 \\
+%                     & \ddots &  0     & \vdots   \\
+%                     &        &  1     & -\tilde{a}_{n-1} \\
+%  \end{pmatrix}}_{\mathbf{A}_u} \, \mathbf{u}(t) 
+%  + \underbrace{\begin{pmatrix}
+%      \tilde{b}_0 \\
+%      \vdots \\
+%      \tilde{b}_m \\
+%      0 \\
+%      \vdots \\
+%      0
+%  \end{pmatrix}}_{\mathbf{L}_u} \,
+%   w(t) \\
+%   u(t) &=
+%   \underbrace{\begin{pmatrix} 0 & \cdots & 0 & 1 \end{pmatrix}}_{\mathbf{C}_u} \, \mathbf{u}(t)
+%\end{split}
+%\end{equation}
 
 However, it is important to point out that the direct use of this procedure might result in a numerically unstable model especially when the approximation order is high. To overcome this problem it is often advisable to use the following method. 
 Because the choice of state-variable coordinate system is arbitrary, we can define a new process via $\tilde{\mathbf{u}}(t) = \mathbf{T}^{-1} \, \mathbf{u}(t)$, where $\mathbf{T}$ is a constant invertible matrix, to get a new system
@@ -2225,11 +2245,25 @@ The results above were obtained by explicitly computing the modified covariance 
 
 \subsection{Controlled ODE Model}
 
-To demonstrate the benefit of the state-space representation and the modeling of the force as GP we consider the model \eqref{eq:sde0} with linear closed loop optimal control design for $c(t)$. We consider two ways of designing the controller which were discussed in Section~\ref{sec:controlled_basic}: using the assumed separability design based on putting $u(t) = 0$ and a controller which is designed by taking account the existence of the latent force as described in the same section. In the experiment we use the parameters that were estimated from the open loop system considered in the previous section.
+To demonstrate the benefit of the state-space representation and the modeling of the force as GP we consider the model \eqref{eq:sde0} with linear closed loop optimal control design for $c(t)$. In the experiment the mass-spring-damper system was started at static position $f(0) = -1$ and the aim was to keep it at the origin while the unknown latent force is affecting it. In the experiment we use the latent force hyper-parameters that were estimated from the open loop system considered in the previous section. We assumed that we only get measurements of the position, but with a relatively small variance $\sigma^2 = 0.01^2$ -- this was assumed to emphasize the differences between the control designs.
 
+We consider two ways of designing the controller which were discussed in Section~\ref{sec:controlled_basic}: using the assumed separability design based on putting $u(t) = 0$ and a controller which is designed by taking account the existence of the latent force as described in the same section. The results of using the basic linear quadratic regulator (LQR), that is, the certainty equivalent design, and the result of using the joint LFM control are shown in Figure~\ref{fig:cntl_spring}. It can be seen that the LFM controller is able to maintain the system much better near the origin than the basic controller.
 
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.9\columnwidth]{cntl_spring}
+\caption{Result of controlling the ODE model with Basic LQR and LFM LQR. It can be seen the that control designed for the full LFM outperforms the basic LQR significantly. The average position tracking error for the Basic LFM was approximately $14.9$ units whereas in the case of LFM LQR it was approximately $7.8$ units.}
+\label{fig:cntl_spring}
+\end{figure}
 
-\simo{Controlled spring model where we discuss the online estimation of latent GP as well as the benefit of it to control.}
+To estimate the state from the measurements we used a Kalman filter designed for the full latent state. The estimate produced by the Kalman filter is shown in Figure~\ref{fig:cntl_force}. The estimate is from the LFM LQR experiment, but the estimates with both the controllers are very similar.
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.9\columnwidth]{cntl_force}
+\caption{Kalman filter estimate of the latent force in the controlled ODE example. As expected, the estimate is worse in the beginning, but starts to follow the true force trajectory after the short initial transient.}
+\label{fig:cntl_force}
+\end{figure}
 
 
 \subsection{Inference on Poisson equation}
@@ -2353,7 +2387,7 @@ In this experiment we consider a controlled heat equation of the form
   + u(\mathbf{x},t) + c(\mathbf{x},t),
 \end{equation}
 %
-where $u(\mathbf{x},t)$ is an unknown latent force, $c(\mathbf{x},t)$ is the control signal, $\mathbf{x} \in \mathbb{R}^2$, and $\lambda,D > 0$ are positive constants. Figure \ref{cartoon:heatpde} is a cartoon representation of the simulated scenario which is a heat source moving across a 2D spatial field. The field is measured at a discrete grid and the measurements are corrupted by Gaussian noise. In the simulation, the latent force $u(\mathbf{x},t)$ is the heat generated by the moving source and the aim is to reconstruct $f$ and $u$ from noisy observations as well as design an optimal control signal $c(\mathbf{x},t)$, which aims to regulate the temperature $f$ to zero.
+where $u(\mathbf{x},t)$ is an unknown latent force, $c(\mathbf{x},t)$ is the control signal, $\mathbf{x} \in \mathbb{R}^2$, and $\lambda,D > 0$ are positive constants. Figure \ref{cartoon:heatpde} is a cartoon representation of the simulated scenario which is a heat source moving across a 2D spatial field. The field is measured at a discrete grid and the measurements are corrupted by Gaussian noise. In the simulation, the latent force $u(\mathbf{x},t)$ is the heat generated by the moving source and the aim is to reconstruct $f$ and $u$ from noisy observations as well as design an optimal control signal $c(\mathbf{x},t)$, which aims to regulate the temperature $f(\mathbf{x},t)$ to zero.
 
 \begin{figure}[!t]
 \centering
@@ -2362,9 +2396,47 @@ where $u(\mathbf{x},t)$ is an unknown latent force, $c(\mathbf{x},t)$ is the con
 \label{cartoon:heatpde}
 \end{figure}
 
+In the simulation, we used the parameters $\lambda = 0.2$ and $D = 0.001$ and the heat source was moving for 10 seconds from top-right to bottom-left direction and then it was turned off. The temperature then increases at the application point and when the heat source moves away, the position starts cooling down. Figures~\ref{fig:heat_open_x} and \ref{fig:heat_open_u} show the temperature field and the heat source at time $t = 6.9$ when no control is applied. 
 
+\begin{figure}[!t]
+\centering
+   \subfloat[Temperature field $f(\mathbf{x},t)$
+   \label{fig:heat_open_x}]{%
+       \includegraphics[width=0.49\columnwidth]{heat_open_x}
+         }
+   \subfloat[Source field $u(\mathbf{x},t)$
+   \label{fig:heat_open_u}]{%
+       \includegraphics[width=0.49\columnwidth]{heat_open_u}
+         }
+\caption{The temperature function $f(\mathbf{x},t)$ and the source function $u(\mathbf{x},t)$ at time $t = 6.9$. The small circles mark the positions of the measurements.}
+\end{figure}
 
-\simo{Simo: State-space estimation and control of the heat equation with the same input as we used above. If this works well then it would be beneficial to expand the control section and even change the title to include "control".}
+We then formed a Fourier-basis approximation to the PDE (with $100$ basis functions) and designed two controllers for it -- one using an assumed separability design ("Basic LQR") and one by taking the latent force into account ("LFM LQR"). We used SE covariance functions for the latent force model in both time and space directions. A Kalman filter was used to estimate the physical system and latent force states from temperature measurements with low variance ($\sigma^2 = 0.01^2$) and the controller was applied using the estimate.
+
+\begin{figure}[!t]
+\centering
+   \subfloat[Field $f(\mathbf{x},t)$ with Basic LQR 
+   \label{fig:heat_lq_x}]{%
+       \includegraphics[width=0.49\columnwidth]{heat_lq_x}
+         }
+   \subfloat[Field $f(\mathbf{x},t)$ with LFM LQR
+   \label{fig:heat_lfm_lq_x}]{%
+       \includegraphics[width=0.49\columnwidth]{heat_lfm_lq_x}
+         }
+  \\
+   \subfloat[Maximum temperatures
+   \label{fig:heat_maxtemp}]{%
+       \includegraphics[width=0.49\columnwidth]{heat_maxtemp}
+         }
+   \subfloat[LFM control signal
+   \label{fig:heat_lfm_lq_c}]{%
+       \includegraphics[width=0.49\columnwidth]{heat_lfm_lq_c}
+         }
+\caption{The results of using Basic LQR and LFM LQR controllers to regulate the temperature field to zero. It can be seen from Figures~\ref{fig:heat_lq_x},  \ref{fig:heat_lfm_lq_x}, and \ref{fig:heat_maxtemp} that LFM LQR is able to keep the temperature closer to zero than Basic LQR. Figure~\ref{fig:heat_lfm_lq_c} shows an example control signal which can be see to effectively cancel out the latent force model part as one would expect.}
+\end{figure}
+
+Figures~\ref{fig:heat_lq_x} -- \ref{fig:heat_lfm_lq_c} show the results when the controllers were used. It can be seen that the LFM LQR provides a significantly smaller tracking error. 
+
 
 
 %\subsection{\simo{\st{A Periodic Model}}}
@@ -2389,14 +2461,14 @@ The conclusion goes here.
 %
 
 
-\appendices
-\section{Proof of the First Zonklar Equation}
-Appendix one text goes here.
+%\appendices
+%\section{Proof of the First Zonklar Equation}
+%Appendix one text goes here.
 
 % you can choose not to have a title for an appendix
 % if you want by leaving the argument blank
-\section{}
-Appendix two text goes here.
+%\section{}
+%Appendix two text goes here.
 
 
 % use section* for acknowledgment

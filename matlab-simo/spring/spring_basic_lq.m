@@ -1,12 +1,7 @@
 %
 % Test Basic LQ control with the full LFM
+% You should run strong_kfs.m first.
 %
-    
-    %%
-    % Random seed and parameters
-    %
-    s = RandStream('mt19937ar', 'Seed', 1e8);
-    RandStream.setGlobalStream(s);
     
     %%
     % Run the LQ controller
