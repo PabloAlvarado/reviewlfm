@@ -1656,7 +1656,7 @@ where
 \end{split}
 \end{equation}
 %
-The design of the optimal linear quadratic controller for the resulting model can be done by using the classical Riccati-equation-based approaches \cite{LQ}. Namely, the optimal control takes the form
+The design of the optimal linear quadratic controller for the resulting model can be done by using the classical Riccati-equation-based approaches \cite{Kalman:1960b}. Namely, the optimal control takes the form
 %
 \begin{equation}
 \begin{split}
@@ -1678,6 +1678,16 @@ where $\hat{\mathbf{g}}(t)$ is the Kalman filter estimate of $\mathbf{g}(t)$ and
 with the boundary condition $\mathbf{K}(T) =  \boldsymbol{\Phi}_g$.
 
 \simo{Make a theorem out of this:}
+
+\begin{equation} 
+\begin{split}
+  \mathbf{c}(t) = - \begin{pmatrix}
+    \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{f}(t) &
+    \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{12}(t)
+  \end{pmatrix} \, \hat{\mathbf{g}}(t),
+\end{split}
+\label{eq:joint_control2}
+\end{equation}
 
 \begin{equation}
 \begin{split}
@@ -1888,7 +1898,7 @@ However, the sole stabilizability is not very useful in practice, because sole s
 \end{theorem}
 
 \begin{proof}
-  \simo{The model is already in Kalman's canonical form, where the non-controllable part is the latent force.}
+  The model can be seem to be in Kalman's canonical form \cite{Kalman:1963}, where the non-controllable part is the latent force.
 \end{proof}
 
 In practice, the non-controllability of the force part is not a problem, as we are actually interested in controlling the physical system part of the model, not the force per se. It turns out that the physical system can be controllable even though the full system is not controllable. This result can be obtained as a corollary of so called output controllability (see, e.g., Ogata) as follows.

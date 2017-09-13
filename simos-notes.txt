@@ -1002,7 +1002,7 @@ In practice, the non-controllability of the force part is not a problem, as we a
 
 [theorem here that says that if the physical system is controllable, then the full system is output controllable w.r.t. to the physical system part]
 
-Proof. consider the system
+Proof. Consider the system
 
   df/dt = A_f f + B_f C_u u + B_c c
   du/dt = A_u u
@@ -1040,5 +1040,5 @@ hence actually
 
   CA^mB = A_f^m B_c
 
-which reduces the rank condition to controllability of the physical system.
+which reduces the rank condition to controllability of the physical system part.
 
