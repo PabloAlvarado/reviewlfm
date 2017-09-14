@@ -613,19 +613,15 @@ In this section, we provide a brief introduction to Gaussian process regression,
 \subsection{Gaussian process regression}\label{sec:gp:regression}
 %
 
-In machine learning \cite{Rasmussen+Williams:2006}, Gaussian processes (GPs) are commonly used as prior distributions over functions $f: \mathbb{R}^d\rightarrow \mathbb{R}$. When used for regression, the GP encodes the uncertainty we have over a function, before seeing the data. Once we have specified a particular relationship between the function and the data we observe, we can update our beliefs over the function using the Bayesian theorem, and compute the posterior distribution. 
+In machine learning \cite{Rasmussen+Williams:2006}, Gaussian processes (GPs) are commonly used as prior distributions over functions $f: \mathbb{R}^d\rightarrow \mathbb{R}$. When used for regression, the GP encodes the uncertainty we have over a function, before seeing the data. Once we have specified a particular relationship between the function and the data we observe, we can update our beliefs over the function using the Bayes' rule, and compute the posterior distribution.  Although the dimensionality of the input domain is often greater than one, that is, $d>1$, in what follows we use $d=1$ and refer to it as the time domain. Later on, the input domain will refer to a purely spatial domain (as in the Poisson equation), or to a spatio-temporal domain, (as in the heat equation). 
 
-Although the dimensionality of the input domain could be greater than one, that is, $d>1$, in what follows we use $d=1$ and refer to it as the time domain. Later on, the input domain will refer to a purely spatial domain (as in the Poisson equation), or to a spatio-temporal domain, (as in the heat equation). 
+Let us now consider predicting the value of an unknown function $f(t)$ at a certain test point $t^*$. The prediction is based on a finite set of previously seen data points or training samples $\mathcal{D}=\{(t_1, y_1), \ldots, (t_n, y_n)\}$ which are corrupted with $\epsilon_k \sim \mathcal{N}(0,\sigma^2)$ Gaussian noise $y_k = f(t_k) + \epsilon_k$. Assume that $f(t)$ is moded as a priori Gaussian process with zero mean and a covariance function $k(t,t')$.
 
-Let us now consider predicting the value of an unknown function $y = f(t)$ at a certain test point $(y^*, t^*)$. The prediction is based on a finite set of previously seen data points or training samples
-$\mathcal{D}=\{(t_1, y_1), \ldots, (t_n, y_n)\}$. Assume that $f(t)$ is moded as a priori Gaussian process with zero mean and a covariance function $k(t,t')$.
-%For temporal processes, the variable $x$ can conveniently be replaced for $t$.
-
-Under the Gaussian process assumption, the joint distribution between $y_1, \ldots, y_n$ and $y^*$ follows a Gaussian distribution. Using $\mathbf{y}$ to denote the set of training outputs $y_1, \ldots, y_n$, and $\mathbf{t}$ the set of training inputs $t_1, \ldots, t_n$, we have
+Under the Gaussian process assumption, the joint distribution between $y_1, \ldots, y_n$ and $f(t^*)$ follows a Gaussian distribution. Using $\mathbf{y}$ to denote the set of training outputs $y_1, \ldots, y_n$, and $\mathbf{t}$ the set of training inputs $t_1, \ldots, t_n$, we have
 \begin{align*}
 \begin{pmatrix}
 \mathbf{y}\\
-y^*
+f(t^*)
 \end{pmatrix}\sim
 \mathcal{N}
 \left(
@@ -634,7 +630,7 @@ y^*
 0
 \end{pmatrix},
 \begin{pmatrix}
-\mathbf{K}(\mathbf{t}, \mathbf{t}) & \mathbf{k}(\mathbf{t}, t^*)\\
+\mathbf{K}(\mathbf{t}, \mathbf{t}) + \sigma^2 \mathbf{I} & \mathbf{k}(\mathbf{t}, t^*)\\
 \mathbf{k}^{\top}(\mathbf{t}, t^*) & k(t^*, t^*)
 \end{pmatrix}
 \right),
@@ -643,24 +639,8 @@ where $\mathbf{K}(\mathbf{t}, \mathbf{t})\in \mathbb{R}^{n\times n}$ is a matrix
 $\{k(t_i, t_j)\}_{i=1, j=1}^{n,n}$, and $\mathbf{k}(\mathbf{t}, t^*) \in \mathbb{R}^n$ is a vector with elements
 $\{k(t_i, t^*)\}_{i=1}^n$.
 
-By making use of the properties of multivariate Gaussian distributions, the posterior distribution for $y^*$ given
+By making use of the properties of multivariate Gaussian distributions, the posterior distribution for $f(t^*)$ given
 $\mathbf{y}$ follows
-\begin{align*}
-p(y^* \mid \mathbf{y}) & =\mathcal{N}(y^* \mid \mu_{y^* \mid \mathbf{y}}, \sigma^2_{y^* \mid \mathbf{y}}),
-\end{align*}
-where
-\begin{align*}
-\mu_{y^* \mid \mathbf{y}} & = \mathbf{k}^{\top}(\mathbf{t}, t^*)\mathbf{K}^{-1}(\mathbf{t}, \mathbf{t})\mathbf{y},\\
-\sigma^2_{y^* \mid \mathbf{y}} & = k(t^*, t^*) - \mathbf{k}^{\top}(\mathbf{t}, t^*)\mathbf{K}^{-1}(\mathbf{t}, \mathbf{t})
-\mathbf{k}(\mathbf{t}, t^*).
-\end{align*}
-The equations above can be used for predicting the values of $y^*$ at a particular time point $t^*$.
-
-In practice, we assume that the observed values for $y^*$ are noisy versions of unknown function values $f(t^*)$.
-We model the measurements as $y_k = f(t_k) + \epsilon_k$, where $e_k\sim \mathcal{N}(0, \sigma^2)$, and estimate
-the unknown function value $f(t^*)$ using the training data $\mathbf{t}, \mathbf{y}$.
-
-The posterior distribution for $f(t^*)$ given $\mathbf{y}$ is again Gaussian, given as
 \begin{align*}
 p(f(t^*) \mid \mathbf{y}) & =\mathcal{N}(f(t^*) \mid \mu_{f(t^*) \mid \mathbf{y}}, \sigma^2_{f(t^*) \mid \mathbf{y}}),
 \end{align*}
@@ -683,7 +663,7 @@ $\mu_{f(t^*) \mid \mathbf{y}}$ computed at several test inputs, and the shaded r
 %slice-samplings, C%CD. DONE}
 \begin{figure}[!t]
 \centering
-\includegraphics[width=\columnwidth]{toyGPoutput}
+\includegraphics[width=0.9\columnwidth]{toyGPoutput}
 % where an .eps filename suffix will be assumed under latex,
 % and a .pdf suffix will be assumed for pdflatex; or what has been declared
 % via \DeclareGraphicsExtensions.
@@ -723,15 +703,7 @@ differential operator of the form $\mathcal{L}\equiv a_n \, \frac{d}{dt^{n}} + \
   + a_1 \, \frac{d}{dt} + a_0$. The differential operator $\mathcal{L}$ can be related to a so called Green's function or
 impulse response $h(t)$.
 %\simo{What should we actually put here?}
-On the stationary stage the solution to the differential equation \eqref{eq:difeq1} can be expressed as
-%
-\begin{equation}
-\begin{split}
-  f(t) &= \int_{-\infty}^{t} h(t - s) \, u(s) \, ds,
-\end{split}
-\end{equation}
-%
-where $h(t)$ is the impulse response of the system. When $u(s)$ is a Gaussian process with zero mean and covariance function $k(t - t')$ then we can compute the covariance function of the process $f(t)$:
+On the stationary stage the solution to the differential equation \eqref{eq:difeq1} can be expressed as $f(t) = \int_{-\infty}^{t} h(t - s) \, u(s) \, ds$, where $h(t)$ is the impulse response of the system. When $u(s)$ is a Gaussian process with zero mean and covariance function $k(t - t')$ then we can compute the covariance function of the process $f(t)$:
 %
 \begin{equation}
 \begin{split}
@@ -850,7 +822,7 @@ Because this system is of the first order, the impulse response---which is now a
   =
   \int_{-\infty}^{t} \int_{-\infty}^{t'}
   \mathbf{H}(t - s) \, \mathbf{B}_f \, k(s - s') \,
-  \mathbf{B}_f^T \, \mathbf{H}^T(t' - s') \, ds \, ds',
+  \mathbf{B}_f^{\top} \, \mathbf{H}^{\top}(t' - s') \, ds \, ds',
 \end{split}
 \label{eq:vfcov}
 \end{equation}
@@ -860,7 +832,7 @@ and we can pick up the covariance function of $f(t)$ from the matrix via
 \begin{equation}
 \begin{split}
   k_f(t,t') &=
-  \mathbf{C}_f \, \mathbf{K}_\mathbf{f}(t - t') \, \mathbf{C}_f^T
+  \mathbf{C}_f \, \mathbf{K}_\mathbf{f}(t - t') \, \mathbf{C}_f^{\top}
 \end{split}
 \label{eq:fcov2}
 \end{equation}
@@ -1004,7 +976,7 @@ where $\mathbf{\mathcal{A}}_f$ is a matrix of linear operators. Let the covarian
 \begin{equation}
 \begin{split}
   k_f(\mathbf{x},\mathbf{x}';t-t') &=
-  \mathbf{C}_f \, \mathbf{K}_\mathbf{f}(\mathbf{x},\mathbf{x}';t-t') \, \mathbf{C}_f^T
+  \mathbf{C}_f \, \mathbf{K}_\mathbf{f}(\mathbf{x},\mathbf{x}';t-t') \, \mathbf{C}_f^{\top}
 \end{split}
 \end{equation}
 %
@@ -1017,7 +989,7 @@ with
   =
   \int_{-\infty}^{t} \int_{-\infty}^{t'}
   \mathbf{\mathcal{H}}(t - s) \, \mathbf{B}_f \, k(\mathbf{x},\mathbf{x}';s - s') \,
-  \mathbf{B}_f^T \, \mathbf{\mathcal{H}}^T(t' - s') \, ds \, ds',
+  \mathbf{B}_f^{\top} \, \mathbf{\mathcal{H}}^{\top}(t' - s') \, ds \, ds',
 \end{split}
 \label{eq:vfcov_pde}
 \end{equation}
@@ -1224,8 +1196,8 @@ where $\mathbf{g}_k \triangleq \mathbf{g}(t_k)$, $\mathbf{q}_k \sim \mathcal{N}(
 \begin{split}
   \mathbf{U}(\Delta t_k)  &= \exp(\Delta t_k \, \mathbf{A}), \\
   \mathbf{Q}(\Delta t_k) &= \int_0^{\Delta t_k} \exp((\Delta t_k - \tau) \, \mathbf{A}) \,
-  \mathbf{B} \, q_c  \, \mathbf{B}^T \\
-  &\qquad \quad \times \exp((\Delta t_k - \tau) \, \mathbf{A})^T \, d\tau,
+  \mathbf{B} \, q_c  \, \mathbf{B}^{\top} \\
+  &\qquad \quad \times \exp((\Delta t_k - \tau) \, \mathbf{A})^{\top} \, d\tau,
 \end{split}
 \label{eq:dssaug}
 \end{equation}
@@ -1239,7 +1211,7 @@ Another benefit of the representation \eqref{eq:comb} is that we can compute the
 \begin{equation}
 \begin{split}
   \mathbf{K}_{\mathbf{g}}(t,t') = \begin{cases}
-    \mathbf{P}_\infty \, \exp(( t - t') \, \mathbf{A})^T, &
+    \mathbf{P}_\infty \, \exp(( t - t') \, \mathbf{A})^{\top}, &
     \text{ if } t \ge t' \\
     \exp((t' - t) \, \mathbf{A}) \, \mathbf{P}_\infty, &
     \text{ if } t < t',
@@ -1252,8 +1224,8 @@ where $\mathbf{P}_\infty$ is the solution to the Lyapunov equation
 %
 \begin{equation}
 \begin{split}
-  \mathbf{A} \, \mathbf{P}_\infty + \mathbf{P}_\infty \, \mathbf{A}^T
-  + \mathbf{B} \, q_c \, \mathbf{B}^T = 0.
+  \mathbf{A} \, \mathbf{P}_\infty + \mathbf{P}_\infty \, \mathbf{A}^{\top}
+  + \mathbf{B} \, q_c \, \mathbf{B}^{\top} = 0.
 \end{split}
 \label{eq:Kg2}
 \end{equation}
@@ -1262,8 +1234,8 @@ We can then pick up the covariance function of $f$ and the cross-covariance of $
 %
 \begin{equation}
 \begin{split}
-  k_{f,f}(t,t') = \mathbf{C} \, \mathbf{K}_{\mathbf{g}}(t,t') \, \mathbf{C}^T, \\
-  k_{f,u}(t,t') = \mathbf{C} \, \mathbf{K}_{\mathbf{g}}(t,t') \, \mathbf{D}^T, \\
+  k_{f,f}(t,t') = \mathbf{C} \, \mathbf{K}_{\mathbf{g}}(t,t') \, \mathbf{C}^{\top}, \\
+  k_{f,u}(t,t') = \mathbf{C} \, \mathbf{K}_{\mathbf{g}}(t,t') \, \mathbf{D}^{\top}, \\
 \end{split}
 \label{eq:Kg3}
 \end{equation}
@@ -1337,8 +1309,8 @@ The discretization now proceeds analogously to the previous section, except that
   \mathbf{\mathcal{U}}(\Delta t_k)  &= \exp(\Delta t_k \, \mathbf{\mathcal{A}}), \\
   \mathbf{Q}(\mathbf{x},\mathbf{x}';\Delta t_k) &= \int_0^{\Delta t_k} \exp((\Delta t_k - \tau) \, 
   \mathbf{\mathcal{A}}) \,
-  \mathbf{B} \, q_c(\mathbf{x},\mathbf{x}')  \, \mathbf{B}^T \\
-  &\qquad \quad \times \exp((\Delta t_k - \tau) \, \mathbf{\mathcal{A}})^T \, d\tau.
+  \mathbf{B} \, q_c(\mathbf{x},\mathbf{x}')  \, \mathbf{B}^{\top} \\
+  &\qquad \quad \times \exp((\Delta t_k - \tau) \, \mathbf{\mathcal{A}})^{\top} \, d\tau.
 \end{split}
 \label{eq:dssaug}
 \end{equation}
@@ -1551,7 +1523,7 @@ observations are not critically sampled, then the discrete-time full system is o
 See \cite{Ding:2009}.
 \end{proof}
 %
-In practical terms it is thus easiest to use, for example, the classical rank-condition (see, e.g., \cite{Ogata:1997}) which says that the (joint) system $(\mathbf{A},\mathbf{C})$ is observable, provided that the following matrix has full rank:
+In practical terms it is thus easiest to use, for example, the classical rank-condition (see, e.g., \cite{Ogata:1997}) which says that the (joint) system $(\mathbf{A},\mathbf{C})$ is observable, which in time-invariant case is ensured provided that the following matrix has full rank:
 %
 \begin{equation}
   \mathcal{O} = 
@@ -1590,10 +1562,10 @@ We will specifically aim to consider optimal control problems which minimize the
 \begin{equation}
 \begin{split}
   \mathcal{J}[\mathbf{c}] &= \frac{1}{2} \mathrm{E} \Big[
-    \mathbf{f}(T)^T \, \boldsymbol{\Phi} \, \mathbf{f}(T) \\
+    \mathbf{f}^{\top}(T) \, \boldsymbol{\Phi} \, \mathbf{f}(T) \\
    &+ \int_0^T
-   (\mathbf{f}^T(t) \, \mathbf{X}(t) \, \mathbf{f}(t)
-  + \mathbf{c}^T(t) \, \mathbf{U}(t) \, \mathbf{c}(t)) \, dt \Big],
+   (\mathbf{f}^{\top}(t) \, \mathbf{X}(t) \, \mathbf{f}(t)
+  + \mathbf{c}^{\top}(t) \, \mathbf{U}(t) \, \mathbf{c}(t)) \, dt \Big],
 \end{split}
 \label{eq:quadcost1}
 \end{equation}
@@ -1617,10 +1589,10 @@ with the measurement model \eqref{eq:ssaugkf}, where $ \mathbf{M} = \begin{pmatr
 \begin{equation}
 \begin{split}
   \mathcal{J}[\mathbf{c}] &= \frac{1}{2} \mathrm{E} \Big[
-    \mathbf{g}(T)^T \, \boldsymbol{\Phi}_g \, \mathbf{g}(T) \\
+    \mathbf{g}^{\top}(T) \, \boldsymbol{\Phi}_g \, \mathbf{g}(T) \\
    &+ \int_0^T
-   (\mathbf{g}^T(t) \, \mathbf{X}_g(t) \, \mathbf{g}(t)
-  + \mathbf{c}^T(t) \, \mathbf{U}(t) \, \mathbf{c}(t)) \, dt \Big],
+   (\mathbf{g}^{\top}(t) \, \mathbf{X}_g(t) \, \mathbf{g}(t)
+  + \mathbf{c}^{\top}(t) \, \mathbf{U}(t) \, \mathbf{c}(t)) \, dt \Big],
 \end{split}
 \end{equation}
 %
@@ -1641,7 +1613,7 @@ The design of the optimal linear quadratic controller for the resulting model ca
 %
 \begin{equation}
 \begin{split}
-  \mathbf{c}(t) = -\mathbf{U}^{-1}(t) \, \mathbf{M}^T \, \mathbf{K}(t) \, \hat{\mathbf{g}}(t),
+  \mathbf{c}(t) = -\mathbf{U}^{-1}(t) \, \mathbf{M}^{\top} \, \mathbf{K}(t) \, \hat{\mathbf{g}}(t),
 \end{split}
 \label{eq:joint_control1} 
 \end{equation}
@@ -1651,13 +1623,13 @@ where $\hat{\mathbf{g}}(t)$ is the Kalman filter estimate of $\mathbf{g}(t)$ and
 \begin{equation}
 \begin{split}
   \frac{d\mathbf{K}(t)}{dt} &=
-    -\mathbf{A}^T \, \mathbf{K}(t) - \mathbf{K}(t) \, \mathbf{A} \\
+    -\mathbf{A}^{\top} \, \mathbf{K}(t) - \mathbf{K}(t) \, \mathbf{A} \\
   &+  \mathbf{K}(t) \, \mathbf{M} \, \mathbf{U}^{-1}(t) \,
-   \mathbf{M}^T \, \mathbf{K}(t) - \mathbf{X}_g(t).
+   \mathbf{M}^{\top} \, \mathbf{K}(t) - \mathbf{X}_g(t).
 \end{split}
 \end{equation}
 %
-with the boundary condition $\mathbf{K}(T) =  \boldsymbol{\Phi}_g$. However, it turns out that we write this solution for the LFM model in more explicit form which reveals its structure better. That is summarized in the following theorem which can be obtained by partitioning $\mathbf{K} = \begin{pmatrix} \mathbf{K}_{11} & \mathbf{K}_{12} \\ \mathbf{K}_{12}^T & \mathbf{K}_{22} \end{pmatrix}$.
+with the boundary condition $\mathbf{K}(T) =  \boldsymbol{\Phi}_g$. However, it turns out that we write this solution for the LFM model in more explicit form which reveals its structure better. That is summarized in the following theorem which can be obtained by partitioning $\mathbf{K} = \begin{pmatrix} \mathbf{K}_{11} & \mathbf{K}_{12} \\ \mathbf{K}_{12}^{\top} & \mathbf{K}_{22} \end{pmatrix}$.
 
 \begin{theorem} \label{the:control1}
 The control law in \eqref{eq:joint_control1} can be written as
@@ -1665,8 +1637,8 @@ The control law in \eqref{eq:joint_control1} can be written as
 \begin{equation} 
 \begin{split}
   \mathbf{c}(t) = - \begin{pmatrix}
-    \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{f}(t) &
-    \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{12}(t)
+    \mathbf{U}^{-1} \, \mathbf{M}_f^{\top} \, \mathbf{K}_{f}(t) &
+    \mathbf{U}^{-1} \, \mathbf{M}_f^{\top} \, \mathbf{K}_{12}(t)
   \end{pmatrix} \, \hat{\mathbf{g}}(t),
 \end{split}
 \label{eq:joint_control2}
@@ -1677,19 +1649,19 @@ where $\mathbf{K}_{f}(t) \triangleq \mathbf{K}_{11}(t)$ is the Riccati equation 
 \begin{equation}
 \begin{split}
   \frac{d\mathbf{K}_{11}(t)}{dt}
-  &= -\mathbf{A}_f^T \, \mathbf{K}_{11} - \mathbf{K}_{11} \, \mathbf{A}_f
+  &= -\mathbf{A}_f^{\top} \, \mathbf{K}_{11} - \mathbf{K}_{11} \, \mathbf{A}_f
   \\
   &\qquad
-  + \mathbf{K}_{11} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{11} - \mathbf{X}(t) \\
+  + \mathbf{K}_{11} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^{\top} \, \mathbf{K}_{11} - \mathbf{X}(t) \\
   \frac{d\mathbf{K}_{12}(t)}{dt}
-  &= -\mathbf{A}_f^T \, \mathbf{K}_{12} - \mathbf{K}_{11} \, \mathbf{B}_f \, \mathbf{C}_u - \mathbf{K}_{12} \, \mathbf{A}_u
+  &= -\mathbf{A}_f^{\top} \, \mathbf{K}_{12} - \mathbf{K}_{11} \, \mathbf{B}_f \, \mathbf{C}_u - \mathbf{K}_{12} \, \mathbf{A}_u
   \\
-  &\qquad + \mathbf{K}_{11} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{12} \\
+  &\qquad + \mathbf{K}_{11} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^{\top} \, \mathbf{K}_{12} \\
   \frac{d\mathbf{K}_{22}(t)}{dt}
-  &= -\mathbf{C}_u^T \, \mathbf{B}_f^T \, \mathbf{K}_{12} - \mathbf{A}_u^T \, \mathbf{K}_{22}
+  &= -\mathbf{C}_u^{\top} \, \mathbf{B}_f^{\top} \, \mathbf{K}_{12} - \mathbf{A}_u^{\top} \, \mathbf{K}_{22}
   - \mathbf{K}_{21} \, \mathbf{B}_f \, \mathbf{C}_u \\
   &\qquad  - \mathbf{K}_{22} \, \mathbf{A}_u
-  + \mathbf{K}_{12}^T \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{12},
+  + \mathbf{K}_{12}^{\top} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^{\top} \, \mathbf{K}_{12},
 \end{split}
 \end{equation}
 \end{theorem}
@@ -1717,8 +1689,8 @@ In the LFM case, namely because we have restricted our consideration to time-inv
 \begin{equation}
 \begin{split}
   \mathcal{J}[\mathbf{c}] &= \int_0^\infty
-   (\mathbf{f}^T(t) \, \mathbf{X} \, \mathbf{f}(t)
-  + \mathbf{c}^T(t) \, \mathbf{U} \, \mathbf{c}(t)) \, dt \Big],
+   (\mathbf{f}^{\top}(t) \, \mathbf{X} \, \mathbf{f}(t)
+  + \mathbf{c}^{\top}(t) \, \mathbf{U} \, \mathbf{c}(t)) \, dt \Big],
 \end{split}
 \end{equation}
 %
@@ -1726,7 +1698,7 @@ By rewriting the model as an augmented state-spate model as we did in the previo
 %
 \begin{equation}
 \begin{split}
-  \mathbf{c}(t) = - \mathbf{U}^{-1} \, \mathbf{M}^T \, \mathbf{K}\, \hat{\mathbf{g}}(t),
+  \mathbf{c}(t) = - \mathbf{U}^{-1} \, \mathbf{M}^{\top} \, \mathbf{K}\, \hat{\mathbf{g}}(t),
 \end{split}
 \label{eq:joint_control}
 \end{equation}
@@ -1736,9 +1708,9 @@ where the matrix $\mathbf{K}$ is the solution to the algebraic Riccati equation 
 \begin{equation}
 \begin{split}
   0 &=
-    -\mathbf{A}^T \, \mathbf{K} - \mathbf{K} \, \mathbf{A} 
+    -\mathbf{A}^{\top} \, \mathbf{K} - \mathbf{K} \, \mathbf{A} 
   +  \mathbf{K} \, \mathbf{M} \, \mathbf{U}^{-1} \,
-   \mathbf{M}^T \, \mathbf{K} - \mathbf{X}_g.
+   \mathbf{M}^{\top} \, \mathbf{K} - \mathbf{X}_g.
 \end{split}
 \label{eq:joint_are}
 \end{equation}
@@ -1753,19 +1725,19 @@ The control law in \eqref{eq:joint_control} can now be written as
 \begin{equation} 
 \begin{split}
   \mathbf{c}(t) = - \begin{pmatrix}
-    \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{f} &
-    \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{12}
+    \mathbf{U}^{-1} \, \mathbf{M}_f^{\top} \, \mathbf{K}_{f} &
+    \mathbf{U}^{-1} \, \mathbf{M}_f^{\top} \, \mathbf{K}_{12}
   \end{pmatrix} \, \hat{\mathbf{g}}(t),
 \end{split}
 \label{eq:joint_control2}
 \end{equation}
 %
-where $\mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{f}$ is just the non-forced-case gain and $\mathbf{K}_{12}$ can be solved from the Sylvester equation
+where $\mathbf{U}^{-1} \, \mathbf{M}_f^{\top} \, \mathbf{K}_{f}$ is just the non-forced-case gain and $\mathbf{K}_{12}$ can be solved from the Sylvester equation
 %
 \begin{equation}
 \begin{split}
-  \left( \mathbf{K}_{f} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^T 
-         - \mathbf{A}_f^T \right) \, \mathbf{K}_{12}  - \mathbf{K}_{12} \, \mathbf{A}_u
+  \left( \mathbf{K}_{f} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^{\top} 
+         - \mathbf{A}_f^{\top} \right) \, \mathbf{K}_{12}  - \mathbf{K}_{12} \, \mathbf{A}_u
     = \mathbf{K}_{f} \, \mathbf{B}_f \, \mathbf{C}_u \\
 \end{split}
 \end{equation}
@@ -1849,15 +1821,23 @@ This can be derived by writing down the output controllability condition \cite{O
 
 The above result is useful when the system is fully observable as well. Then it ensures that we can successfully control the physical system part although the latent force model remains uncontrollable. However, if the latent force model is not fully observable, then latent force model inherently causes disturbance to the physical system and although we can keep the system stable, the state cannot be forced to follow a given trajectory.
 
+As a conclusion, for all practical purposes a (time-invariant) latent force model is controllable for all practical purposes, if it is observable and the following matrix has a full rank:
+%
+\begin{equation}
+  \mathcal{C} = \begin{pmatrix}
+  	\mathbf{M}_f & \mathbf{A}_f \, \mathbf{M}_f & \hdots & \mathbf{A}_f^{n-1} \, \mathbf{M}_f
+  \end{pmatrix}.
+\end{equation}
+
 \subsection{Controlled PDE Based LFMs}
 %
-In the case of PDE LFMs we naturally get models of the form
+In the case of PDE LFMs we get models of the form
 %
 \begin{equation}
 \begin{split}
   \frac{\partial \mathbf{g}(\mathbf{x},t)}{\partial t}
   &= \mathbf{\mathcal{A}} \, \mathbf{g}(\mathbf{x},t)
-  + \mathbf{B} \, w(\mathbf{x},t) + \mathbf{\mathcal{M}} \, c(\mathbf{x},t) \\
+  + \mathbf{B} \, w(\mathbf{x},t) + \mathbf{M}_f \, c(\mathbf{x},t) \\
   y_k &= \mathbf{C} \, \mathbf{g}(t_k) + \epsilon_k.
 \end{split}
 \end{equation}
@@ -1916,7 +1896,7 @@ As shown in \cite{Sarkka:2011,Sarkka+Hartikainen:2012,Sarkka+Solin+Hartikainen:2
 %
 This kind of formulations are especially useful in inverse problems \cite{Kaipio+Somersalo:2005} arising, for example, in computer tomography and other imaging methods where the operator $\mathcal{H}_k$ encodes the physics of the system into the model. This kind of formulation can also be used to enforce the field to have zero curl, which is useful, for example, when the unknown field corresponds to a magnetic field \cite{Solin:2017}.
 
-We can also consider non-linear transformations in the measurement model which allows us to consider, for example, classification problems. There exists efficient methods for approximate inference in the resulting non-linear models \cite{Rasmussen+Williams:2006,Sarkka:2013}.
+We can also consider non-linear transformations in the measurement model which allows us to consider, for example, classification problems. There exists efficient methods for approximate inference in such non-linear models \cite{Rasmussen+Williams:2006,Sarkka:2013}.
 
 \subsection{Numerical methods for PDEs}
 
@@ -1976,7 +1956,7 @@ $\epsilon_k$ with zero mean and variance equal to $0.09$, to get
 measurements $\{y_k\}_{k=1}^n$. We assume that the parameters
 $\lambda$, $\gamma$, and the variance for $\epsilon_k$ are known, and
 only estimate the parameters $\sigma_t^2$,
-and $\ell^2_t$ of the kernel function $k(t-t')$. The estimates were obtained by maximizing the log marginal likelihood by using the conjugate gradient optimization method \cite{Rasmussen+Williams:2006}.
+and $\ell^2_t$ of the kernel function $k(t-t')$. The estimates were obtained by maximizing the log marginal likelihood by using the conjugate gradient method \cite{Rasmussen+Williams:2006}.
 
 \begin{figure}[!ht]
 \centering
@@ -2032,7 +2012,7 @@ We consider two ways of designing the controller which were discussed in Section
        \includegraphics[width=0.33\textwidth]{toyPDElatentGT}
          }
      \subfloat[Contourns of the surface in Fig. \ref{pde:poisson:latent:gt} 
-\label{pde:poisson:latent:gt:contourn}]{%
+\label{pde:poisson:latent:gt:contour}]{%
        \includegraphics[width=0.3\textwidth]{toyPDElatentGTContourn}
      }
     \subfloat[Output function $f(x,y)$. 
@@ -2044,7 +2024,7 @@ We consider two ways of designing the controller which were discussed in Section
        \includegraphics[width=0.33\textwidth]{toyPDElatentPR}
          }
      \subfloat[Contourns of the surface in Fig. \ref{pde:poisson:latent:pr} 
-     \label{pde:poisson:latent:pr:contourn}]{%
+     \label{pde:poisson:latent:pr:contour}]{%
        \includegraphics[width=0.3\textwidth]{toyPDElatentPRContourn}
      }
     \subfloat[Mean prediction for $f^*(x,y)$     
@@ -2053,12 +2033,12 @@ We consider two ways of designing the controller which were discussed in Section
      }
 
      \caption{The upper row shows the ground truth data for the 2D PDE Poisson example: the input source
-       (Fig. \ref{pde:poisson:latent:gt}); contourns of the ground truth input source
-       \ref{pde:poisson:latent:gt:contourn}; ground truth for the output function
+       (Fig. \ref{pde:poisson:latent:gt}); contours of the ground truth input source
+       \ref{pde:poisson:latent:gt:contour}; ground truth for the output function
        (Fig. \ref{pde:poisson:output:gt}). Noisy observations are shown as red crosses in
        Fig. \ref{pde:poisson:output:gt}. The lower row shows the predicted mean function
-       $\mathbb{E}[u^*(x,y)|\mathbf{y}]$ (Fig. \ref{pde:poisson:latent:pr}); contourns of the predicted mean function
-       (Fig. \ref{pde:poisson:latent:pr:contourn}); the predicted mean output $\mathbb{E}[f^*(x,y)|\mathbf{y}]$ 
+       $\mathbb{E}[u^*(x,y)|\mathbf{y}]$ (Fig. \ref{pde:poisson:latent:pr}); contours of the predicted mean function
+       (Fig. \ref{pde:poisson:latent:pr:contour}); the predicted mean output $\mathbb{E}[f^*(x,y)|\mathbf{y}]$ 
       (Fig. \ref{pde:poisson:output:pr}). Noisy observations are again shown as red crosses in Fig. \ref{pde:poisson:output:pr}. 
      }
      \label{fig:dummy}
@@ -2079,7 +2059,7 @@ spatial dimensions.
 Assuming boundary conditions equal to zero, we can use the corresponding Green's function (see
 \cite{Polyanin:Handbook02} for mathematical details) to compute covariance functions for the output
 $k_{f,f}(x,y,x',y')$, and between the output and the latent source $k_{f,u}(x,y,x',y')$. We can then use GP regression
-expressions to infer the posterior distribution $p(u^*|\mathbf{y})$.
+expressions to infer the posterior distribution $p(u^* \mid \mathbf{y})$.
 
 In this example, the input field $u(x,y)$ is given by
 \begin{align*}
@@ -2088,7 +2068,7 @@ u(x, y) & = 100\exp\left\{- \frac{\left[(x + 0.8)^2 + (y - 0.8)^2\right]}{s^2}\r
 \end{align*}
 where $s^2 = 1$.
 Figure \ref{pde:poisson:latent:gt} shows a 3D description of the input source in the domain $[-2, 2]\times
-[-2,2]$. Figure \ref{pde:poisson:latent:gt:contourn} shows contourns of the same input source. Figure
+[-2,2]$. Figure \ref{pde:poisson:latent:gt:contour} shows contours of the same input source. Figure
 \ref{pde:poisson:output:gt} corresponds to the output function $f(t)$ obtained by solving the Poisson equation with an
 input source given by the function in Figure \ref{pde:poisson:latent:gt}.
 
@@ -2102,10 +2082,10 @@ input source given by the function in Figure \ref{pde:poisson:latent:gt}.
    For obtaining estimates of $\sigma_x^2$ and $\sigma_y^2$, we maximize the marginal log-likelihood function with
    respect to the parameters.
 
-Figure \ref{pde:poisson:latent:pr} shows the mean prediction of the distribution $p(u^*|\mathbf{y})$. Figure
-\ref{pde:poisson:latent:pr:contourn} shows contourns for the estimated mean function. We notice that the mean predictive
-function $\mathbb{E}[u^*(x,y)|\mathbf{y}]$ is qualitatively similar to the ground truth function $u(x,y)$. Figure
-\ref{pde:poisson:output:pr} shows the mean of the predictive distribution $p(f^*(x,y)|\mathbf{y})$. We note the
+Figure \ref{pde:poisson:latent:pr} shows the mean prediction of the distribution $p(u^* \mid \mathbf{y})$. Figure
+\ref{pde:poisson:latent:pr:contour} shows contours for the estimated mean function. We notice that the mean predictive
+function $\mathbb{E}[u^*(x,y) \mid \mathbf{y}]$ is qualitatively similar to the ground truth function $u(x,y)$. Figure
+\ref{pde:poisson:output:pr} shows the mean of the predictive distribution $p(f^*(x,y) \mid \mathbf{y})$. We note the
 similarity between the ground truth in Figure \ref{pde:poisson:output:gt} and the mean prediction in Figure
 \ref{pde:poisson:output:pr}.  Furthermore, the MSE between the ground truth source $u(x,y)$, and the inferred mean source $u^*(x,y)$
 is equal to $0.5153$. The MSE between the ground truth output $f(x,y)$ and the mean predicted output $f^*(x,y)$
