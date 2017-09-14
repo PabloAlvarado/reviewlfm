@@ -1461,7 +1461,7 @@ However, it turns out that although we can indeed estimate the process $f$ easil
 
 \subsection{Detectability and Observability of Latent Force Models}
 
-In this section, our aim is to discuss the detectability and observability of the latent force models. For the theorems, we need to assume that the joint force system has a state-space representation, because otherwise the classical observability and detectability results \simo{ref Kalman \& Anderson} are not applicable. We only consider finite-dimensional models which is enough for our purposes because infinite-dimensional (PDE) models anyway need to be discretized and in order to ensure the detectability and observability of the resulting models, the finite-dimensional results are sufficient. However, the reader is referred to the book of Curtain \cite{Curtain:2012} for the corresponding infinite-dimensional results.
+In this section, our aim is to discuss the detectability and observability of the latent force models. For the theorems, we need to assume that the joint force system has a state-space representation, because otherwise the classical observability and detectability results \cite{Kalman:1960b,Kalman:1963,Anderson:1981} are not applicable. We only consider finite-dimensional models which is enough for our purposes because infinite-dimensional (PDE) models anyway need to be discretized and in order to ensure the detectability and observability of the resulting models, the finite-dimensional results are sufficient. However, the reader is referred to the book of Curtain \cite{Curtain:2012} for the corresponding infinite-dimensional results.
 
 That is, we assume that we have a latent force model which has the following state space representation
 
@@ -1499,15 +1499,12 @@ with $\mathbf{g} = \begin{pmatrix} \mathbf{f}, \mathbf{u} \end{pmatrix}$. In thi
 
 It is also reasonable to assume that the state-space representation of the latent force model is stable and hence detectable. However, the physical system part itself usually is not stable. We need to assume though that it is at least detectable and preferably it should be observable. The most useful case occurs when the whole joint system is observable. The sampling procedure also affects the observability and we need to ensure that we do not get 'aliasing' kind of phenomenon analogously to sampling a signal with a sampling frequency that is below the Nyquist frequency. Let us start with the following result for detectability.
 
-\simo{I guess that we need to assume controllability w.r.t. noise as well!}
-
 \begin{lemma} \label{lem:detect}
   Assume that we have a latent force model which has the state space representation given in \eqref{eq:detss}.
 Assume that $(\exp(\mathbf{A}_f \, \Delta t_k),\mathbf{C}_f)$ is detectable, and that the latent force $u(t)$ has a exponentially stable state space representation. Then the full system is \emph{detectable} and the Kalman filter for the model is exponentially stable.
 \end{lemma}
 
 \begin{proof}
-%  \simo{Using the existence of gain from \cite{Anderson:1981} which causes exponential stability}
 We first discretize the system at arbitrary time points. The discretized system is (cf. \eqref{eq:dssaug})
 %
 \begin{equation}
@@ -1530,47 +1527,19 @@ which will be detectable provided that there exists a bounded gain sequence $\ma
 As the process $\mathbf{u}_k$ is exponentially stable, the sequence $\tilde{\mathbf{u}}_k$ is exponentially decreasing and bounded. Hence it does not affect the stability of the first equation. Therefore, the full system will be detectable provided that there exists a gain sequence $K_k$ such that $\tilde{\mathbf{f}}_k = (\exp(\mathbf{A}_f \, \Delta t_k) - \mathbf{K}_k \, \mathbf{C}_f) \, \tilde{\mathbf{f}}_{k-1}$ is exponentially stable. The gain sequence exists, because $[\exp(\mathbf{A}_f \, \Delta t_k),\mathbf{C}_f]$ is detectable by assumption. 
 \end{proof}
 
-Above, in Lemma~\ref{lem:detect} we had to assume that detectability of the discretized system []. There are many ways to assure that, but one way is to demand that the continuous physical model is observable and that we are not sampling critically [ref], that is, in a way that would lead to aliasing of frequencies as in the Shannon-Nyquist theory. Although observability is a quite strong condition compared to detectability, it assures that we have the chance to reconstruct the physical system with an arbitrary precision by improving the measurement protocol, which would not be true for mere detectability. Actually, sole detectability of the system is quite useful in practice, because our estimates might still have error offsets that would be impossible to observe.
-
-%Therefore, it is more useful to consider the following assumptions on the system:
-%%
-%\begin{enumerate}
-%\item The continuous-time physical system part, without the latent force, that is
-%%
-%\begin{equation}
-%\begin{split}
-%  \frac{d\mathbf{f}}{dt} &= \mathbf{A}_f \, \mathbf{f} \\
-%      y &= \mathbf{C}_f \, \mathbf{f},
-%\end{split}
-%\end{equation}
-%%
-%is observable. 
-%
-%\item State state-space representation for the latent force
-%%
-%\begin{equation}
-%\begin{split}
-%  \frac{d\mathbf{u}}{dt} &= \mathbf{A}_u \, \mathbf{u} + \mathbf{B}_u \, w \\
-%      z &= \mathbf{C}_u \, \mathbf{u},
-%\end{split}
-%\end{equation}
-%%
-%is observable.
-%
-%\item The system is not critically sampled.
-%\end{enumerate}
+Above, in Lemma~\ref{lem:detect} we had to assume that detectability of the discretized system. There are many ways to assure that, but one way is to demand that the continuous physical model is observable and that we are not sampling critically \cite{Ding:2009}, that is, in a way that would lead to aliasing of frequencies as in the Shannon-Nyquist theory. Although observability is a quite strong condition compared to detectability, it assures that we have the chance to reconstruct the physical system with an arbitrary precision by improving the measurement protocol, which would not be true for mere detectability. Actually, sole detectability of the system is quite useful in practice, because our estimates might still have error offsets that would be impossible to observe.
 
 If we assume that the physical system part is observable and the sampling is not critical, we get the following detectability theorem. Note that we do not yet assume that the latent force model part would be observable although its stability already implies that it is detectable.
 %
 \begin{theorem} \label{the:detect}
-Assume that $(\mathbf{A}_f,\mathbf{C}_f)$ is observable \simo{and controllable w.r.t. noise?}, the physical system is not critically sampled, and that the latent force model part is stable. Then the full system is detectable and the Kalman filter for the model is exponentially stable.
+Assume that $(\mathbf{A}_f,\mathbf{C}_f)$ is observable, the physical system is not critically sampled, and that the latent force model part is stable. Then the full system is detectable and the Kalman filter for the model is exponentially stable.
 \end{theorem}
 
 \begin{proof}
-The observability \simo{and controllability?} of the continuous time system together with the non-critical sampling ensures that the discrete-time system is also observable \simo{and controllable?} \simo{Ref to Ding et al.}. As discrete-time observability implies discrete-time detectability the result follows from Lemma~\ref{lem:detect}.
+According to \cite{Ding:2009}, the observability of the continuous time system together with the non-critical sampling ensures that the discrete-time system is also observable. As discrete-time observability implies discrete-time detectability the result follows from Lemma~\ref{lem:detect}.
 \end{proof}
 
-Let us now consider the conditions for the observability of the full system. It turns out that in general, the best way to determine the observability of the joint system is not to attempt to think of the physical system and the latent force model separately, but explicitly consider the joint state-space model. There are numerous attempts to map the properties of this kind cascaded systems to the properties of the joint system \simo{cite a few}, but still the best way to go seems to be simply to use a standard observability tests on the joint system. The properties of the sub-systems of this kind of cascade do not alone determine the observability, because we can have phenomena like zero-pole cancellation which leads to a non-observable system even when all the subsystems are observable \simo{cite e.g. Gilbert:1963}. When we also account for the effect of sampling to observability, we get the following theorem.
+Let us now consider the conditions for the observability of the full system. It turns out that in general, the best way to determine the observability of the joint system is not to attempt to think of the physical system and the latent force model separately, but explicitly consider the joint state-space model. There are numerous attempts to map the properties of this kind cascaded systems to the properties of the joint system (e.g. \cite{Gilbert:1963,Chen:1967,Davison:1975}), but still the best way to go seems to be simply to use a standard observability tests on the joint system. The properties of the sub-systems of this kind of cascade do not alone determine the observability, because we can have phenomena like zero-pole cancellation which leads to a non-observable system even when all the subsystems are observable (see, e.g., \cite{Gilbert:1963}). When we also account for the effect of sampling to observability, we get the following theorem.
 
 \begin{theorem} \label{the:obsv}
 Assume that the continuous-time joint system $(\mathbf{A},\mathbf{C})$ is observable, and the
@@ -1578,9 +1547,22 @@ observations are not critically sampled, then the discrete-time full system is o
 \end{theorem} 
 
 \begin{proof}
-See \simo{Ding et al. 2009}.
+See \cite{Ding:2009}.
 \end{proof}
-
+%
+In practical terms it is thus easiest to use, for example, the classical rank-condition (see, e.g., \cite{Ogata:1997}) which says that the (joint) system $(\mathbf{A},\mathbf{C})$ is observable, provided that the following matrix has full rank:
+%
+\begin{equation}
+  \mathcal{O} = 
+  \begin{pmatrix}
+    \mathbf{C} \\
+    \mathbf{C} \, \mathbf{A} \\
+    \vdots \\
+    \mathbf{C} \, \mathbf{A}^{n-1} \\    
+  \end{pmatrix}
+\end{equation}
+%
+and then ensure that sampling is non-critical \cite{Ding:2009}.
 
 %\subsection{PDE Methods for State-Space PDEs}
 %

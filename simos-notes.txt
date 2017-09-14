@@ -506,6 +506,8 @@ which seems to be based on the book of Chen/Francis (1996) and article of Kalman
 
 Some results on the observability and controllability of composite systems:
 
+Gilbert, E. G. (1963). Controllability and observability in multivariable control systems. Journal of the Society for Industrial and Applied Mathematics, Series A: Control, 1(2), 128-151.
+
 Chen, C. T., & Desoer, C. (1967). Controllability and observability of composite systems. IEEE Transactions on Automatic Control, 12(4), 402-409.
 
 Davison, E., & Wang, S. (1975). New results on the controllability and observability of general composite systems. IEEE Transactions on Automatic Control, 20(1), 123-128.
@@ -517,7 +519,7 @@ H.H. Rosenbrock, “State-Space and Multivariable Theory,” T. Nelson, London, 
 
 
 Counter-examples of non-sufficiency of cascade observability of both systems is given in
-Gilbert, E. G. (1963). Controllability and observability in multivariable control systems. Journal of the Society for Industrial and Applied Mathematics, Series A: Control, 1(2), 128-151.
+
 The paper also discusses the property that pole-zero cancellation will make the system unobservable
 http://people.duke.edu/~hpgavin/SystemID/References/Gilbert-JSIAM-1963.pdf
 
