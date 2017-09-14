@@ -129,7 +129,7 @@
             XR1 = [XR1 x];
         end
         
-        err1 = sqrt(sum(XR1(1,:).^2))
+        err1 = sqrt(mean(XR1(1,:).^2))
 %        pause;
     end
     
@@ -204,7 +204,7 @@
 
         end
         
-        err2 = sqrt(sum(XR2(1,:).^2))
+        err2 = sqrt(mean(XR2(1,:).^2))
 %        pause;
     end
     
