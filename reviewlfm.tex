@@ -609,9 +609,8 @@ The aim of this article is to consider the problem of inferring the functions $f
 
 \section{Latent Force Models as Gaussian Process Regression with Specific Covariance Functions}
 
-In this section, we \ldots \simo{To be completed}
+In this section, we provide a brief introduction to Gaussian process regression, latent force models in covariance-function and state-space forms.
 
-%\simo{Mauricio: check the notation on inputs $\mathbf{x}$ vs. $\mathbf{x},t$ vs. $t$ DONE}
 
 \subsection{Gaussian process regression}\label{sec:gp:regression}
 %
@@ -649,12 +648,12 @@ $\{k(t_i, t^*)\}_{i=1}^n$.
 By making use of the properties of multivariate Gaussian distributions, the posterior distribution for $y^*$ given
 $\mathbf{y}$ follows
 \begin{align*}
-p(y^*|\mathbf{y}) & =\mathcal{N}(y^*|\mu_{y^*|\mathbf{y}}, \sigma^2_{y^*|\mathbf{y}}),
+p(y^* \mid \mathbf{y}) & =\mathcal{N}(y^* \mid \mu_{y^* \mid \mathbf{y}}, \sigma^2_{y^* \mid \mathbf{y}}),
 \end{align*}
 where
 \begin{align*}
-\mu_{y^*|\mathbf{y}} & = \mathbf{k}^{\top}(\mathbf{t}, t^*)\mathbf{K}^{-1}(\mathbf{t}, \mathbf{t})\mathbf{y},\\
-\sigma^2_{y^*|\mathbf{y}} & = k(t^*, t^*) - \mathbf{k}^{\top}(\mathbf{t}, t^*)\mathbf{K}^{-1}(\mathbf{t}, \mathbf{t})
+\mu_{y^* \mid \mathbf{y}} & = \mathbf{k}^{\top}(\mathbf{t}, t^*)\mathbf{K}^{-1}(\mathbf{t}, \mathbf{t})\mathbf{y},\\
+\sigma^2_{y^* \mid \mathbf{y}} & = k(t^*, t^*) - \mathbf{k}^{\top}(\mathbf{t}, t^*)\mathbf{K}^{-1}(\mathbf{t}, \mathbf{t})
 \mathbf{k}(\mathbf{t}, t^*).
 \end{align*}
 The equations above can be used for predicting the values of $y^*$ at a particular time point $t^*$.
@@ -665,21 +664,21 @@ the unknown function value $f(t^*)$ using the training data $\mathbf{t}, \mathbf
 
 The posterior distribution for $f(t^*)$ given $\mathbf{y}$ is again Gaussian, given as
 \begin{align*}
-p(f(t^*)|\mathbf{y}) & =\mathcal{N}(f(t^*)|\mu_{f(t^*)|\mathbf{y}}, \sigma^2_{f(t^*)|\mathbf{y}}),
+p(f(t^*) \mid \mathbf{y}) & =\mathcal{N}(f(t^*) \mid \mu_{f(t^*) \mid \mathbf{y}}, \sigma^2_{f(t^*) \mid \mathbf{y}}),
 \end{align*}
 where
 \begin{align*}
-\mu_{f(t^*)|\mathbf{y}} & = \mathbf{k}^{\top}(\mathbf{t}, t^*)\left[\mathbf{K}(\mathbf{t}, \mathbf{t}) +
+\mu_{f(t^*) \mid \mathbf{y}} & = \mathbf{k}^{\top}(\mathbf{t}, t^*)\left[\mathbf{K}(\mathbf{t}, \mathbf{t}) +
 \sigma^2\mathbf{I}\right]^{-1}\mathbf{y},\\
-\sigma^2_{f(t^*)|\mathbf{y}} & = k(t^*, t^*) - \mathbf{k}^{\top}(\mathbf{t}, t^*)\left[\mathbf{K}(\mathbf{t}, \mathbf{t}) +
+\sigma^2_{f(t^*) \mid \mathbf{y}} & = k(t^*, t^*) - \mathbf{k}^{\top}(\mathbf{t}, t^*)\left[\mathbf{K}(\mathbf{t}, \mathbf{t}) +
 \sigma^2\mathbf{I}\right]^{-1}\mathbf{k}(\mathbf{t}, t^*),
 \end{align*}
 being $\mathbf{I}\in\mathbb{R}^{n\times n}$ the identity matrix.
 
 Fig.~\ref{reg_ex} shows an example of Gaussian process regression. The dashed line is an unknown function $f(t)$. The
 dots correspond to noisy observed data $\mathcal{D} = \{t_k,y_k\}_{k=1}^n$. The solid line is the posterior mean
-$\mu_{f(t^*)|\mathbf{y}}$ computed at several test inputs, and the shaded region represents two standard deviations
-(obtained from $\sigma^2_{f(t^*)|\mathbf{y}}$) away from the posterior mean.
+$\mu_{f(t^*) \mid \mathbf{y}}$ computed at several test inputs, and the shaded region represents two standard deviations
+(obtained from $\sigma^2_{f(t^*) \mid \mathbf{y}}$) away from the posterior mean.
 
 %\simo{Mauricio: Explain more. DONE}
 %\simo{Mauricio: explain how we can also estimate the parameters using ML, MAP, or some fancier method such as MCMC,
@@ -691,15 +690,20 @@ $\mu_{f(t^*)|\mathbf{y}}$ computed at several test inputs, and the shaded region
 % and a .pdf suffix will be assumed for pdflatex; or what has been declared
 % via \DeclareGraphicsExtensions.
 \caption{Example of Gaussian process regression.  The dashed line represents the unknown function $f(t)$. The dots are
-  the observed data $\{t_k, y_k\}_{k=1}^n$. The solid line is the posterior mean $\mu_{f(t^*)|\mathbf{y}}$, and the
+  the observed data $\{t_k, y_k\}_{k=1}^n$. The solid line is the posterior mean $\mu_{f(t^*) \mid \mathbf{y}}$, and the
   shaded region represents two standard deviations away from the predictive mean.}
 \label{reg_ex}
 \end{figure}
 
 An additional element that is usually considered in GP regression is the estimation of the parameters of the covariance
-function $k(t,t')$, also known as hyperparameters. There are different ways in which those hyperparameters can be
-estimated, including maximization of the log-marginal likelihood \cite{Rasmussen+Williams:2006}, maximum a posteriori
-\cite{Murphy:2012:MLP}, and Markov chain Monte Carlo \cite{FilipponeML13}.
+function $k(t,t')$, also known as hyperparameters. However, the GP regression formulation allows for the following simple expression for the likelihood of measurement given the parameters:
+%
+\begin{equation}
+  p(\mathbf{y} \mid \theta,\sigma^2)
+  = \mathcal{N}(\mathbf{y} \mid \mathbf{0}, \mathbf{K}(\mathbf{t}, \mathbf{t};\theta) + \sigma^2 \mathbf{I}).
+\end{equation}
+%
+Given the likelihood there are different ways in which the hyperparameters can be estimated, including maximization of the log-marginal likelihood \cite{Rasmussen+Williams:2006}, maximum a posteriori \cite{Murphy:2012:MLP}, and Markov chain Monte Carlo \cite{FilipponeML13}. 
 
 \subsection{GP Regression Solution to Basic LFM Inference}\label{sec:gp:regression:lfm}
 %
@@ -783,12 +787,12 @@ given by $\{k_{f,u}(t_i, t^*)\}_{i=1}^{n}$. Notice that due to the assumed indep
 the covariance between the process $y(t)$ and $u(t)$ is the same than the covariance between the process $f(t)$, and
 $u(t)$.
 
-Posterior distribution for $u^*$ given $\mathbf{y}$ follows a Gaussian distribution with mean $\mu_{u^*|\mathbf{y}}$, and
-variance $\sigma^2_{u^*|\mathbf{y}}$,
+Posterior distribution for $u^*$ given $\mathbf{y}$ follows a Gaussian distribution with mean $\mu_{u^* \mid \mathbf{y}}$, and
+variance $\sigma^2_{u^* \mid \mathbf{y}}$,
 \begin{align*}
-\mu_{u^*|\mathbf{y}} & = \mathbf{k}_{f,u}^{\top}(t^*, \mathbf{t})\left[\mathbf{K}_{f,f}(\mathbf{t}, \mathbf{t})
+\mu_{u^* \mid \mathbf{y}} & = \mathbf{k}_{f,u}^{\top}(t^*, \mathbf{t})\left[\mathbf{K}_{f,f}(\mathbf{t}, \mathbf{t})
 + \sigma^2\mathbf{I}\right]^{-1}\mathbf{y}\\
-\sigma^2_{u^*|\mathbf{y}} & =  k(t^*, t^*) - \mathbf{k}_{f,u}^{\top}(\mathbf{t}, t^*)\left[\mathbf{K}_{f,f}(\mathbf{t}, \mathbf{t})
+\sigma^2_{u^* \mid \mathbf{y}} & =  k(t^*, t^*) - \mathbf{k}_{f,u}^{\top}(\mathbf{t}, t^*)\left[\mathbf{K}_{f,f}(\mathbf{t}, \mathbf{t})
 + \sigma^2\mathbf{I}\right]^{-1}\mathbf{k}_{f,u}(\mathbf{t}, t^*).
 \end{align*}
 
@@ -1033,19 +1037,15 @@ where the operator multiplication from right is interpreted as acting onto the v
 
 \subsection{Hyperparameter Learning in LFMs}
 
-\simo{Mauricio: Should rewrite the text below to be a bit more specific. The Titsias references are also old and not even related (?).}
-
-Expressions for the covariance functions $k_{f}(t,t')$,
-$k_{f}(\mathbf{x}, \mathbf{x}', t-t')$, and $k_{f}(\mathbf{x}, \mathbf{x}')$ involve the parameters of the differential equations, and the hyperparameters of the covariance function of the latent process $u(\cdot)$. Once we have formed the GP model with the modified covariance function, those hyperparameters can be estimated using any of the methods mentioned in the section on GP regression. In the context of latent force models, there have been more recent
+Expressions for the covariance functions $k_{f}(t,t')$, $k_{f}(\mathbf{x}, \mathbf{x}', t-t')$, and $k_{f}(\mathbf{x}, \mathbf{x}')$ also involve the parameters of the differential equations, and the parameters of the covariance function of the latent process $u(\cdot)$. Once we have formed the GP model with the modified covariance function, those hyperparameters can be estimated using any of the methods mentioned in the section on GP regression. In the context of latent force models, there have been more recent
 attempts to estimate these hyperparameters using Markov Chain Monte Carlo, by including priors for the parameters of the differential equations and the covariance function of the latent process \cite{Titsias:control:vars:2009, Titsias:BMC:2012}.
-
 
 
 \section{Latent Force Models as Stochastic State-Space Models}
 
-In this section \ldots \simo{To be completed}
+In this section, we discuss state-space methods for Gaussian process regression and especially show how they can be used with latent force models. 
 
-\subsection{Temporal GPs in state-space form}
+\subsection{Temporal GPs in state-space form} \label{sec:tempgp}
 As shown in \cite{Hartikainen+Sarkka:2010,Sarkka+Solin+Hartikainen:2013,Sarkka+Piche:2014} many covariance function based models of the form
 %
 \begin{equation}
@@ -1088,9 +1088,9 @@ For example, the Mat\'ern covariance functions  $k(\tau) = \left( \sigma^2 \, 2^
 %
 where $\lambda=\sqrt{2\nu}/\ell$. 
 
-Although the commonly used squared exponential covariance function does not have an exact state-space representation, it can be easily it can be approximated with such using a simple Taylor series expansions or Pad\'e approximants in Fourier domain \cite{Sarkka+Piche:2014}. State-space representations of periodic covariance functions have been considered in \cite{Solin+Sarkka:2014a}, and rational quadratic and general scale mixtures of Gaussians in \cite{Solin+Sarkka:2014b}.
+Although the commonly used squared exponential covariance function does not have an exact state-space representation, it can be easily it can be approximated with such using a simple Taylor series expansions or Pad\'e approximants in Fourier domain \cite{Sarkka+Piche:2014,Karvonen+Sarkka:2016}. State-space representations of periodic covariance functions have been considered in \cite{Solin+Sarkka:2014a}, and rational quadratic and general scale mixtures of Gaussians in \cite{Solin+Sarkka:2014b}.
 
-\simo{Discussion on certain classes of non-stationary models}
+To some extent it is also possible to convert non-stationary covariance function into state space form. However, in that case the Fourier domain approach above is not applicable. For example, Wiener processes and $n$-times integrated Wiener processes are non-stationary Gaussian processes, but they still have easy state-space representation (see, e.g., \cite{Solin:2016}). There also exist some general procedures (e.g., \cite{Anderson:1969,Van-Trees:1971}) for converting non-stationary covariance functions into state-space form.
 
 \subsection{Spatio-temporal GPs in state-space form}
 
@@ -1142,9 +1142,9 @@ For example, the spatio-temporal Mat\'ern covariance function with a suitable pa
 %
 where $\nabla^2 = \partial^2 / \partial x_1^2 + \cdots + \partial^2 / \partial x_p^2$ and $\sqrt{\cdot}$ in the matrix $\mathbf{\mathcal{A}}_u$ denotes an operator square root.
 
-State-space realizations of spatio-temporal oscillating fields have been discussed in \cite{Solin+Sarkka:2013}. The implementation of divergence-free covariance functions for magnetic field modeling have been recently presented in \cite{Solin:2015}. It is worth noting that fixing the GP to be realized as its causal version via the spectral factorization can also cause problems when the GP is combined with a suitable non-causal PDE. This is discussed in Section~\ref{sec:poisson-problem}.
+State-space realizations of spatio-temporal oscillating fields have been discussed in \cite{Solin+Sarkka:2013}. The implementation of divergence-free covariance functions for magnetic field modeling have been recently presented in \cite{Solin:2017}. It is worth noting that fixing the GP to be realized as its causal version via the spectral factorization can also cause problems when the GP is combined with a suitable non-causal PDE. This is discussed in Section~\ref{sec:poisson-problem}.
 
-\simo{Discussion on certain classes of non-stationary models}
+As in the case of temporal processes discussed in Section~\ref{sec:tempgp}, it is possible to convert some classes of non-stationary covariance functions in state-space form. In that case the Fourier domain approach is not applicable, but similar methods as in the temporal case can also be used for spatio-temporal models.
 
 
 \subsection{ODE LFMs in joint state-space form}
@@ -2179,7 +2179,7 @@ If we further select $\varphi_j = \phi_i$, we can also use the approximation
 %
 Finite-difference methods also lead to an equation of the form \eqref{eq:disc_pde} where the vectors $\mathbf{f}$ and $\mathbf{u}$ contain the values of the processes at certain grid points, and the matrix $\mathbf{D}$ is a discrete approximation to the operator (e.g. Laplacian). The covariance function and cross-covariance approximations of the grid points are then given as $\mathbf{K}_f = \mathbf{G} \, \mathrm{Cov}(\mathbf{u},\mathbf{u}) \, \mathbf{G}^T$ and $\mathbf{K}_{f,u} = \mathbf{G} \, \mathrm{Cov}(\mathbf{u},\mathbf{u})$, respectively.
 
-Although in general the covariances $\mathrm{Cov}(u_i,u_{i'})$ can only be computed by explicit (numerical) integration, these covariance can sometimes be approximated very efficiently. When we use the eigenfunctions of the Laplacian operator as the basis and when the covariance function is stationary, we can approximate the covariances via point-wise evaluations of the spectral density of $u$ \cite{Solin+Sarkka:2016}. With this basis the case of translation invariant operators also becomes particularly easy, because the matrix $\mathbf{G}$ also becomes diagonal.
+Although in general the covariances $\mathrm{Cov}(u_i,u_{i'})$ can only be computed by explicit (numerical) integration, these covariance can sometimes be approximated very efficiently. When we use the eigenfunctions of the Laplacian operator as the basis and when the covariance function is stationary, we can approximate the covariances via point-wise evaluations of the spectral density of $u$ \cite{Solin+Sarkka:2014}. With this basis the case of translation invariant operators also becomes particularly easy, because the matrix $\mathbf{G}$ also becomes diagonal.
 
 
 
