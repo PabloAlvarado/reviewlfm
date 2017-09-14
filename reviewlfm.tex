@@ -510,7 +510,9 @@ In addition to \eqref{eq:sde0}, other examples of problems of interest are spati
 \label{eq:spde0}
 \end{equation}
 %
-where again the aim is to learn both the Gaussian force field $u(\mathbf{x},t)$ and the function $f(\mathbf{x},t)$ from the noisy observations $y_k$ as well as design an optimal control for regulating the heat. 
+where again the aim is to learn both the Gaussian force field $u(\mathbf{x},t)$ and the function $f(\mathbf{x},t)$ from
+the noisy observations $y_k$ as well as design an optimal control for \mauricio{regulating the heat. should we define D
+  and beta in the heat equation?}
 
 %In both temporal models \eqref{eq:sde0} and spatio-temporal models \eqref{eq:spde0} we also consider the associated stochastic control problem: how can we simultaneously learn the functions $f$ and $u$, and design an optimal stochastic controller $c$ which uses the learning outcome optimally. It turns out that this problem can be recasted as a classical stochastic control problem (e.g., \cite{Maybeck:1982b}) in an augmented state-space provided that we convert the Gaussian process input model into an equivalent stochastic state-space representation \cite{Hartikainen+Sarkka:2010,Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012}.
 
@@ -615,7 +617,10 @@ In this section, we provide a brief introduction to Gaussian process regression,
 
 In machine learning \cite{Rasmussen+Williams:2006}, Gaussian processes (GPs) are commonly used as prior distributions over functions $f: \mathbb{R}^d\rightarrow \mathbb{R}$. When used for regression, the GP encodes the uncertainty we have over a function, before seeing the data. Once we have specified a particular relationship between the function and the data we observe, we can update our beliefs over the function using the Bayes' rule, and compute the posterior distribution.  Although the dimensionality of the input domain is often greater than one, that is, $d>1$, in what follows we use $d=1$ and refer to it as the time domain. Later on, the input domain will refer to a purely spatial domain (as in the Poisson equation), or to a spatio-temporal domain, (as in the heat equation). 
 
-Let us now consider predicting the value of an unknown function $f(t)$ at a certain test point $t^*$. The prediction is based on a finite set of previously seen data points or training samples $\mathcal{D}=\{(t_1, y_1), \ldots, (t_n, y_n)\}$ which are corrupted with $\epsilon_k \sim \mathcal{N}(0,\sigma^2)$ Gaussian noise $y_k = f(t_k) + \epsilon_k$. Assume that $f(t)$ is moded as a priori Gaussian process with zero mean and a covariance function $k(t,t')$.
+Let us now consider predicting the value of an unknown function $f(t)$ at a certain test point $t^*$. The prediction is
+based on a finite set of previously seen data points or training samples $\mathcal{D}=\{(t_1, y_1), \ldots, (t_n,
+y_n)\}$ which are corrupted with \mauricio{$\epsilon_k \sim \mathcal{N}(0,\sigma^2)$ tha variance of this noise is
+  different to the one appearing in equation 11} Gaussian noise $y_k = f(t_k) + \epsilon_k$. Assume that $f(t)$ is moded as a priori Gaussian process with zero mean and a covariance function $k(t,t')$.
 
 Under the Gaussian process assumption, the joint distribution between $y_1, \ldots, y_n$ and $f(t^*)$ follows a Gaussian distribution. Using $\mathbf{y}$ to denote the set of training outputs $y_1, \ldots, y_n$, and $\mathbf{t}$ the set of training inputs $t_1, \ldots, t_n$, we have
 \begin{align*}
@@ -967,7 +972,7 @@ We can also extend the ideas presented in Section~\ref{sec:ss_de_lfms} to the sp
 \begin{equation}
 \begin{split}
   \frac{\partial \mathbf{f}(\mathbf{x},t)}{\partial t}
-  &= \mathbf{\mathcal{A}}_f \, \mathbf{f}(\mathbf{x},t) + \mathbf{B}_f \, u(\mathbf{x},t) \\
+  &= \mathbf{\mathcal{A}}_f \, \mathbf{f}(\mathbf{x},t) + \mathbf{B}_f \, u(\mathbf{x},t), \\
 \end{split}
 \end{equation}
 %
