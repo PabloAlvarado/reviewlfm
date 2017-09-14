@@ -687,7 +687,7 @@ function $k(t,t')$, also known as hyperparameters. However, the GP regression fo
 %
 Given the likelihood there are different ways in which the hyperparameters can be estimated, including maximization of the log-marginal likelihood \cite{Rasmussen+Williams:2006}, maximum a posteriori \cite{Murphy:2012:MLP}, and Markov chain Monte Carlo \cite{FilipponeML13}. 
 
-\subsection{GP Regression Solution to Basic LFM Inference}\label{sec:gp:regression:lfm}
+\subsection{GP regression solution to basic LFM Inference}\label{sec:gp:regression:lfm}
 %
 %\simo{Mauricio: check the notation: DONE}
 
@@ -779,7 +779,7 @@ covariance functions via \eqref{eq:fcov}, and \eqref{eq:fucov}.  If we can obtai
 expressions for them, then the inference procedure becomes very
 easy. Otherwise numerical computations are needed.
 
-\subsection{State-Space ODE LFMs} \label{sec:ss_de_lfms}
+\subsection{State-space ODE LFMs} \label{sec:ss_de_lfms}
 %
 A convenient way to compute the impulse responses required for the GP inference on LFMs is to rewrite the differential equation in state-space form, which allows us to express the impulse response in terms of matrix exponential function. We can rewrite the basic LFM differential equation \eqref{eq:difeq1} in state-space form \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012} by defining a state vector $\mathbf{f} = (f, df/dt,\ldots,d^{n-1}f/dt^{n-1})$ and writing
 %
@@ -871,7 +871,7 @@ Later in this article we consider state-space methods which also convert the var
 
 %\simo{Simo: Explain how to get $k_{f,u}$}
 
-\subsection{Partial Differential Equation Based LFMs}
+\subsection{Partial differential equation based LFMs}
 %
 Similar to the case of ordinary differential equations, we can associate a Green's function to a linear partial differential operator \cite{Myintu:LPDEBook:2006, Polyanin:Handbook02}.\footnote{The presentation here refers to boundary value problems.} Let $H(\mathbf{x}, \mathbf{x}')$ be the Green's function for a particular linear partial differential operator, where $\mathbf{x}$ is a general input vector that could include different types of input variables, as we mentioned before. For example, the vector $\mathbf{x}$ could refer to coordinates $x$ and $y$ for the Poisson equation in two spatial dimensions, or to coordinate $x$ and time $t$ for the Heat equation in one spatial dimension.
 
@@ -964,7 +964,7 @@ where $\mathcal{D}$ is a (pseudo) differential operator.
 
 Once we have derived the covariance functions, we can use the Gaussian process regression equations as in Sections \ref{sec:gp:regression} and \ref{sec:gp:regression:lfm} for learning and prediction of functions $f$ and $u$.
 
-\subsection{State-Space PDE LFMs}
+\subsection{State-space PDE LFMs}
 
 We can also extend the ideas presented in Section~\ref{sec:ss_de_lfms} to the spatial-temporal case.  Assume that that our PDE LFM has the form
 %
@@ -1010,7 +1010,7 @@ cross-covariance between $f$ and $u$ has the representation
 \end{split}
 \end{equation}
 
-\subsection{Hyperparameter Learning in LFMs}
+\subsection{Hyperparameter learning in LFMs}
 
 Expressions for the covariance functions $k_{f}(t,t')$, $k_{f}(\mathbf{x}, \mathbf{x}', t-t')$, and $k_{f}(\mathbf{x}, \mathbf{x}')$ also involve the parameters of the differential equations, and the parameters of the covariance function of the latent process $u(\cdot)$. Once we have formed the GP model with the modified covariance function, those hyperparameters can be estimated using any of the methods mentioned in the section on GP regression. In the context of latent force models, there have been more recent
 attempts to estimate these hyperparameters using Markov Chain Monte Carlo, by including priors for the parameters of the differential equations and the covariance function of the latent process \cite{Titsias:control:vars:2009, Titsias:BMC:2012}.
@@ -1442,7 +1442,7 @@ This model is now time-stable and can be augmented with a state-space model for 
 
 However, it turns out that although we can indeed estimate the process $f$ easily using the representation, the estimation of $u$ becomes non-trivial. This is because we have implicitly made a unitary transformation for the input process. Although this does not affect the covariance structure of the input, it does transform the posterior mean of it using the same transformation. In order to determine the original $u$ from the estimate of $u$ obtained from this equation, we need to solve another pseudo-differential equation, which can be hard. Thus the benefit of using state-space methods for the Poisson equation is quite limited. 
 
-\subsection{Detectability and Observability of Latent Force Models}
+\subsection{Detectability and observability of latent force models}
 
 In this section, our aim is to discuss the detectability and observability of the latent force models. For the theorems, we need to assume that the joint force system has a state-space representation, because otherwise the classical observability and detectability results \cite{Kalman:1960b,Kalman:1963,Anderson:1981} are not applicable. We only consider finite-dimensional models which is enough for our purposes because infinite-dimensional (PDE) models anyway need to be discretized and in order to ensure the detectability and observability of the resulting models, the finite-dimensional results are sufficient. However, the reader is referred to the book of Curtain \cite{Curtain:2012} for the corresponding infinite-dimensional results.
 
@@ -1510,7 +1510,7 @@ which will be detectable provided that there exists a bounded gain sequence $\ma
 As the process $\mathbf{u}_k$ is exponentially stable, the sequence $\tilde{\mathbf{u}}_k$ is exponentially decreasing and bounded. Hence it does not affect the stability of the first equation. Therefore, the full system will be detectable provided that there exists a gain sequence $K_k$ such that $\tilde{\mathbf{f}}_k = (\exp(\mathbf{A}_f \, \Delta t_k) - \mathbf{K}_k \, \mathbf{C}_f) \, \tilde{\mathbf{f}}_{k-1}$ is exponentially stable. The gain sequence exists, because $[\exp(\mathbf{A}_f \, \Delta t_k),\mathbf{C}_f]$ is detectable by assumption. 
 \end{proof}
 
-Above, in Lemma~\ref{lem:detect} we had to assume the detectability of the discretized system. There are many ways to assure that, but one way is to demand that the continuous physical model is observable and that we are not sampling critically \cite{Ding:2009}, that is, in a way that would lead to aliasing of frequencies as in the Shannon-Nyquist theory. Although observability is a quite strong condition compared to detectability, it assures that we have the chance to reconstruct the physical system with an arbitrary precision by improving the measurement protocol, which would not be true for mere detectability. Actually, sole detectability of the system is quite useful in practice, because our estimates might still have error offsets that would be impossible to observe.
+Above, in Lemma~\ref{lem:detect} we had to assume the detectability of the discretized system. There are many ways to assure that, but one way is to demand that the continuous physical model is observable and that we are not sampling critically \cite{Ding:2009}, that is, in a way that would lead to aliasing of frequencies as in the Shannon-Nyquist theory. Although observability is a quite strong condition compared to detectability, it assures that we have the chance to reconstruct the physical system with an arbitrary precision by improving the measurement protocol, which would not be true for mere detectability. Actually, sole detectability of the system is quite useless in practice, because our estimates might still have error offsets that would be impossible to observe.
 
 If we assume that the physical system part is observable and the sampling is not critical, we get the following detectability theorem. Note that we do not yet assume that the latent force model part would be observable although its stability already implies that it is detectable.
 %
@@ -1547,15 +1547,11 @@ In practical terms it is thus easiest to use, for example, the classical rank-co
 %
 and then ensure that sampling is non-critical \cite{Ding:2009}.
 
-%\subsection{PDE Methods for State-Space PDEs}
-%
-%\simo{Discuss the use of Hilbert-space methods, FEM, and finite differences}
-
 \section{Stochastic Control of Latent Force Models}
 %
 In this section, we discuss the stochastic control problems related to latent force models. In particular, we provide and analyze the solutions for the linear quadratic regulation (LQR) problem for them.
 
-\subsection{Controlled Basic LFMs} \label{sec:controlled_basic}
+\subsection{Controlled basic LFMs} \label{sec:controlled_basic}
 %
 Let us consider a controlled version of the state-space model with a Gaussian process input \eqref{eq:ssgen}:
 \begin{equation}
@@ -1692,7 +1688,7 @@ non-linear feedback control. However, the use of more general cost functions tha
 
 In the next section we will simplify the control problem even more, and consider the limit $T \to \infty$, because it leads to a particularly convenient class of linear controllers which are computationally tractable while still being able to use the learning outcome of the Gaussian process inference.
 
-\subsection{Linear Quadratic Regulation of Basic LFMs}
+\subsection{Linear quadratic regulation of basic LFMs}
 %
 In the LFM case, namely because we have restricted our consideration to time-invariant models, a very convenient type of control problem is the infinite-time linear regulation problem which corresponds to the cost function
 %
@@ -1755,7 +1751,7 @@ where $\mathbf{U}^{-1} \, \mathbf{M}_f^{\top} \, \mathbf{K}_{f}$ is just the non
 %
 Note that although the system is stabilizable also by setting the second term to zero, that is, using the non-forced gain (cf. Theorem~\ref{the:stab}), a better solution is obtained by using the control in Theorem~\ref{the:control} which depends on the latent force as well.
 
-\subsection{Stabilizability and Non-Controllability of Controlled LFMs}
+\subsection{Stabilizability and non-controllability of controlled LFMs}
 %
 The aim is now to discuss the controllability and stabilizability of state-space latent force models. We assume that the model has the form
 %
@@ -1841,7 +1837,7 @@ As a conclusion, for all practical purposes a (time-invariant) latent force mode
   \end{pmatrix}.
 \end{equation}
 
-\subsection{Controlled PDE Based LFMs}
+\subsection{Controlled PDE based LFMs}
 %
 In the case of PDE LFMs we get models of the form
 %
@@ -1880,7 +1876,7 @@ where the control problem corresponds to designing the control function $c(\math
 %
 %\simo{I am not sure about the need of this section}
 %
-\subsection{Non-linear Models}
+\subsection{Non-linear models}
 
 %\simo{Mauricio: double check your text: DONE}
 
@@ -1898,7 +1894,7 @@ with coefficients $\{a_i^j\}_{i=0,j=1}^{n, J}$, and $\{u_j(t)\}_{j=1}^J$ are GPs
 Continuity in the output $f(t)$ is ensured by forcing the initial conditions for the $j$th ODE to take the same value
 than the output $f(t)$ and its derivatives, at the last input point for the $j-1$th time interval. This kind of models have been considered in \cite{Alvarez:switched11,Hartikainen+Sarkka:2011}.
 
-\subsection{Operators and Non-linearities in Measurement Model}
+\subsection{Operators and non-linearities in measurement model}
 
 As shown in \cite{Sarkka:2011,Sarkka+Hartikainen:2012,Sarkka+Solin+Hartikainen:2013} Gaussian process regression models and hence LFMs easily extend to having linear operators or functionals $\mathcal{H}_k$ in the measurement model:
 %
@@ -2136,7 +2132,7 @@ evaluated at the test input points is $8.3354\times 10^{-4}$.
 In this experiment we consider a controlled heat equation of the form
 %
 \begin{equation}
-  \frac{\partial f(\mathbf{x},t)}{\partial t} = - \lambda f(\mathbf{x},t) + D \, \nabla^2 f(\mathbf{x},t)
+  \frac{\partial f(\mathbf{x},t)}{\partial t} = D \, \nabla^2 f(\mathbf{x},t) - \lambda f(\mathbf{x},t)
   + u(\mathbf{x},t) + c(\mathbf{x},t),
 \end{equation}
 %
