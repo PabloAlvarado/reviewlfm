@@ -503,8 +503,9 @@ In addition to \eqref{eq:sde0}, other examples of problems of interest are spati
 \begin{equation}
 \begin{split}
   \frac{\partial f(\mathbf{x},t)}{\partial t} &=
-  D \, \nabla^2 \, f(\mathbf{x},t) - \beta \, f(\mathbf{x},t) \\
-  &\qquad + u(\mathbf{x},t) + c(\mathbf{x},t) \\
+  D \, \nabla^2 \, f(\mathbf{x},t) - \lambda \, f(\mathbf{x},t)
+  %\\ &\qquad
+  + u(\mathbf{x},t) + c(\mathbf{x},t) \\
   y_k &= f(\mathbf{x}_k,t_k) + \epsilon_k,
 \end{split}
 \label{eq:spde0}
@@ -915,7 +916,7 @@ for a test input $\mathbf{x}^*$, both for the output process $f(\mathbf{x})$, an
 
 As an example of spatio-temporal PDE, the heat equation is given as
 \begin{align*}
-  \frac{\partial f(\mathbf{x},t)}{\partial t} &= D \, \nabla^2 f(\mathbf{x},t) - \beta \, f(\mathbf{x},t) + u(\mathbf{x},t).
+  \frac{\partial f(\mathbf{x},t)}{\partial t} &= D \, \nabla^2 f(\mathbf{x},t) - \lambda \, f(\mathbf{x},t) + u(\mathbf{x},t).
 \end{align*}
 %
 Let us now assume that we have an initial value problem (i.e., a Cauchy problem) with zero initial condition $f(\mathbf{x},t_0) = 0$ at a fixed $t_0$ together with certain boundary conditions on the boundary of a domain $\mathcal{X}$. 
@@ -931,7 +932,7 @@ and again the Green's function $H$ it can be written in closed form. See \cite{P
 In this case the Green's function is also the kernel of so called operator exponential (exponential semigroup) of the operator:
 %
 \begin{equation}
-  \mathcal{H}(t, s) = \exp\left( (t-s) \, (D \, \nabla^2 - \beta) \right).
+  \mathcal{H}(t, s) = \exp\left( (t-s) \, (D \, \nabla^2 - \lambda) \right).
 \end{equation}
 %
 The covariance functions of the process can now be expressed in terms of the Green's function
@@ -1259,7 +1260,7 @@ Partial differential equation models driven by Gaussian processes can also be of
 \begin{equation}
 \begin{split}
   \frac{\partial f(\mathbf{x},t)}{\partial t} &=
-  D \, \nabla^2 \, f(\mathbf{x},t) - \beta \, f(\mathbf{x},t) + u(\mathbf{x},t) \\
+  D \, \nabla^2 \, f(\mathbf{x},t) - \lambda \, f(\mathbf{x},t) + u(\mathbf{x},t) \\
 \end{split}
 \end{equation}
 %
@@ -1268,7 +1269,7 @@ Let us now assume that we are have a state-space representation of the unknown f
 \begin{equation}
 \begin{split}
   \frac{\partial f(\mathbf{x},t)}{\partial t} &=
-  \underbrace{\left( D \, \nabla^2 - \beta \right)}_{\mathbf{\mathcal{A}}_f} \, f(\mathbf{x},t) + \mathbf{C}_u \, \mathbf{u}(\mathbf{x},t) \\
+  \underbrace{\left( D \, \nabla^2 - \lambda \right)}_{\mathbf{\mathcal{A}}_f} \, f(\mathbf{x},t) + \mathbf{C}_u \, \mathbf{u}(\mathbf{x},t) \\
   \frac{\partial\mathbf{u}(\mathbf{x},t)}{\partial t} &= \mathbf{\mathcal{A}}_u \, \mathbf{u}(\mathbf{x},t)
   + \mathbf{B}_u \, w(\mathbf{x},t) \\
 \end{split}
