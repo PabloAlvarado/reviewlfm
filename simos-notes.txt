@@ -1,4 +1,8 @@
 
+Arxiv one-liner:
+
+perl -pe 's/(^|[^\\])%.*/$1%/' < reviewlfm.tex > reviewlfm_arxiv.tex
+
 
 Consider the control problem
 
