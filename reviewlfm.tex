@@ -1942,8 +1942,7 @@ In this section, we illustrate the latent force model framework in three differe
 
 Our first illustrative example corresponds to the second order differential equation model described in equation
 \eqref{eq:sde0} with no control $c(t) = 0$. Figure~\ref{mass:spring:damper:figure} shows a mass-spring-damper system
-being forced by a latent function $u(t)$, \mauricio{\textbf{which an example of a physical system that with such a
-    model} sorry, I don't get this}. The output
+being forced by a latent function $u(t)$, which an example of a physical system with such a model. The output
 $f(t)$ is also shown in the figure and represents the position of the body with a particular reference. For this model,
 we can compute the covariance function for $k_{f,f}(t,t')$ in equation \eqref{eq:fcov} using the following Green's
 function
@@ -2000,7 +1999,7 @@ The results above were obtained by explicitly computing the modified covariance 
 To demonstrate the benefit of the state-space representation and the modeling of the force as GP we consider the model \eqref{eq:sde0} with linear closed loop optimal control design for $c(t)$. In the experiment the mass-spring-damper system was started at static position $f(0) = -1$ and the aim was to keep it at the origin while the unknown latent force is affecting it. In the experiment we use the latent force hyper-parameters that were estimated from the open loop system considered in the previous section. We assumed that we only get measurements of the position, but with a relatively small variance $\sigma^2 = 0.01^2$---this was assumed to emphasize the differences between the control designs.
 
 We consider two ways of designing the controller which were discussed in Section~\ref{sec:controlled_basic}: using the
-assumed separability design based on putting $u(t) = 0$ and a controller which is designed by taking \mauricio{into?} account the existence of the latent force as described in the same section. The results of using the basic linear quadratic regulator (LQR), that is, the certainty equivalent design, and the result of using the joint LFM control are shown in Figure~\ref{fig:cntl_spring}. It can be seen that the LFM controller is able to maintain the system much better near the origin than the basic controller.
+assumed separability design based on putting $u(t) = 0$ and a controller which is designed by taking into account the existence of the latent force as described in the same section. The results of using the basic linear quadratic regulator (LQR), that is, the certainty equivalent design, and the result of using the joint LFM control are shown in Figure~\ref{fig:cntl_spring}. It can be seen that the LFM controller is able to maintain the system much better near the origin than the basic controller.
 
 \begin{figure}[!t]
 \centering
