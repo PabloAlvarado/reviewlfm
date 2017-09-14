@@ -998,7 +998,7 @@ with
 \end{equation}
 %
 where the operator multiplication from right is interpreted as acting onto the variable $\mathbf{x}'$. The
-\mauricio{cross-variance cross-covariance?} between $f$ and $u$ has the representation
+cross-covariance between $f$ and $u$ has the representation
 %
 \begin{equation}
 \begin{split}
@@ -1028,7 +1028,7 @@ As shown in \cite{Hartikainen+Sarkka:2010,Sarkka+Solin+Hartikainen:2013,Sarkka+P
 %
 can be equivalently or approximately expressed in state-space form by defining a state vector such as $\mathbf{u} = (u,
 du/dt,\ldots,d^{p-1}u/dt^{p-1})$---note that depending on parameterization the state vector might not contain exactly
-the derivatives, but \mauricio{\textbf{something related} I'm not sure I understand this}---leading to a state-space model
+the derivatives, but a linear transformation of them---leading to a state-space model
 %
 \begin{equation}
 \begin{split}
@@ -1039,7 +1039,7 @@ the derivatives, but \mauricio{\textbf{something related} I'm not sure I underst
 \label{eq:ssu}
 \end{equation}
 %
-where $w(t)$ is a white-noise process. The advantage of \mauricio{\textbf{this kind} maybe too informal?} of model formulation is that it allows for solving the GP regression problem using Kalman filters and smoothers \cite{Sarkka:2013} in $O(n)$ time when the traditional GP takes $O(n^3)$ time (here $n$ denotes the number of measurements).
+where $w(t)$ is a white-noise process. The advantage of this kind of model formulation is that it allows for solving the GP regression problem using Kalman filters and smoothers \cite{Sarkka:2013} in $O(n)$ time when the traditional GP takes $O(n^3)$ time (here $n$ denotes the number of measurements).
 
 The key (classical) result is that such a white-noise-driven state-space representation exists if and only if the spectral density (the Fourier transform of $k(\tau)$) is a proper rational function:
 %
@@ -1065,7 +1065,7 @@ For example, the Mat\'ern covariance functions  $k(\tau) = \left( \sigma^2 \, 2^
 where $\lambda=\sqrt{2\nu}/\ell$. 
 
 Although the commonly used squared exponential covariance function does not have an exact state-space representation, it
-can be easily approximated \mauricio{\textbf{with such} ??} using a simple Taylor series expansions or Pad\'e approximants in Fourier domain \cite{Sarkka+Piche:2014,Karvonen+Sarkka:2016}. State-space representations of periodic covariance functions have been considered in \cite{Solin+Sarkka:2014a}, and rational quadratic and general scale mixtures of Gaussians in \cite{Solin+Sarkka:2014b}. A review of different representations and approximations can be found in \cite{Solin:2016}.
+can be easily approximated as such using a simple Taylor series expansions or Pad\'e approximants in Fourier domain \cite{Sarkka+Piche:2014,Karvonen+Sarkka:2016}. State-space representations of periodic covariance functions have been considered in \cite{Solin+Sarkka:2014a}, and rational quadratic and general scale mixtures of Gaussians in \cite{Solin+Sarkka:2014b}. A review of different representations and approximations can be found in \cite{Solin:2016}.
 
 To some extent it is also possible to convert non-stationary covariance function into state space form. However, in that case the Fourier domain approach above is not applicable. For example, Wiener processes and $n$-times integrated Wiener processes are non-stationary Gaussian processes, but they still have easy state-space representation (see, e.g., \cite{Solin:2016}). There also exists some general procedures (e.g., \cite{Anderson:1969,Van-Trees:1971}) for converting non-stationary covariance functions into state-space form.
 
@@ -1209,13 +1209,11 @@ where $\mathbf{g}_k \triangleq \mathbf{g}(t_k)$, $\mathbf{q}_k \sim \mathcal{N}(
   \mathbf{B} \, q_c  \, \mathbf{B}^{\top} \\
   &\qquad \quad \times \exp((\Delta t_k - \tau) \, \mathbf{A})^{\top} \, d\tau,
 \end{split}
-\label{eq:dssaug}
 \end{equation}
 %
 where $q_c$ is the spectral density of the white noise $w(t)$. For numerical computation of the matrix exponential and the above integral there exists a wide range of numerical methods (see, e.g., \cite{Grewal+Andrews:2001,Sarkka:2006}) with ready-available implementations.
 
-The link to Kalman filtering results from the fact that the model \mauricio{\eqref{eq:dssaug} until this point, the
-  equation has not been introduced} is a standard discrete-time linear Gaussian model and the Kalman filter and (Rauch--Tung--Striebel, RTS) smoother provide the equations for exact Bayesian inference on it (see, e.g., \cite{Sarkka:2013}). 
+The link to Kalman filtering results from the fact that the model \eqref{eq:dssaug} is a standard discrete-time linear Gaussian model and the Kalman filter and (Rauch--Tung--Striebel, RTS) smoother provide the equations for exact Bayesian inference on it (see, e.g., \cite{Sarkka:2013}). 
 
 Another benefit of the representation \eqref{eq:comb} is that we can compute the covariance functions corresponding to the ODE LFM without resorting to numerical integration as in \eqref{eq:fcov} and \eqref{eq:fucov}, or \eqref{eq:vfcov} and \eqref{eq:vfucov}. The joint stationary covariance function of $\mathbf{g}(t) = (\mathbf{f}(t),\mathbf{u}(t))$ can be expressed as
 %
@@ -1323,7 +1321,7 @@ The discretization now proceeds analogously to the previous section, except that
   \mathbf{B} \, q_c(\mathbf{x},\mathbf{x}')  \, \mathbf{B}^{\top} \\
   &\qquad \quad \times \exp((\Delta t_k - \tau) \, \mathbf{\mathcal{A}})^{\top} \, d\tau.
 \end{split}
-\label{eq:dssaug}
+%\label{eq:dssaug}
 \end{equation}
 %
 Furthermore, both the spectral density $q_c(\mathbf{x},\mathbf{x}')$ and the covariance $\mathbf{Q}(\mathbf{x},\mathbf{x}';\Delta t_k)$ become kernels in $\mathbf{x},\mathbf{x}'$. Note that above, we need to interpret the operator application from the right as operating onto the variable $\mathbf{x}'$ (cf. \cite{Sarkka+Hartikainen:2012}).
@@ -1511,7 +1509,7 @@ which will be detectable provided that there exists a bounded gain sequence $\ma
 As the process $\mathbf{u}_k$ is exponentially stable, the sequence $\tilde{\mathbf{u}}_k$ is exponentially decreasing and bounded. Hence it does not affect the stability of the first equation. Therefore, the full system will be detectable provided that there exists a gain sequence $K_k$ such that $\tilde{\mathbf{f}}_k = (\exp(\mathbf{A}_f \, \Delta t_k) - \mathbf{K}_k \, \mathbf{C}_f) \, \tilde{\mathbf{f}}_{k-1}$ is exponentially stable. The gain sequence exists, because $[\exp(\mathbf{A}_f \, \Delta t_k),\mathbf{C}_f]$ is detectable by assumption. 
 \end{proof}
 
-Above, in Lemma~\ref{lem:detect} we had to assume \mauricio{\textbf{that} the?} detectability of the discretized system. There are many ways to assure that, but one way is to demand that the continuous physical model is observable and that we are not sampling critically \cite{Ding:2009}, that is, in a way that would lead to aliasing of frequencies as in the Shannon-Nyquist theory. Although observability is a quite strong condition compared to detectability, it assures that we have the chance to reconstruct the physical system with an arbitrary precision by improving the measurement protocol, which would not be true for mere detectability. Actually, sole detectability of the system is quite useful in practice, because our estimates might still have error offsets that would be impossible to observe.
+Above, in Lemma~\ref{lem:detect} we had to assume the detectability of the discretized system. There are many ways to assure that, but one way is to demand that the continuous physical model is observable and that we are not sampling critically \cite{Ding:2009}, that is, in a way that would lead to aliasing of frequencies as in the Shannon-Nyquist theory. Although observability is a quite strong condition compared to detectability, it assures that we have the chance to reconstruct the physical system with an arbitrary precision by improving the measurement protocol, which would not be true for mere detectability. Actually, sole detectability of the system is quite useful in practice, because our estimates might still have error offsets that would be impossible to observe.
 
 If we assume that the physical system part is observable and the sampling is not critical, we get the following detectability theorem. Note that we do not yet assume that the latent force model part would be observable although its stability already implies that it is detectable.
 %
@@ -1583,8 +1581,7 @@ We will specifically aim to consider optimal control problems which minimize the
 %
 because they lead to computationally tractable control laws. However, the principle outlined here can also be extended to more general cost functionals although the numerical methods become order of magnitude more complicated.
 
-A straightforward approach to optimal control with the quadratic cost \mauricio{\textbf{\eqref{eq:quadcost1}} this
-  eq. has not been defined yet} is to use the separation principle of linear estimation and control which amounts to designing the optimal controller for the case $u(t) = 0$ and use it in cascade with a Kalman filter. This indeed is the optimal solution in the case of white $u(t)$, but not in our case.
+A straightforward approach to optimal control with the quadratic cost \eqref{eq:quadcost1} is to use the separation principle of linear estimation and control which amounts to designing the optimal controller for the case $u(t) = 0$ and use it in cascade with a Kalman filter. This indeed is the optimal solution in the case of white $u(t)$, but not in our case.
 
 The correct approach in this case, which also utilizes the learning outcome of the Gaussian process regression is to use the augmented state space model with the control signal. In this case it is given as (see \eqref{eq:ssaug})
 
@@ -1687,13 +1684,12 @@ It would also be possible to consider more complicated cost functions of the for
   \mathcal{J}[\mathbf{c}] &= \mathrm{E} \left[ \psi(\mathbf{f}(T))
    + \int_0^T L(\mathbf{f}(t),\mathbf{c}(t),t) \, dt \right],
 \end{split}
-\label{eq:quadcost1}
 \end{equation}
 %
-which would then lead to interesting control laws that utilize the latent force \mauricio{\textbf{that in} ?} a
-non-linear feedback control. \mauricio{\textbf{However} too many howevers in the following paragraphs}, the use of more general cost functions than the quadratic cost is considerably more complicated than using a quadratic cost, because the estimation and control no longer separate. \mauricio{However}, a typical practical approach is to assume that this still approximately holds. Also in this case we argue that it is desirable to design the (deterministic) controller for the augmented system instead of the original system with $u(t) = 0$, because this design is able to fully use the learning outcome of the Gaussian process regression of the input.
+which would then lead to interesting control laws that utilize the latent force in a
+non-linear feedback control. However, the use of more general cost functions than the quadratic cost is considerably more complicated than using a quadratic cost, because the estimation and control no longer separate. A typical practical approach is to assume that this still approximately holds. Also in this case we argue that it is desirable to design the (deterministic) controller for the augmented system instead of the original system with $u(t) = 0$, because this design is able to fully use the learning outcome of the Gaussian process regression of the input.
 
-\mauricio{However}, in the next section we will simplify the control problem even more, and consider the limit $T \to \infty$, because it leads to a particularly convenient class of linear controllers which are computationally tractable while still being able to use the learning outcome of the Gaussian process inference.
+In the next section we will simplify the control problem even more, and consider the limit $T \to \infty$, because it leads to a particularly convenient class of linear controllers which are computationally tractable while still being able to use the learning outcome of the Gaussian process inference.
 
 \subsection{Linear Quadratic Regulation of Basic LFMs}
 %
@@ -1836,7 +1832,7 @@ The above result is useful when the system is fully observable as well. Then it 
 the physical system part although the latent force model remains uncontrollable. However, if the latent force model is
 not fully observable, then the latent force model inherently causes disturbance to the physical system and although we can keep the system stable, the state cannot be forced to follow a given trajectory.
 
-As a conclusion, for all \mauricio{\textbf{practical purposes} appears again in the next line} a (time-invariant) latent force model is controllable for all practical purposes, if it is observable and the following matrix has a full rank:
+As a conclusion, for all practical purposes a (time-invariant) latent force model is controllable, if it is observable and the following matrix has a full rank:
 %
 \begin{equation}
   \mathcal{C} = \begin{pmatrix}
