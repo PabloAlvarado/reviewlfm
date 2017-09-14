@@ -477,7 +477,7 @@ Gaussian process, latent force model, stochastic control, statistical learning, 
 
 %\simo{{\em Notation:} $n$ is the number of data points, $p$ is the input ($\mathbf{x}$) dimension, $d$ is the vector output dimensionality, $s$ for order of ODE or state-space or half-order of spectral density denominator (these are the same things), $r$ for the half-order of spectral density numerator, $k$ is the discrete time index, if we have space and time, $n = n_x \, n_t$ for data points in time and space (for a grid). Todo: check the operator fonts.}
 
-\IEEEPARstart{C}{onsider} a second order differential equation model of a physical system of the form
+\IEEEPARstart{C}{onsider}, as an example, a second order differential equation model of a physical system of the form
 %
 \begin{equation}
 \begin{split}
@@ -494,11 +494,11 @@ where the functions $u(t)$ and $f(t)$ are unknown an $c(t)$ is a control functio
 \end{split}
 \end{equation}
 %
-The aim of this article is to consider the unknown force or input $u$ as unknown and model it as a non-parametric Gaussian process model \cite{Rasmussen+Williams:2006} with a given covariance function in order to estimate, or in machine learning terms, {\em learn} $f$ and $u$. This kind of models are called latent force models (LFM) \cite{Alvarez+Luengo+Lawrence:2009,Alvarez:2010,Alvarez+Luengo+Lawrence:2013,Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012} in machine learning literature. In addition to learning problem on the LFMs, we also consider the problem of controlling the LFM using the control function $c(t)$. In particular, we consider the problem of optimal linear stochastic control design for this type of models.
+The aim of this article is to consider the unknown force or input $u$ as unknown and model it as a non-parametric Gaussian process model \cite{Rasmussen+Williams:2006} with a given covariance function in order to estimate, or in machine learning terms, {\em learn} $f$ and $u$. The generalizations of this kind of models to arbitrary differential equations are called latent force models (LFM) \cite{Alvarez+Luengo+Lawrence:2009,Alvarez:2010,Alvarez+Luengo+Lawrence:2013,Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012} in machine learning literature. In addition to learning problem on the LFMs, we also consider the problem of controlling the LFM using the control function $c(t)$. In particular, we consider the problem of optimal stochastic control design for LFMs.
 
-The present problem is also closely related to so called input estimation problem that has previously been addressed in target tracking literature (e.g. \cite{Bar-Shalom+Li+Kirubarajan:2001}) by replacing the input or force with a white or colored noise. However, here we will specifically concentrate on the machine learning point of view which allows for encoding prior information into the driving force as well as the use of modern machine learning methods for coping with the related hyperparameter estimation problems and model extensions. Another connection 
+The present problem is also closely related to so called input estimation problem that has previously been addressed in target tracking literature (e.g. \cite{Bar-Shalom+Li+Kirubarajan:2001}) by replacing the input or force with a white or colored noise. However, here we will specifically concentrate on the machine learning point of view which allows for encoding prior information into the driving force as well as the use of modern machine learning methods for coping with the related hyperparameter estimation problems and model extensions. 
 
-Other examples of problem of interest are spatio-temporal partial differential equations driven by (structured) Gaussian processes. An example of this kind of model is the heat equation
+In addition to \eqref{eq:sde0}, other examples of problems of interest are spatio-temporal partial differential equations driven by (structured) Gaussian processes such as the controlled heat equation
 %
 \begin{equation}
 \begin{split}
@@ -510,9 +510,9 @@ Other examples of problem of interest are spatio-temporal partial differential e
 \label{eq:spde0}
 \end{equation}
 %
-where again the aim is to learn both the Gaussian force field $u(\mathbf{x},t)$ and the function $f(\mathbf{x},t)$ from the noisy observations $y_k$. 
+where again the aim is to learn both the Gaussian force field $u(\mathbf{x},t)$ and the function $f(\mathbf{x},t)$ from the noisy observations $y_k$ as well as design an optimal control for regulating the heat. 
 
-In both temporal models \eqref{eq:sde0} and spatio-temporal models \eqref{eq:spde0} we also consider the associated stochastic control problem: how can we simultaneously learn the functions $f$ and $u$, and design an optimal stochastic controller $c$ which uses the learning outcome optimally. It turns out that this problem can be recasted as a classical stochastic control problem (e.g., \cite{Maybeck:1982b}) in an augmented state-space provided that we convert the Gaussian process input model into an equivalent stochastic state-space representation \cite{Hartikainen+Sarkka:2010,Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012}.
+%In both temporal models \eqref{eq:sde0} and spatio-temporal models \eqref{eq:spde0} we also consider the associated stochastic control problem: how can we simultaneously learn the functions $f$ and $u$, and design an optimal stochastic controller $c$ which uses the learning outcome optimally. It turns out that this problem can be recasted as a classical stochastic control problem (e.g., \cite{Maybeck:1982b}) in an augmented state-space provided that we convert the Gaussian process input model into an equivalent stochastic state-space representation \cite{Hartikainen+Sarkka:2010,Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012}.
 
 A different kind of example of a problem studied in this article is the Poisson equation
 %
@@ -524,7 +524,7 @@ A different kind of example of a problem studied in this article is the Poisson 
 \label{eq:poisson0}
 \end{equation}
 %
-where again the function $f$ and the force field $u$ are unknown. The difference is that here is no concept of time in this equation. However, the problem of estimating the function $f$ and the force field $u$ from the observations $y_k$ is still well defined.
+where again the function $f$ and the force field $u$ are unknown. The difference is that here is no concept of time in this equation, nor a possibility for controlling the equation. However, the problem of estimating the function $f$ and the force field $u$ from the observations $y_k$ is still well defined.
 
 
 %LFMs can be derived from two different perspectives: the covariance function perspective \cite{Alvarez+Lawrence:2009,Alvarez+Luengo+Lawrence:2013} and the state-space perspective \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012}. The former approach can be seen as a machine learning point of view (cf. \cite{Rasmussen+Williams:2006}) to LFMs whereas the latter approach is a signal processing point of view (cf. \cite{Sarkka+Solin+Hartikainen:2013,Sarkka:2013}). Both of these approaches have their own advantages and disadvantages in terms of flexibility, ease of implementation, and computational complexity. In this paper, we analyze both of these points of view to latent force models as well as present new computational methods which aim to combine the best sides of both points of view. 
@@ -603,7 +603,7 @@ In each of the models we obtain noisy observations of the form
 %
 where in the case of state-space models we have $f(\bullet) = \mathbf{C}_f \, \mathbf{f}(\bullet)$ for some given matrix $\mathbf{C}_f$. Above, the argument $\bullet$ is either $t_k \in \mathbb{R}_+$, $(t_k,x_k) \in \mathbb{R}_+ \times \mathbb{R}^p$, or $x_k \in \mathbb{R}^d$. The measurement noise is assumed to be Gaussian $\epsilon_k \sim \mathrm{N}(0,\Sigma_k)$. We also briefly consider a number of generalizations, including operators in the measurement model, non-linear measurement models, non-Gaussian noises, as well as switching dynamic models.
 
-The aim of this article is to consider the problem of inferring the functions $f(\bullet)$ and $u(\bullet)$ from a set of noisy measurements $\{ y_k \}$. We consider inference problems both in batch form and with recursive Kalman filters and smoothers. We also consider the parameter estimation problems as well as the optimal control problems (i.e., optimal selection of $\mathbf{c}(\bullet)$) in these models. Many of the results have already been presented in conference papers, 
+The aim of this article is to consider the problem of inferring the functions $f(\bullet)$ and $u(\bullet)$ from a set of noisy measurements $\{ y_k \}$. We consider inference problems both in batch form and with recursive Kalman filters and smoothers. We also consider the parameter estimation problems as well as the optimal control problems (i.e., optimal selection of $\mathbf{c}(\bullet)$) in these models. Some of the inference results have previously been presented in conference and journal articles \cite{Alvarez+Luengo+Lawrence:2009,Alvarez:2010,Alvarez+Luengo+Lawrence:2013,Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012}, but the contribution of this article is to extend the inference methods, give new theoretical results, and extend the methodology to allow for stochastic control of the LFMs.
 
 \section{Latent Force Models as Gaussian Process Regression with Specific Covariance Functions}
 
@@ -613,7 +613,7 @@ In this section, we provide a brief introduction to Gaussian process regression,
 \subsection{Gaussian process regression}\label{sec:gp:regression}
 %
 
-A Gaussian process (GP) is a stochastic process with the property that any finite number of random variables taken from that process follows a multivariate Gaussian distribution \cite{Rasmussen+Williams:2006, Shanmugan:randomSignals:88}. In machine learning \cite{Rasmussen+Williams:2006}, Gaussian processes are commonly used as prior distributions over functions $f: \mathbb{R}^d\rightarrow \mathbb{R}$. When used for regression, the GP encodes the uncertainty we have over a function, before seeing the data. Once we have specified a particular relationship between the function and the data we observe, we can update our beliefs over the function using the Bayesian theorem, and compute the posterior distribution. 
+In machine learning \cite{Rasmussen+Williams:2006}, Gaussian processes (GPs) are commonly used as prior distributions over functions $f: \mathbb{R}^d\rightarrow \mathbb{R}$. When used for regression, the GP encodes the uncertainty we have over a function, before seeing the data. Once we have specified a particular relationship between the function and the data we observe, we can update our beliefs over the function using the Bayesian theorem, and compute the posterior distribution. 
 
 Although the dimensionality of the input domain could be greater than one, that is, $d>1$, in what follows we use $d=1$ and refer to it as the time domain. Later on, the input domain will refer to a purely spatial domain (as in the Poisson equation), or to a spatio-temporal domain, (as in the heat equation). 
 
@@ -841,7 +841,7 @@ This gives the following state-space representation for $f(t)$:
 \label{eq:ssgen}
 \end{equation}
 %
-Because this system is of the first order, the impulse response -- which is now a matrix valued function -- can be written down explicitly in terms of the matrix exponential function $\mathbf{H}(t) = \exp(t \, \mathbf{A}_f)$ and hence the joint covariance function of $\mathbf{f}$ is
+Because this system is of the first order, the impulse response---which is now a matrix valued function---can be written down explicitly in terms of the matrix exponential function $\mathbf{H}(t) = \exp(t \, \mathbf{A}_f)$ and hence the joint covariance function of $\mathbf{f}$ is
 %
 \begin{equation}
 \begin{split}
@@ -1086,7 +1086,7 @@ For example, the Mat\'ern covariance functions  $k(\tau) = \left( \sigma^2 \, 2^
 %
 where $\lambda=\sqrt{2\nu}/\ell$. 
 
-Although the commonly used squared exponential covariance function does not have an exact state-space representation, it can be easily it can be approximated with such using a simple Taylor series expansions or Pad\'e approximants in Fourier domain \cite{Sarkka+Piche:2014,Karvonen+Sarkka:2016}. State-space representations of periodic covariance functions have been considered in \cite{Solin+Sarkka:2014a}, and rational quadratic and general scale mixtures of Gaussians in \cite{Solin+Sarkka:2014b}.
+Although the commonly used squared exponential covariance function does not have an exact state-space representation, it can be easily it can be approximated with such using a simple Taylor series expansions or Pad\'e approximants in Fourier domain \cite{Sarkka+Piche:2014,Karvonen+Sarkka:2016}. State-space representations of periodic covariance functions have been considered in \cite{Solin+Sarkka:2014a}, and rational quadratic and general scale mixtures of Gaussians in \cite{Solin+Sarkka:2014b}. A review of different representations and approximations can be found in \cite{Solin:2016}.
 
 To some extent it is also possible to convert non-stationary covariance function into state space form. However, in that case the Fourier domain approach above is not applicable. For example, Wiener processes and $n$-times integrated Wiener processes are non-stationary Gaussian processes, but they still have easy state-space representation (see, e.g., \cite{Solin:2016}). There also exist some general procedures (e.g., \cite{Anderson:1969,Van-Trees:1971}) for converting non-stationary covariance functions into state-space form.
 
@@ -1349,6 +1349,9 @@ The inference in the above model can be done with infinite-dimensional Kalman fi
 
 The covariance functions for explicit GP inference could also be computed with the operator analogs of Equations \eqref{eq:Kg1}, \eqref{eq:Kg2}, and \eqref{eq:Kg3}.
 
+\subsection{Parameter estimation in state-space LFMs}
+%
+In the conversion of the LFM into a state-space form, the parameters of the differential equations and covariance functions transform into parameters of the state-space model. In the resulting model we can estimate the parameters using parameter estimation methods for state-space models. See, for example, \cite{Sarkka:2013} for a review of parameter estimation methods for state-space models.
 
 \subsection{Counter-example: the Poisson equation} \label{sec:poisson-problem}
 
@@ -1609,7 +1612,7 @@ The correct approach in this case, which also utilizes the learning outcome of t
 \end{split}
 \end{equation}
 %
-with the measurement model \eqref{eq:ssaugkf}, where $ \mathbf{M} = \begin{pmatrix} \mathbf{M}_u \\ 0 \end{pmatrix}$ and the matrices $\mathbf{A}$ and $\mathbf{B}$ are defined in \eqref{eq:ssaugmats}. What we now should do is to design a controller for the above model with $w(t) = 0$ and run it in cascade with a Kalman filter processing the measurements in the model \eqref{eq:ssaugkf}. This yields to a controller which jointly learns the functions $f$ and $u$ and optimizes the control with respect to the cost criterion. In this case the control cost function can be rewritten in form
+with the measurement model \eqref{eq:ssaugkf}, where $ \mathbf{M} = \begin{pmatrix} \mathbf{M}_f \\ 0 \end{pmatrix}$ and the matrices $\mathbf{A}$ and $\mathbf{B}$ are defined in \eqref{eq:ssaugmats}. What we now should do is to design a controller for the above model with $w(t) = 0$ and run it in cascade with a Kalman filter processing the measurements in the model \eqref{eq:ssaugkf}. This yields to a controller which jointly learns the functions $f$ and $u$ and optimizes the control with respect to the cost criterion. In this case the control cost function can be rewritten in form
 %
 \begin{equation}
 \begin{split}
@@ -1742,17 +1745,7 @@ where the matrix $\mathbf{K}$ is the solution to the algebraic Riccati equation 
 %
 By solving the control law from these equations, we get a controller which is function of both the estimate of the function $\mathrm{f}$ as well the latent force $\mathbf{u}$, and is hence able to utilize both the estimate of the function as well the learned Gaussian latent force model.
 
-It is also possible to express the solution to the LFM control problem above in terms of the corresponding control solution to the non-forced problem
-%
-\begin{equation}
-\begin{split}
-  \frac{d\mathbf{f}(t)}{dt}
-  &= \mathbf{A}_f \, \mathbf{f}(t) + \mathbf{M}_f \, \mathbf{c}_f(t) \\
-\end{split}
-\label{eq:classic_lq_model}
-\end{equation}
-%
-and a solution which only depends on the parameters of the Gaussian latent force model and how the force and control enter the equation (i.e., on $\mathbf{B}_f$ and $\mathbf{M}_f$). This result is summarized in the following theorem which can be derived by setting the time derivatives in Theorem~\ref{the:control1} to zero.
+It is also possible to express the solution to the LFM control problem above in terms of the corresponding control solution to the non-forced problem similarly to the time-varying case considered in the previous section. This result is summarized in the following theorem which can be derived by setting the time derivatives in Theorem~\ref{the:control1} to zero.
 
 \begin{theorem} \label{the:control}
 The control law in \eqref{eq:joint_control} can now be written as
@@ -1805,16 +1798,16 @@ where (cf. \eqref{eq:ssaugmats})
   = \begin{pmatrix}
 	0 & \mathbf{B}_u
   \end{pmatrix}, 
-  \mathbf{M} = \begin{pmatrix} \mathbf{M}_u \\ 0 \end{pmatrix},
+  \mathbf{M} = \begin{pmatrix} \mathbf{M}_f \\ 0 \end{pmatrix},
 \end{split}
 \end{equation}
 %
 and $\mathbf{g} = \begin{pmatrix} \mathbf{f}, \mathbf{u} \end{pmatrix}$. We will not explicitly consider infinite-dimensional (PDE) models, because such models need to be discretized anyway, and it is best to analyze the stabilizability and the controllability in the resulting discretized representation. For infinite-dimensional results the reader is referred to the book of Curtain \cite{Curtain:2012}.
 
-First of all, the stabilizability of the system is guaranteed solely by ensuring that the physical model part is stabilizable, because state-space representations of stationary GPs -- provided that they are properly formed -- are stable. Thus we have the following theorem.
+First of all, the stabilizability of the system is guaranteed solely by ensuring that the physical model part is stabilizable, because state-space representations of stationary GPs---provided that they are properly formed---are stable. Thus we have the following theorem.
 
 \begin{theorem} \label{the:stab}
-Assume that $(\mathbf{A}_f,\mathbf{M}_u)$ is stabilizable and the latent force has an exponentially stable state space representation. Then the full system is \emph{stabilizable}.
+Assume that $(\mathbf{A}_f,\mathbf{M}_f)$ is stabilizable and the latent force has an exponentially stable state space representation. Then the full system is \emph{stabilizable}.
 \end{theorem}
 
 \begin{proof}
@@ -1823,13 +1816,13 @@ The system is stabilizable if there exist a finite gain $\mathbf{K}_c$ such that
 %
 \begin{equation}
 \begin{split}
-  \frac{d\tilde{\mathbf{f}}}{dt} &= (\mathbf{A}_f + \mathbf{M}_u \, \mathbf{K}_f) \, \tilde{\mathbf{f}}
-  + (\mathbf{B}_f \, \mathbf{C}_u + \mathbf{M}_u \, \mathbf{K}_u) \, \tilde{\mathbf{u}} \\
+  \frac{d\tilde{\mathbf{f}}}{dt} &= (\mathbf{A}_f + \mathbf{M}_f \, \mathbf{K}_f) \, \tilde{\mathbf{f}}
+  + (\mathbf{B}_f \, \mathbf{C}_u + \mathbf{M}_f \, \mathbf{K}_u) \, \tilde{\mathbf{u}} \\
   \frac{d\tilde{\mathbf{u}}}{dt} &= \mathbf{A}_u \, \tilde{\mathbf{u}}
 \end{split}
 \end{equation}
 %
-where we have written $\mathbf{K}_c = \begin{pmatrix} \mathbf{K}_f & \mathbf{K}_u \end{pmatrix}$. Because $\tilde{\mathbf{u}}$ is exponentially decreasing and bounded, we can safely set $\mathbf{K}_u = 0$. The remainder of the system will be stabilizable if there exists a gain $\mathbf{K}_f$ such that $d\tilde{\mathbf{f}}/dt = (\mathbf{A}_f + \mathbf{M}_u \, \mathbf{K}_f) \, \tilde{\mathbf{f}}$ is exponentially stable. By our assumption on the stabilizability of $(\mathbf{A}_f,\mathbf{M}_u)$, this is true and hence the result follows.
+where we have written $\mathbf{K}_c = \begin{pmatrix} \mathbf{K}_f & \mathbf{K}_u \end{pmatrix}$. Because $\tilde{\mathbf{u}}$ is exponentially decreasing and bounded, we can safely set $\mathbf{K}_u = 0$. The remainder of the system will be stabilizable if there exists a gain $\mathbf{K}_f$ such that $d\tilde{\mathbf{f}}/dt = (\mathbf{A}_f + \mathbf{M}_f \, \mathbf{K}_f) \, \tilde{\mathbf{f}}$ is exponentially stable. By our assumption on the stabilizability of $(\mathbf{A}_f,\mathbf{M}_f)$, this is true and hence the result follows.
 \end{proof}
 
 The stabilizability also implies that the corresponding LQ controller is uniquely determined \cite{Anderson+Moore:2007}.
@@ -1847,11 +1840,11 @@ However, the sole stabilizability is not very useful in practice, because sole s
 In practice, the non-controllability of the force part is not a problem, as we are actually interested in controlling the physical system part of the model, not the force per se. It turns out that the physical system can be controllable even though the full system is not controllable. This result can be obtained as a corollary of so called output controllability (see, e.g., \cite{Ogata:1997}) as follows.
 
 \begin{theorem} \label{the:stab}
-Assume that $(\mathbf{A}_f,\mathbf{M}_u)$ is controllable. Then the full system is output controllable with respect to the physical system part.
+Assume that $(\mathbf{A}_f,\mathbf{M}_f)$ is controllable. Then the full system is output controllable with respect to the physical system part.
 \end{theorem}
 
 \begin{proof}
-This can be derived by writing down the output controllability condition and noticing that it reduces to controllability of the physical system part.
+This can be derived by writing down the output controllability condition \cite{Ogata:1997} and noticing that it reduces to controllability of the physical system part.
 \end{proof}
 
 The above result is useful when the system is fully observable as well. Then it ensures that we can successfully control the physical system part although the latent force model remains uncontrollable. However, if the latent force model is not fully observable, then latent force model inherently causes disturbance to the physical system and although we can keep the system stable, the state cannot be forced to follow a given trajectory.
@@ -1869,20 +1862,10 @@ In the case of PDE LFMs we naturally get models of the form
 \end{split}
 \end{equation}
 %
-where the control problem corresponds to designing the control function $c(\mathbf{x},t)$ minimizing, for example, a linear quadratic cost functional. In principle, it is possible to directly analyze such infinite-dimensional control problems which leads to, for example, generalizations of the controllability concepts \cite{Curtain:2012}. However, in practice, as the first step after setting up the model, we replace the infinite-dimensional model with a finite-dimensional approximation. Therefore it is actually more fruitful to directly analyze the finite-dimensional approximation rather than the original infinite-dimensional model -- this way we can also easily account for the effect of discretization. For the analysis of the finite-dimensional approximate model the results in the previous sections apply as such.
+where the control problem corresponds to designing the control function $c(\mathbf{x},t)$ minimizing, for example, a linear quadratic cost functional. In principle, it is possible to directly analyze such infinite-dimensional control problems which leads to, for example, generalizations of the controllability concepts \cite{Curtain:2012}. However, in practice, as the first step after setting up the model, we replace the infinite-dimensional model with a finite-dimensional approximation. Therefore it is actually more fruitful to directly analyze the finite-dimensional approximation rather than the original infinite-dimensional model---this way we can also easily account for the effect of discretization. For the analysis of the finite-dimensional approximate model the results in the previous sections apply as such.
 
 
 \section{Extensions and Discussion}
-
-\subsection{Operators in Measurement Model}
-
-As shown in \cite{Sarkka:2011,Sarkka+Hartikainen:2012,Sarkka+Solin+Hartikainen:2013} Gaussian process regression models easily extend to having linear operators or functionals $\mathcal{H}_k$ in the measurement model:
-%
-\begin{equation}
-  y_k = \mathcal{H}_k \, f(\cdot,t) + \epsilon_k.
-\end{equation}
-%
-This kind of formulations are especially useful in inverse problems \cite{Kaipio+Somersalo:2005} arising, for example, in computer tomography and other imaging methods where the operator $\mathcal{H}_k$ encodes the physics of the system into the model. This kind of formulation can also be used to enforce the field to have zero curl, which is useful, for example, when the unknown field corresponds to a magnetic field \cite{Solin:2017}.
 
 %\subsection{Cascaded LFMs}
 %
@@ -1910,7 +1893,7 @@ This kind of formulations are especially useful in inverse problems \cite{Kaipio
 %\simo{Mauricio: double check your text: DONE}
 
 It is also possible to consider non-linear differential equation (physical) models which are driven by Gaussian process. In that case it is 
-necessary to resort to approximations in order to compute the posterior distribution for $u^*$ given $\mathbf{y}$, or the predictive distribution for $f^*$ given $\mathbf{y}$. Approximation methods for the covariance function formulation of LFMs have been presented in \cite{Lawrence:gpsim2007a,Gao:latent08,Titsias:BMC:2012}, In the state-representation, the non-linearity transform the linear state-space model into a non-linear state-space model, where we can use non-linear Kalman filtering and smoothing methods \cite{Hartikainen+Seppanen+Sarkka:2012,Sarkka:2013}. The stochastic control problems could also be extended to the non-linear case.
+necessary to resort to approximations in order to compute the posterior distribution for $u^*$ given $\mathbf{y}$, or the predictive distribution for $f^*$ given $\mathbf{y}$. Approximation methods for the covariance function formulation of LFMs have been presented in \cite{Lawrence:gpsim2007a,Gao:latent08,Titsias:BMC:2012}, In the state-representation, the non-linearity transform the linear state-space model into a non-linear state-space model, where we can use non-linear Kalman filtering and smoothing methods \cite{Hartikainen+Seppanen+Sarkka:2012,Sarkka:2013}. The stochastic control problems could also be extended to the non-linear case (see, e.g., \cite{Maybeck:1982b}).
 
 \subsection{Switching LFMs}
 
@@ -1920,10 +1903,22 @@ define the differential operator $L$, to take discrete values as function of $t$
 series of basic LFMs $\{L_jf(t) = u_j(t)\}_{j=1}^J$, each of them applied in a particular time interval
 $\{[T_{j-1}, T_j]\}_{j=1}^J$, where $J$ is the maximum number of time intervals considered, $L_j$ is a differential operator
 with coefficients $\{a_i^j\}_{i=0,j=1}^{n, J}$, and $\{u_j(t)\}_{j=1}^J$ are GPs with covariance functions $k_j(t,t')$.
-Continuity in the output $f(t)$ is ensured by forcing the initial conditions for the $j$-th ODE to take the same value
-than the output $f(t)$ and its derivatives, at the last input point for the $j-1$-th time interval. This kind of models have been considered in \cite{Alvarez:switched11,Hartikainen+Sarkka:2011}.
+Continuity in the output $f(t)$ is ensured by forcing the initial conditions for the $j$th ODE to take the same value
+than the output $f(t)$ and its derivatives, at the last input point for the $j-1$th time interval. This kind of models have been considered in \cite{Alvarez:switched11,Hartikainen+Sarkka:2011}.
 
-\subsection{Numerical methods}
+\subsection{Operators and Non-linearities in Measurement Model}
+
+As shown in \cite{Sarkka:2011,Sarkka+Hartikainen:2012,Sarkka+Solin+Hartikainen:2013} Gaussian process regression models and hence LFMs easily extend to having linear operators or functionals $\mathcal{H}_k$ in the measurement model:
+%
+\begin{equation}
+  y_k = \mathcal{H}_k \, f(\cdot,t) + \epsilon_k.
+\end{equation}
+%
+This kind of formulations are especially useful in inverse problems \cite{Kaipio+Somersalo:2005} arising, for example, in computer tomography and other imaging methods where the operator $\mathcal{H}_k$ encodes the physics of the system into the model. This kind of formulation can also be used to enforce the field to have zero curl, which is useful, for example, when the unknown field corresponds to a magnetic field \cite{Solin:2017}.
+
+We can also consider non-linear transformations in the measurement model which allows us to consider, for example, classification problems. There exists efficient methods for approximate inference in the resulting non-linear models \cite{Rasmussen+Williams:2006,Sarkka:2013}.
+
+\subsection{Numerical methods for PDEs}
 
 One commonly used method for approximate solution of partial differential equations (PDEs) is the Galerkin's method which approximates the solution on a finite-dimensional spaces spanned by sets of basis functions $\{ \phi_i(\mathbf{x})~i=1,2,\ldots,N \}$ and $\{ \varphi_j(\mathbf{x})~j=1,2,\ldots,N \}$. With a suitable selections of basis functions it (in its weak formulation) leads to widely-used methods such as finite element method (FEM). We can then approximate $\mathbf{g}$ via the series expansion
 %
@@ -1933,7 +1928,9 @@ One commonly used method for approximate solution of partial differential equati
 \end{split}
 \end{equation}
 %
-where $\mathbf{g}_i(t)$ are jointly Gaussian random variables. By substituting this into the model and approximating the Gaussian process prior using a similar series expansion, we can re-express the model in terms of the Gaussian state variables $\mathbf{g}_i(t)$ \cite{Sarkka+Hartikainen:2012}. When we use the eigenfunctions of the Laplacian operator as the basis and when the covariance function is stationary, we can approximate the covariances via point-wise evaluations of the spectral density of $u$ \cite{Solin+Sarkka:2014}. With this basis the case of translation invariant operators also becomes particularly easy, because the matrices become diagonal. Finite-differences can also be used to approximate the operators in the equations \cite{Lindgren+Rue+Lindstrom:2011}.
+where $\mathbf{g}_i(t)$ are jointly Gaussian random variables.
+
+By substituting this into the LFM and approximating the Gaussian process prior using a similar series expansion, we can re-express the model in terms of the Gaussian state variables $\mathbf{g}_i(t)$ \cite{Sarkka+Hartikainen:2012}. When we use the eigenfunctions of the Laplacian operator as the basis and when the covariance function is stationary, we can approximate the covariances via point-wise evaluations of the spectral density of $u$ \cite{Solin+Sarkka:2014}. With this basis the case of translation invariant operators also becomes particularly easy, because the matrices become diagonal. Finite-differences can also be used to approximate the operators in the equations \cite{Lindgren+Rue+Lindstrom:2011}.
 
 %\subsection{Covariance Computation via State-Space Representation}
 %
@@ -1941,13 +1938,13 @@ where $\mathbf{g}_i(t)$ are jointly Gaussian random variables. By substituting t
 
 \section{Experimental Results}
 
-In this section, we illustrate the latent force model framework in four different problems: a second order ordinary differential equation modeling a spring with and without control, a Poisson equation in two spatial dimensions, and an controlled heat source in two dimensions.
+In this section, we illustrate the latent force model framework in three different problems: a second order ordinary differential equation modeling a spring with and without control, a Poisson equation in two spatial dimensions, and an controlled heat source in two dimensions.
 
 \subsection{Inference on GP driven spring}
 %
 \begin{figure}[!t]
 \centering
-\includegraphics[width=0.3\textwidth]{massSpringDamper}
+\includegraphics[width=0.5\columnwidth]{massSpringDamper}
 \caption{A mass-spring-damper system to illustrate a latent force model with ordinary differential equations.}
 \label{mass:spring:damper:figure}
 \end{figure}
@@ -1968,7 +1965,7 @@ We assume that the input source $u(t)$ is given as
 \begin{align*}
 u(t) = \sin(0.73t - 0.64) + \sin(0.29t- 0.64),
 \end{align*}
-where $t\in [0,50]$. The dahsed line in Figure \ref{ode2:source:subfig:mlgp}  shows the input $u(t)$ computed for
+where $t\in [0,50]$. The dashed line in Figure \ref{ode2:source:subfig:mlgp}  shows the input $u(t)$ computed for
 $N=5000$ points equally distributed in the input domain. 
 
 Parameters for the ODE are $\lambda = 0.1$, and $\gamma = 1$. The output function $f(t)$ obtained by solving the
@@ -1979,26 +1976,23 @@ $\epsilon_k$ with zero mean and variance equal to $0.09$, to get
 measurements $\{y_k\}_{k=1}^n$. We assume that the parameters
 $\lambda$, $\gamma$, and the variance for $\epsilon_k$ are known, and
 only estimate the parameters $\sigma_t^2$,
-and $\ell^2_t$ of the kernel function $k(t-t')$.
+and $\ell^2_t$ of the kernel function $k(t-t')$. The estimates were obtained by maximizing the log marginal likelihood by using the conjugate gradient optimization method \cite{Rasmussen+Williams:2006}.
 
 \begin{figure}[!ht]
 \centering
-   \subfloat[ODE output $f(t)$ and measurements $\{y_k\}_{k=1}^n$. The dashed line is the ground truth output $f(t)$
+       \includegraphics[width=0.7\columnwidth]{toyODE2output}
+\caption{ODE output $f(t)$ and measurements $\{y_k\}_{k=1}^n$. The dashed line is the ground truth output $f(t)$
    obtained by solving the ODE, and the dots
    represent the noisy measurements $\{y_k\}_{k=1}^n$. The solid line is the predictive mean $f(t_*)$, and the grey
-   region represents the predictive uncertainty, two standard deviations away from the mean prediction.\label{ode2:output:subfig:mlgp}]{%
-       \includegraphics[width=0.45\textwidth]{toyODE2output}
-         }\\
-   %\hfill
-     \subfloat[Ground truth and predicted source $u(t)$. The dashed line is the ground truth source $u(t)$. The solid
-     line is the mean posterior for  $u^*$, while the shaded region covers two standard deviation away from the mean. \label{ode2:source:subfig:mlgp}]{%
-       \includegraphics[width=0.45\textwidth]{toyODE2source}
-     }
-     \caption{In \ref{ode2:output:subfig:mlgp}, the ground truth output function $f(t)$, the noisy observations
-       $\{y_k\}_{k=1}^n$, and the predictive distribution for the output process for the ODE
-       example. In \ref{ode2:source:subfig:mlgp}, the ground truth source and the posterior distribution for $u^*$.}
-     \label{fig:dummy}
-   \end{figure}
+   region represents the predictive uncertainty, two standard deviations away from the mean prediction.\label{ode2:output:subfig:mlgp}}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+       \includegraphics[width=0.7\columnwidth]{toyODE2source}
+\caption{Ground truth and predicted source $u(t)$. The dashed line is the ground truth source $u(t)$. The solid
+     line is the mean posterior for  $u^*$, while the shaded region covers two standard deviation away from the mean.\label{ode2:source:subfig:mlgp}}
+\end{figure}
 
 Results of inference for the latent function $u(t)$ are shown in Figure \ref{ode2:source:subfig:mlgp}. The mean squared error (MSE) between the ground truth source $u(t)$, and the inferred mean source $u^*(t)$ is equal to $0.0036$. The MSE between the ground truth output $f(t)$ and the mean predicted output $f^*(t)$ evaluated at the test input points is $0.0040$. As can be seen in the figure, the estimate is very close to the truth and the error quantiles are realistic.
 
@@ -2006,25 +2000,25 @@ The results above were obtained by explicitly computing the modified covariance 
 
 \subsection{Controlled ODE Model}
 
-To demonstrate the benefit of the state-space representation and the modeling of the force as GP we consider the model \eqref{eq:sde0} with linear closed loop optimal control design for $c(t)$. In the experiment the mass-spring-damper system was started at static position $f(0) = -1$ and the aim was to keep it at the origin while the unknown latent force is affecting it. In the experiment we use the latent force hyper-parameters that were estimated from the open loop system considered in the previous section. We assumed that we only get measurements of the position, but with a relatively small variance $\sigma^2 = 0.01^2$ -- this was assumed to emphasize the differences between the control designs.
+To demonstrate the benefit of the state-space representation and the modeling of the force as GP we consider the model \eqref{eq:sde0} with linear closed loop optimal control design for $c(t)$. In the experiment the mass-spring-damper system was started at static position $f(0) = -1$ and the aim was to keep it at the origin while the unknown latent force is affecting it. In the experiment we use the latent force hyper-parameters that were estimated from the open loop system considered in the previous section. We assumed that we only get measurements of the position, but with a relatively small variance $\sigma^2 = 0.01^2$---this was assumed to emphasize the differences between the control designs.
 
 We consider two ways of designing the controller which were discussed in Section~\ref{sec:controlled_basic}: using the assumed separability design based on putting $u(t) = 0$ and a controller which is designed by taking account the existence of the latent force as described in the same section. The results of using the basic linear quadratic regulator (LQR), that is, the certainty equivalent design, and the result of using the joint LFM control are shown in Figure~\ref{fig:cntl_spring}. It can be seen that the LFM controller is able to maintain the system much better near the origin than the basic controller.
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=0.9\columnwidth]{cntl_spring}
+\includegraphics[width=0.7\columnwidth]{cntl_spring}
 \caption{Result of controlling the ODE model with Basic LQR and LFM LQR. It can be seen the that control designed for the full LFM outperforms the basic LQR significantly. The average position tracking error for the Basic LFM was approximately $14.9$ units whereas in the case of LFM LQR it was approximately $7.8$ units.}
 \label{fig:cntl_spring}
 \end{figure}
 
-To estimate the state from the measurements we used a Kalman filter designed for the full latent state. The estimate produced by the Kalman filter is shown in Figure~\ref{fig:cntl_force}. The estimate is from the LFM LQR experiment, but the estimates with both the controllers are very similar.
+%To estimate the state from the measurements we used a Kalman filter designed for the full latent state. The estimate produced by the Kalman filter is shown in Figure~\ref{fig:cntl_force}. The estimate is from the LFM LQR experiment, but the estimates with both the controllers are very similar.
 
-\begin{figure}[!t]
-\centering
-\includegraphics[width=0.9\columnwidth]{cntl_force}
-\caption{Kalman filter estimate of the latent force in the controlled ODE example. As expected, the estimate is worse in the beginning, but starts to follow the true force trajectory after the short initial transient.}
-\label{fig:cntl_force}
-\end{figure}
+%\begin{figure}[!t]
+%\centering
+%\includegraphics[width=0.8\columnwidth]{cntl_force}
+%\caption{Kalman filter estimate of the latent force in the controlled ODE example. As expected, the estimate is worse in the beginning, but starts to follow the true force trajectory after the short initial transient.}
+%\label{fig:cntl_force}
+%\end{figure}
 
 
 \subsection{Inference on Poisson equation}
@@ -2152,7 +2146,7 @@ where $u(\mathbf{x},t)$ is an unknown latent force, $c(\mathbf{x},t)$ is the con
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=0.3\textwidth]{heatpde}
+\includegraphics[width=0.5\columnwidth]{heatpde}
 \caption{A cartoon representation of a heat source moving across a 2D spatial field.}
 \label{cartoon:heatpde}
 \end{figure}
@@ -2172,7 +2166,7 @@ In the simulation, we used the parameters $\lambda = 0.2$ and $D = 0.001$ and th
 \caption{The temperature function $f(\mathbf{x},t)$ and the source function $u(\mathbf{x},t)$ at time $t = 6.9$. The small circles mark the positions of the measurements.}
 \end{figure}
 
-We then formed a Fourier-basis approximation to the PDE (with $100$ basis functions) and designed two controllers for it -- one using an assumed separability design ("Basic LQR") and one by taking the latent force into account ("LFM LQR"). We used SE covariance functions for the latent force model in both time and space directions. A Kalman filter was used to estimate the physical system and latent force states from temperature measurements with low variance ($\sigma^2 = 0.01^2$) and the controller was applied using the estimate.
+We then formed a Fourier-basis approximation to the PDE (with $100$ basis functions) and designed two controllers for it---one using an assumed separability design ("Basic LQR") and one by taking the latent force into account ("LFM LQR"). We used SE covariance functions for the latent force model in both time and space directions. A Kalman filter was used to estimate the physical system and latent force states from temperature measurements with low variance ($\sigma^2 = 0.01^2$) and the controller was applied using the estimate.
 
 \begin{figure}[!t]
 \centering
@@ -2205,7 +2199,8 @@ Figures~\ref{fig:heat_lq_x} -- \ref{fig:heat_lfm_lq_c} show the results when the
 %\simo{Probably leave this out}
 
 \section{Conclusions}
-The conclusion goes here.
+In this paper we have presented a latent force model (LFM) framework for learning and control in hybrid systems which are combinations of first-principles (physical) models and non-parametric Gaussian process models as their inputs. We have presented both covariance function based inference methods and state-space based inference methods for the models as well as analyzed the detectability and observability properties of LFMs. Additionally, we have extended the methodology to allow for stochastic control of the (state-space) LFMs. Although the full models are uncontrollable, they are output controllable with respect to the physical model part which is enough for practical implementation of the controllers.
+
 
 % if have a single appendix:
 %\appendix[Proof of the Zonklar Equations]
@@ -2233,10 +2228,10 @@ The conclusion goes here.
 
 
 % use section* for acknowledgment
-\section*{Acknowledgment}
+%\section*{Acknowledgment}
 
 
-The authors would like to thank...
+%The authors would like to thank Academy of Finland for funding.
 
 
 % Can use something like this to put references on a page
