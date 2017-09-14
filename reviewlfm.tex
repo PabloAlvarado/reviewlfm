@@ -605,7 +605,7 @@ In each of the models we obtain noisy observations of the form
 %
 where in the case of state-space models we have $f(\bullet) = \mathbf{C}_f \, \mathbf{f}(\bullet)$ for some given matrix $\mathbf{C}_f$. Above, the argument $\bullet$ is either $t_k \in \mathbb{R}_+$, $(t_k,x_k) \in \mathbb{R}_+ \times \mathbb{R}^p$, or $x_k \in \mathbb{R}^d$. The measurement noise is assumed to be Gaussian $\epsilon_k \sim \mathrm{N}(0,\Sigma_k)$. We also briefly consider a number of generalizations, including operators in the measurement model, non-linear measurement models, non-Gaussian noises, as well as switching dynamic models.
 
-The aim of this article is to consider the problem of inferring the functions $f(\bullet)$ and $u(\bullet)$ from a set of noisy measurements $\{ y_k \}$. We consider inference problems both in batch form and with recursive Kalman filters and smoothers. We also consider the parameter estimation problems as well as the optimal control problems (i.e., optimal selection of $\mathbf{c}(\bullet)$) in these models.
+The aim of this article is to consider the problem of inferring the functions $f(\bullet)$ and $u(\bullet)$ from a set of noisy measurements $\{ y_k \}$. We consider inference problems both in batch form and with recursive Kalman filters and smoothers. We also consider the parameter estimation problems as well as the optimal control problems (i.e., optimal selection of $\mathbf{c}(\bullet)$) in these models. Many of the results have already been presented in conference papers, 
 
 \section{Latent Force Models as Gaussian Process Regression with Specific Covariance Functions}
 
@@ -1570,9 +1570,7 @@ and then ensure that sampling is non-critical \cite{Ding:2009}.
 
 \section{Stochastic Control of Latent Force Models}
 %
-%\simo{We could also discuss the use of LFMs in control. The state-space representation allows for the use of classical LQ-control theory for this. As the latent forces are modeled as stationary GPs, it implies that the model will not be controllable (from the force), but certainly it will be stabilizable. }
-
-\simo{Simo: Say something for intro and finite the missing parts}
+In this section, we discuss the stochastic control problems related to latent force models. In particular, we provide and analyze the solutions for the linear quadratic regulation (LQR) problem for them.
 
 \subsection{Controlled Basic LFMs} \label{sec:controlled_basic}
 %
@@ -1586,7 +1584,7 @@ Let us consider a controlled version of the state-space model with a Gaussian pr
 %
 Also recall that any basic LFM of the form \eqref{eq:difeq1} with a control signal can be written in a state-space form as above.
 
-We will specifically aim to consider optimal control problems which minimize the quadratic cost functinal
+We will specifically aim to consider optimal control problems which minimize the quadratic cost functional
 %
 \begin{equation}
 \begin{split}
@@ -1638,12 +1636,13 @@ where
 \end{split}
 \end{equation}
 %
-The design of the optimal linear quadratic controller for the resulting model can be done by using the classical Riccati-equation-based approaches \cite{Kalman:1960b}. Namely, the optimal control takes the form
+The design of the optimal linear quadratic controller for the resulting model can be done by using the classical Riccati-equation-based approaches \cite{Kalman:1960b,Anderson+Moore:2007}. Namely, the optimal control takes the form
 %
 \begin{equation}
 \begin{split}
   \mathbf{c}(t) = -\mathbf{U}^{-1}(t) \, \mathbf{M}^T \, \mathbf{K}(t) \, \hat{\mathbf{g}}(t),
 \end{split}
+\label{eq:joint_control1} 
 \end{equation}
 %
 where $\hat{\mathbf{g}}(t)$ is the Kalman filter estimate of $\mathbf{g}(t)$ and the matrix $\mathbf{K}(t)$ solves the backward Riccati differential equation
@@ -1657,10 +1656,11 @@ where $\hat{\mathbf{g}}(t)$ is the Kalman filter estimate of $\mathbf{g}(t)$ and
 \end{split}
 \end{equation}
 %
-with the boundary condition $\mathbf{K}(T) =  \boldsymbol{\Phi}_g$.
+with the boundary condition $\mathbf{K}(T) =  \boldsymbol{\Phi}_g$. However, it turns out that we write this solution for the LFM model in more explicit form which reveals its structure better. That is summarized in the following theorem which can be obtained by partitioning $\mathbf{K} = \begin{pmatrix} \mathbf{K}_{11} & \mathbf{K}_{12} \\ \mathbf{K}_{12}^T & \mathbf{K}_{22} \end{pmatrix}$.
 
-\simo{Make a theorem out of this:}
-
+\begin{theorem} \label{the:control1}
+The control law in \eqref{eq:joint_control1} can be written as
+%
 \begin{equation} 
 \begin{split}
   \mathbf{c}(t) = - \begin{pmatrix}
@@ -1670,12 +1670,16 @@ with the boundary condition $\mathbf{K}(T) =  \boldsymbol{\Phi}_g$.
 \end{split}
 \label{eq:joint_control2}
 \end{equation}
-
+%
+where $\mathbf{K}_{f}(t) \triangleq \mathbf{K}_{11}(t)$ is the Riccati equation solution for the non-forced physical model. The full set of equations is
+%
 \begin{equation}
 \begin{split}
   \frac{d\mathbf{K}_{11}(t)}{dt}
   &= -\mathbf{A}_f^T \, \mathbf{K}_{11} - \mathbf{K}_{11} \, \mathbf{A}_f
-  + \mathbf{K}_{11} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{11} \\
+  \\
+  &\qquad
+  + \mathbf{K}_{11} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{11} - \mathbf{X}(t) \\
   \frac{d\mathbf{K}_{12}(t)}{dt}
   &= -\mathbf{A}_f^T \, \mathbf{K}_{12} - \mathbf{K}_{11} \, \mathbf{B}_f \, \mathbf{C}_u - \mathbf{K}_{12} \, \mathbf{A}_u
   \\
@@ -1687,8 +1691,11 @@ with the boundary condition $\mathbf{K}(T) =  \boldsymbol{\Phi}_g$.
   + \mathbf{K}_{12}^T \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{12},
 \end{split}
 \end{equation}
+\end{theorem}
+%
+In the above theorem the gain for the physical system (i.e. $f$) portion of the state is exactly the same as in the optimal controller without a latent force. However, the second part of gain is non-zero and uses the latent force model state for control feedback as well.
 
-\simo{Discuss these:}
+It would also be possible to consider more complicated cost functions of the form
 %
 \begin{equation}
 \begin{split}
@@ -1697,9 +1704,8 @@ with the boundary condition $\mathbf{K}(T) =  \boldsymbol{\Phi}_g$.
 \end{split}
 \label{eq:quadcost1}
 \end{equation}
-
-
-The use of more general cost functions than the quadratic cost is considerably more complicated than using a quadratic cost, because the estimation and control no longer separate. However, a typical practical approach is to assume that this still approximately holds. Also in this case we argue that it is desirable to design the (deterministic) controller for the augmented system instead of the original system with $u(t) = 0$, because this design is able to fully use the learning outcome of the Gaussian process regression of the input.
+%
+which would then lead to interesting control laws that utilize the latent force that in a non-linear feedback control. However, the use of more general cost functions than the quadratic cost is considerably more complicated than using a quadratic cost, because the estimation and control no longer separate. However, a typical practical approach is to assume that this still approximately holds. Also in this case we argue that it is desirable to design the (deterministic) controller for the augmented system instead of the original system with $u(t) = 0$, because this design is able to fully use the learning outcome of the Gaussian process regression of the input.
 
 However, in the next section we will simplify the control problem even more, and consider the limit $T \to \infty$, because it leads to a particularly convenient class of linear controllers which are computationally tractable while still being able to use the learning outcome of the Gaussian process inference.
 
@@ -1748,7 +1754,7 @@ It is also possible to express the solution to the LFM control problem above in 
 \label{eq:classic_lq_model}
 \end{equation}
 %
-and a solution which only depends on the parameters of the Gaussian latent force model and how the force and control enter the equation (i.e., on $\mathbf{B}_f$ and $\mathbf{M}_f$). Thie result is summarize in the following theorem.
+and a solution which only depends on the parameters of the Gaussian latent force model and how the force and control enter the equation (i.e., on $\mathbf{B}_f$ and $\mathbf{M}_f$). This result is summarized in the following theorem which can be derived by setting the time derivatives in Theorem~\ref{the:control1} to zero.
 
 \begin{theorem} \label{the:control}
 The control law in \eqref{eq:joint_control} can now be written as
@@ -1772,52 +1778,9 @@ where $\mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{f}$ is just the non-forc
     = \mathbf{K}_{f} \, \mathbf{B}_f \, \mathbf{C}_u \\
 \end{split}
 \end{equation}
-%
 \end{theorem}
-
-\begin{proof}
-Recall that the optimal control $\mathbf{c}_f(t)$ for \eqref{eq:classic_lq_model} is given by the equations
-%
-\begin{equation}
-\begin{split}
-  \mathbf{c}_f(t) &=
-  - \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_f \, \mathbf{f}(t) \\
-  0 &=
-    -\mathbf{A}_f^T \, \mathbf{K}_f - \mathbf{K}_f \, \mathbf{A}_f
-  +  \mathbf{K}_f \, \mathbf{M}_f \, \mathbf{U}^{-1} \,
-   \mathbf{M}_f^T \, \mathbf{K}_f - \mathbf{X}.
-\end{split}
-\label{eq:are_det}
-\end{equation}
-%
-If we now partition the ARE solution matrix as $\mathbf{K} = \begin{pmatrix} \mathbf{K}_{11} & \mathbf{K}_{12} \\ \mathbf{K}_{12}^T & \mathbf{K}_{22} \end{pmatrix}$, then \eqref{eq:joint_are} gives
-%
-\begin{equation}
-\begin{split}
-  0
-  &= -\mathbf{A}_f^T \, \mathbf{K}_{11} - \mathbf{K}_{11} \, \mathbf{A}_f
-  + \mathbf{K}_{11} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{11} \\
-  0
-  &= -\mathbf{A}_f^T \, \mathbf{K}_{12} - \mathbf{K}_{11} \, \mathbf{B}_f \, \mathbf{C}_u - \mathbf{K}_{12} \, \mathbf{A}_u
-  \\
-  &\qquad + \mathbf{K}_{11} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{12} \\
-  0
-  &= -\mathbf{C}_u^T \, \mathbf{B}_f^T \, \mathbf{K}_{12} - \mathbf{A}_u^T \, \mathbf{K}_{22}
-  - \mathbf{K}_{21} \, \mathbf{B}_f \, \mathbf{C}_u \\
-  &\qquad  - \mathbf{K}_{22} \, \mathbf{A}_u
-  + \mathbf{K}_{12}^T \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^T \, \mathbf{K}_{12},
-\end{split}
-\end{equation}
-%
-where the first equation is the same as the second equation in \eqref{eq:are_det} and we can conclude that $\mathbf{K}_{11} = \mathbf{K}_f$. Given $\mathbf{K}_{11}$, the second equation gives the Sylvester-type of equation for $\mathbf{K}_{12}$ which concludes the proof.
-% and can be easily numerically solved. The last one is also a Sylvester/Lyapunov type of equations for $\mathbf{K}_{22}$, but it turns out that we do not need it.
-\end{proof}
 %
 Note that although the system is stabilizable also by setting the second term to zero, that is, using the non-forced gain (cf. Theorem~\ref{the:stab}), a better solution is obtained by using the control in Theorem~\ref{the:control} which depends on the latent force as well.
-
-\subsection{Controlled PDE Based LFMs}
-%
-\simo{This will be a extension of the basic LFM control to PDE case. The theory is quite heavy and therefore this will be quite pragmatic and referring heavily to the books of Curtain et al. Namely state the model and say that we need to anyway discretize first and then use the results in the previous section.}
 
 \subsection{Stabilizability and Non-Controllability of Controlled LFMs}
 %
@@ -1871,7 +1834,7 @@ The system is stabilizable if there exist a finite gain $\mathbf{K}_c$ such that
 where we have written $\mathbf{K}_c = \begin{pmatrix} \mathbf{K}_f & \mathbf{K}_u \end{pmatrix}$. Because $\tilde{\mathbf{u}}$ is exponentially decreasing and bounded, we can safely set $\mathbf{K}_u = 0$. The remainder of the system will be stabilizable if there exists a gain $\mathbf{K}_f$ such that $d\tilde{\mathbf{f}}/dt = (\mathbf{A}_f + \mathbf{M}_u \, \mathbf{K}_f) \, \tilde{\mathbf{f}}$ is exponentially stable. By our assumption on the stabilizability of $(\mathbf{A}_f,\mathbf{M}_u)$, this is true and hence the result follows.
 \end{proof}
 
-The stabilizability also implies that the corresponding LQ controller is uniquely determined (Anderson \& Moore, Optimal Control)
+The stabilizability also implies that the corresponding LQ controller is uniquely determined \cite{Anderson+Moore:2007}.
 
 However, the sole stabilizability is not very useful in practice, because sole stabilizability says that we might have randomly wandering subprocesses in the joint system which practically prevent us from controlling the process exactly where we wish is to go. A much stronger requirement is to require that the full system controllable. Unfortunately, it turns out that latent force models are never fully controllable in the present formulation, because we cannot control the subsystem corresponding to the GP force.
 
@@ -1880,29 +1843,48 @@ However, the sole stabilizability is not very useful in practice, because sole s
 \end{theorem}
 
 \begin{proof}
-  The model can be seem to be in Kalman's canonical form \cite{Kalman:1963}, where the non-controllable part is the latent force.
+  The model is in Kalman's canonical form \cite{Kalman:1963}, where the non-controllable part is the latent force.
 \end{proof}
 
-In practice, the non-controllability of the force part is not a problem, as we are actually interested in controlling the physical system part of the model, not the force per se. It turns out that the physical system can be controllable even though the full system is not controllable. This result can be obtained as a corollary of so called output controllability (see, e.g., Ogata) as follows.
+In practice, the non-controllability of the force part is not a problem, as we are actually interested in controlling the physical system part of the model, not the force per se. It turns out that the physical system can be controllable even though the full system is not controllable. This result can be obtained as a corollary of so called output controllability (see, e.g., \cite{Ogata:1997}) as follows.
 
 \begin{theorem} \label{the:stab}
 Assume that $(\mathbf{A}_f,\mathbf{M}_u)$ is controllable. Then the full system is output controllable with respect to the physical system part.
 \end{theorem}
 
 \begin{proof}
-\simo{Typeset from notes}
+This can be derived by writing down the output controllability condition and noticing that it reduces to controllability of the physical system part.
 \end{proof}
 
 The above result is useful when the system is fully observable as well. Then it ensures that we can successfully control the physical system part although the latent force model remains uncontrollable. However, if the latent force model is not fully observable, then latent force model inherently causes disturbance to the physical system and although we can keep the system stable, the state cannot be forced to follow a given trajectory.
+
+\subsection{Controlled PDE Based LFMs}
+%
+In the case of PDE LFMs we naturally get models of the form
+%
+\begin{equation}
+\begin{split}
+  \frac{\partial \mathbf{g}(\mathbf{x},t)}{\partial t}
+  &= \mathbf{\mathcal{A}} \, \mathbf{g}(\mathbf{x},t)
+  + \mathbf{B} \, w(\mathbf{x},t) + \mathbf{\mathcal{M}} \, c(\mathbf{x},t) \\
+  y_k &= \mathbf{C} \, \mathbf{g}(t_k) + \epsilon_k.
+\end{split}
+\end{equation}
+%
+where the control problem corresponds to designing the control function $c(\mathbf{x},t)$ minimizing, for example, a linear quadratic cost functional. In principle, it is possible to directly analyze such infinite-dimensional control problems which leads to, for example, generalizations of the controllability concepts \cite{Curtain:2012}. However, in practice, as the first step after setting up the model, we replace the infinite-dimensional model with a finite-dimensional approximation. Therefore it is actually more fruitful to directly analyze the finite-dimensional approximation rather than the original infinite-dimensional model -- this way we can also easily account for the effect of discretization. For the analysis of the finite-dimensional approximate model the results in the previous sections apply as such.
 
 
 \section{Extensions and Discussion}
 
 \subsection{Operators in Measurement Model}
 
-\simo{Simo: Discuss how things work when we have operators in the measurement model as well. In fact everything is already in the SigProcMag article, so this can be brief.}
-
-
+As shown in \cite{Sarkka:2011,Sarkka+Hartikainen:2012,Sarkka+Solin+Hartikainen:2013} Gaussian process regression models easily extend to having linear operators or functionals $\mathcal{H}_k$ in the measurement model:
+%
+\begin{equation}
+  y_k = \mathcal{H}_k \, f(\cdot,t) + \epsilon_k.
+\end{equation}
+%
+This kind of formulations are especially useful in inverse problems \cite{Kaipio+Somersalo:2005} arising, for example, in computer tomography and other imaging methods where the operator $\mathcal{H}_k$ encodes the physics of the system into the model. This kind of formulation can also be used to enforce the field to have zero curl, which is useful, for example, when the unknown field corresponds to a magnetic field \cite{Solin:2017}.
 
 %\subsection{Cascaded LFMs}
 %
@@ -1929,22 +1911,8 @@ The above result is useful when the system is fully observable as well. Then it 
 
 %\simo{Mauricio: double check your text: DONE}
 
-When the input force is modelled as a non-linear transformation of a Gaussian process \cite{Lawrence:gpsim2007a,
-Gao:latent08, Titsias:BMC:2012}, it is necessary to resort to an approximation in order to compute the posterior
-distribution for $u^*$ given $\mathbf{y}$, or the predictive distribution for $f^*$ given $\mathbf{y}$.
-
-The setup is again an ordinary differential equation of the form $Lf(t)=g(u(t))$, where $g(\cdot)$ is a non-linear function
-of the argument. In \cite{Lawrence:gpsim2007a, Gao:latent08}, the authors suggest the MAP-Laplace method
-\cite{Bishop:PRML06} as a way to approximate the posterior distribution for $u(t)$. The MAP-Laplace method approximates
-the posterior distribution by a
-Gaussian distribution centered at the Maximum a Posteriori (MAP) solution. The method implies functional derivatives of the
-log-likelihood for computing the gradient and the Hessian that are necessary in the optimization procedure. Functional
-derivatives for the terms involved are then computed on a grid using Riemann quadrature. In \cite{Titsias:BMC:2012}, the
-authors provide a Markov Chain Monte Carlo (MCMC) procedure to compute the posterior distribution for $u(t)$, as well
-as posterior distributions for any parameters appearing as part of the impulse response.
-
-\simo{Simo: Add non-linear models in state-space form here. Something about non-linear stochastic control here}
-
+It is also possible to consider non-linear differential equation (physical) models which are driven by Gaussian process. In that case it is 
+necessary to resort to approximations in order to compute the posterior distribution for $u^*$ given $\mathbf{y}$, or the predictive distribution for $f^*$ given $\mathbf{y}$. Approximation methods for the covariance function formulation of LFMs have been presented in \cite{Lawrence:gpsim2007a,Gao:latent08,Titsias:BMC:2012}, In the state-representation, the non-linearity transform the linear state-space model into a non-linear state-space model, where we can use non-linear Kalman filtering and smoothing methods \cite{Hartikainen+Seppanen+Sarkka:2012,Sarkka:2013}. The stochastic control problems could also be extended to the non-linear case.
 
 \subsection{Switching LFMs}
 
@@ -1955,216 +1923,19 @@ series of basic LFMs $\{L_jf(t) = u_j(t)\}_{j=1}^J$, each of them applied in a p
 $\{[T_{j-1}, T_j]\}_{j=1}^J$, where $J$ is the maximum number of time intervals considered, $L_j$ is a differential operator
 with coefficients $\{a_i^j\}_{i=0,j=1}^{n, J}$, and $\{u_j(t)\}_{j=1}^J$ are GPs with covariance functions $k_j(t,t')$.
 Continuity in the output $f(t)$ is ensured by forcing the initial conditions for the $j$-th ODE to take the same value
-than the output $f(t)$ and its derivatives, at the last input point for the $j-1$-th time interval.
-In \cite{Alvarez:switched11}, the authors use second order differential operators for $L_j$, to sequentially segment
-basic movements (also known as motor primitives) from a multivariate time series coming from a robot arm playing table
-tennis.
-
-\simo{Both: find references}
-
-
-\subsection{Stable State-Space Realization of $u$}
-%
-\simo{Think if we actually need this}
-
-In this section we discuss stable representation of the rational spectral densities needed to $u$. Recall that the first step in the construction of the state-space model is spectral factorization (see, e.g., \cite{Hartikainen+Sarkka:2010, Sarkka+Hartikainen:2012, Sarkka+Solin+Hartikainen:2013}) which means that given a rational spectral density $S(\omega)$, we find a real rational function
-%
-\begin{equation}
-\begin{split}
- G(i \, \omega)
- = \frac{\tilde{b}_m \, (i \, \omega)^m + \tilde{b}_{m-1} \, (i \, \omega)^{m-1} + \cdots
-   \tilde{b}_1 \, (i \, \omega) + \tilde{b}_0}
-   {(i \, \omega)^n + \tilde{a}_{n-1} \, (i \, \omega)^{n-1} + \cdots + \tilde{a}_1 \, (i \, \omega) + \tilde{a}_0}
-\end{split}
-\label{eq:trans2}
-\end{equation}
-%\begin{equation}
-%\begin{split}
-%  G(s)
-%  = \frac{\tilde{b}_m \, s^m + \tilde{b}_{m-1} \, s^{m-1} + \cdots
-%    \tilde{b}_1 \, s + \tilde{b}_0}
-%    {s^n + \tilde{a}_{n-1} \, s^{n-1} + \cdots + \tilde{a}_1 \, s + \tilde{a}_0}
-%\end{split}
-%\label{eq:trans2}
-%\end{equation}
-%
-which is analytic and non-zero in the right half plane such that
-%
-\begin{equation}
-\begin{split}
-  S(\omega) = G(i \, \omega) \, q_c \, G(-i \, \omega),
-\end{split}
-\end{equation}
-%
-where $q_c > 0$ is a constant. In practice, a viable way to find the function is by computing the roots of numerator and denominator, which appear in conjugate pairs, and construct $G(i \, omega)$ from the roots having positive imaginary parts. However, many other spectral factorization methods exist as well \cite{Ref-to-spec-fact-survey}.
-
-Given the function $G$ we can then use, for example, the controllable or observable canonical forms (e.g., \cite{Glad+Ljung:2000}) to construct the state-space model.
-%(here $q_c$ becomes the spectral density of the white noise process $w(t)$):
-%
-%\begin{equation}
-%\begin{split}
-%  \frac{d\mathbf{u}(t)}{dt}
-%  &= \underbrace{\begin{pmatrix}
-%       0             & 1      &        &       \\
-%                     & \ddots & \ddots &       \\
-%                     &         &  0    &     1 \\
-%   -\tilde{a}_0 & -\tilde{a}_1 & \hdots &  -\tilde{a}_{n-1}
-%  \end{pmatrix}}_{\mathbf{A}_u} \, \mathbf{u}(t) 
-%  + \underbrace{\begin{pmatrix}
-%      0 \\
-%      \vdots \\
-%      0 \\
-%      1
-%  \end{pmatrix}}_{\mathbf{L}_u} \,
-%   w(t) \\
-%   u(t) &=
-%   \underbrace{\begin{pmatrix} \tilde{b}_0 & \tilde{b}_1 & \cdots & \tilde{b}_m & 0 & \cdots & 0
-%   \end{pmatrix}}_{\mathbf{C}_u} \, \mathbf{u}(t),
-%\end{split}
-%\end{equation}
-%%
-%or alternatively the observable canonical form
-%%
-%\begin{equation}
-%\begin{split}
-%  \frac{d\mathbf{u}(t)}{dt}
-%  &= \underbrace{\begin{pmatrix}
-%       0             &        &        & -\tilde{a}_0 \\
-%       1             & \ddots &        & -\tilde{a}_1 \\
-%                     & \ddots &  0     & \vdots   \\
-%                     &        &  1     & -\tilde{a}_{n-1} \\
-%  \end{pmatrix}}_{\mathbf{A}_u} \, \mathbf{u}(t) 
-%  + \underbrace{\begin{pmatrix}
-%      \tilde{b}_0 \\
-%      \vdots \\
-%      \tilde{b}_m \\
-%      0 \\
-%      \vdots \\
-%      0
-%  \end{pmatrix}}_{\mathbf{L}_u} \,
-%   w(t) \\
-%   u(t) &=
-%   \underbrace{\begin{pmatrix} 0 & \cdots & 0 & 1 \end{pmatrix}}_{\mathbf{C}_u} \, \mathbf{u}(t)
-%\end{split}
-%\end{equation}
-
-However, it is important to point out that the direct use of this procedure might result in a numerically unstable model especially when the approximation order is high. To overcome this problem it is often advisable to use the following method. 
-Because the choice of state-variable coordinate system is arbitrary, we can define a new process via $\tilde{\mathbf{u}}(t) = \mathbf{T}^{-1} \, \mathbf{u}(t)$, where $\mathbf{T}$ is a constant invertible matrix, to get a new system
-%
-\begin{equation}
-\begin{split}
-    \frac{d\tilde{\mathbf{u}}(t)}{dt}
-    &= \mathbf{T}^{-1} \, \mathbf{A}_u \, \mathbf{T} \, \tilde{\mathbf{u}}(t)
-    + \mathbf{T}^{-1} \, \mathbf{L} \, w(t), \\
-   u(t) &= \mathbf{H} \, \mathbf{T} \, \tilde{\mathbf{u}}(t)
-\end{split}
-\end{equation}
-%
-which is equivalent to the model \eqref{eq:ssmodel} in (statistical) input-output sense. It can be observed that the numerical stability is essentially governed by the condition number of the matrix $\mathbf{A}_u$. To convert a state-space model with a badly conditioned matrix $\mathbf{A}_u$ into an equivalent model with a well-conditioned matrix we can use the well-known matrix balancing procedure
-%\cite{Parlett+Reinsch:1969,Parlett+Reinsch:1971}
-\cite{Parlett+Reinsch:1971}
-originally developed for numerically stabilizing the computation the eigenvalues of a matrix (implemented, e.g., as the ``balance'' function in Matlab). This procedure gives us a suitable matrix $\mathbf{T}$ which can be used in the transformation above to give a numerically stable state-space model.
+than the output $f(t)$ and its derivatives, at the last input point for the $j-1$-th time interval. This kind of models have been considered in \cite{Alvarez:switched11,Hartikainen+Sarkka:2011}.
 
 \subsection{Numerical methods}
 
-\simo{Simo: move all the numerical methods here, including PDE methods, balancing etc.}
-
-%\subsection{Separable Covariance Functions}
-%
-%\simo{Simo: Add some tips and tricks for separable covariance functions.}
-
-\subsection{PDE Methods for Covariance Function Computation}
-%
-\simo{Simo: should check and add discussion and references. Also discuss point-collocation and fix the notation to something neater in the covariance computations.}
-
-\simo{Simo: Should probably shorten this and move to other part, e.g., to under discussion section.}
-
-One commonly used method for approximate solution of partial differential equations (PDEs) is the Galerkin's method which approximates the solution on a finite-dimensional spaces spanned by sets of basis functions $\{ \phi_i(\mathbf{x})~i=1,2,\ldots,N \}$ and $\{ \varphi_j(\mathbf{x})~j=1,2,\ldots,N \}$. With a suitable selections of basis functions it (in its weak formulation) leads to widely-used methods such as finite element method (FEM). As an example, let us consider the Gaussian process driven Poisson equation
+One commonly used method for approximate solution of partial differential equations (PDEs) is the Galerkin's method which approximates the solution on a finite-dimensional spaces spanned by sets of basis functions $\{ \phi_i(\mathbf{x})~i=1,2,\ldots,N \}$ and $\{ \varphi_j(\mathbf{x})~j=1,2,\ldots,N \}$. With a suitable selections of basis functions it (in its weak formulation) leads to widely-used methods such as finite element method (FEM). We can then approximate $\mathbf{g}$ via the series expansion
 %
 \begin{equation}
 \begin{split}
-  \nabla^2 f(\mathbf{x}) = u(\mathbf{x})
+   \mathbf{g}(\mathbf{x},t) &= \sum_{i=1}^N \mathbf{g}_i(t) \, \phi_i(\mathbf{x}) \\
 \end{split}
 \end{equation}
 %
-Let us now assume, for example, that we are working in a compact subspace $\Omega \subset \mathbb{R}^p$ and define a Hilbert space with an inner product $\langle \cdot, \cdot \rangle$ such that $\{ \phi_i(\mathbf{x})~i=1,2,\ldots,N \}$ are orthonormal with respect to the inner product. We can now approximate $f$ via the series expansion
-%
-\begin{equation}
-\begin{split}
-   f(\mathbf{x}) &= \sum_{i=1}^N f_i \, \phi_i(\mathbf{x}) \\
-\end{split}
-\end{equation}
-%
-where $f_i = \langle f, \phi_i \rangle$, which leads to the approximate Laplace equation
-%
-\begin{equation}
-\begin{split}
-  \sum_{i=1}^N f_i \, \nabla^2 \phi_i(\mathbf{x}) = u(\mathbf{x})
-\end{split}
-\end{equation}
-%
-Taking inner products with respect to the set $\{ \varphi_i(\mathbf{x})~j=1,2,\ldots,N \}$ then gives the system of equations
-%
-\begin{equation}
-\begin{split}
-  \sum_{i=1}^N f_i \, \langle \nabla^2 \phi_i, \varphi_1 \rangle &= u_1 \\
-  &\vdots \\
-  \sum_{i=1}^N f_i \, \langle \nabla^2 \phi_i, \varphi_N \rangle &= u_N \\
-\end{split}
-\end{equation}
-%
-where $u_j = \langle u, \varphi_Nj\rangle$, which can be further written in form
-%
-\begin{equation}
-\begin{split}
-  \mathbf{D} \, \mathbf{f} &= \mathbf{u},
-\end{split}
-\label{eq:disc_pde}
-\end{equation}
-%
-where $[\mathbf{D}]_{ji} = \langle \nabla^2 \phi_i, \varphi_j \rangle$, $\mathbf{f} = \begin{pmatrix} f_1 & \cdots & f_N \end{pmatrix}^T$, and $\mathbf{u} = \begin{pmatrix} u_1 & \cdots & u_N  \end{pmatrix}^T$. Note that if we define the inner product suitably, we can sometimes integrate by parts to give $\langle \nabla^2 \phi_i, \varphi_j \rangle \to -\langle \nabla \phi_i, \nabla \varphi_j \rangle$ which leads to weak formulations of the problem. However, this aspect is not considered here further.
-
-By defining a matrix $\mathbf{G} = \mathbf{D}^{-1}$ \eqref{eq:disc_pde} then leads to the following approximate representation for the covariance function of $f$:
-%
-% f = G u
-% E[f f^T] = G E[u u^T] G^T = sum_ii' G_*i E[u_i u_i'] G_*i'
-% 
-% 
-\begin{equation}
-\begin{split}
-  k_f(\mathbf{x},\mathbf{x}')
-  \approx \sum_{i,j,i',j'=1}^N \phi_j(\mathbf{x}) \, [\mathbf{G}]_{ji} \, \mathrm{Cov}(u_i,u_{i'}) \, 
-    [\mathbf{G}]_{j'i'} \, \phi_{j'}(\mathbf{x}').
-\end{split}
-\end{equation}
-%
-and the cross-covariance can be approximated, for example, as
-%
-\begin{equation}
-\begin{split}
-  k_{f,u}(\mathbf{x},\mathbf{x}')
-  \approx \sum_{i,j,i',j'=1}^N \phi_j(\mathbf{x}) \, [\mathbf{G}]_{ji} \, \mathrm{Cov}(u_i,u_{i'}) \, 
-    [\mathbf{G}]_{j'i'} \, \nabla^2 \phi_{j'}(\mathbf{x}').
-\end{split}
-\label{eq:pde_kfu}
-\end{equation}
-%
-If we further select $\varphi_j = \phi_i$, we can also use the approximation
-%
-\begin{equation}
-\begin{split}
-  k_{f,u}(\mathbf{x},\mathbf{x}')
-  \approx \sum_{i,j,i',j'=1}^N \phi_j(\mathbf{x}) \, [\mathbf{G}]_{ji} \, \mathrm{Cov}(u_i,u_{i'}) \, \phi_{j'}(\mathbf{x}').
-\end{split}
-\label{eq:pde_kfu2}
-\end{equation}
-%
-Finite-difference methods also lead to an equation of the form \eqref{eq:disc_pde} where the vectors $\mathbf{f}$ and $\mathbf{u}$ contain the values of the processes at certain grid points, and the matrix $\mathbf{D}$ is a discrete approximation to the operator (e.g. Laplacian). The covariance function and cross-covariance approximations of the grid points are then given as $\mathbf{K}_f = \mathbf{G} \, \mathrm{Cov}(\mathbf{u},\mathbf{u}) \, \mathbf{G}^T$ and $\mathbf{K}_{f,u} = \mathbf{G} \, \mathrm{Cov}(\mathbf{u},\mathbf{u})$, respectively.
-
-Although in general the covariances $\mathrm{Cov}(u_i,u_{i'})$ can only be computed by explicit (numerical) integration, these covariance can sometimes be approximated very efficiently. When we use the eigenfunctions of the Laplacian operator as the basis and when the covariance function is stationary, we can approximate the covariances via point-wise evaluations of the spectral density of $u$ \cite{Solin+Sarkka:2014}. With this basis the case of translation invariant operators also becomes particularly easy, because the matrix $\mathbf{G}$ also becomes diagonal.
-
-
-
+where $\mathbf{g}_i(t)$ are jointly Gaussian random variables. By substituting this into the model and approximating the Gaussian process prior using a similar series expansion, we can re-express the model in terms of the Gaussian state variables $\mathbf{g}_i(t)$ \cite{Sarkka+Hartikainen:2012}. When we use the eigenfunctions of the Laplacian operator as the basis and when the covariance function is stationary, we can approximate the covariances via point-wise evaluations of the spectral density of $u$ \cite{Solin+Sarkka:2014}. With this basis the case of translation invariant operators also becomes particularly easy, because the matrices become diagonal. Finite-differences can also be used to approximate the operators in the equations \cite{Lindgren+Rue+Lindstrom:2011}.
 
 %\subsection{Covariance Computation via State-Space Representation}
 %
