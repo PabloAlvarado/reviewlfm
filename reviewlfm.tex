@@ -386,7 +386,7 @@
 \author{Simo~S\"arkk\"a,~\IEEEmembership{Senior Member,~IEEE,}
         Mauricio~A.~\'Alvarez, 
         and~Neil~D.~Lawrence% <-this % stops a space
-\thanks{Simo~S\"arkk\"a is with the Department of Electrical Engineering and Automation (EEA), Aalto University, Rakentajanaukio 2, 02150 Espoo, Finland (simo.sarkka@aalto.fi).}% <-this % stops a space
+\thanks{Simo~S\"arkk\"a is with the Department of Electrical Engineering and Automation (EEA), Aalto University, Rakentajanaukio 2c, 02150 Espoo, Finland (simo.sarkka@aalto.fi). Tel. +358 50 512 4393}% <-this % stops a space
 \thanks{Mauricio A. \'Alvarez is with the Department of Computer Science, University of Sheffield,
 Sheffield, UK S1 4DP}% <-this % stops a space
 \thanks{Neil D. Lawrence is with Amazon, Cambridge, UK and the Department of Computer Science, University of Sheffield,
@@ -486,11 +486,11 @@ Gaussian process, latent force model, stochastic control, statistical learning, 
 \label{eq:sde0}
 \end{equation}
 %
-where the functions $u(t)$ and $f(t)$ are unknown an $c(t)$ is a control function (known or to be optimized). Further assume that we measure the function $f(t)$ via noisy measurements at discrete instants of time $t_1,t_2,\ldots$:
+where the functions $u(t)$ and $f(t)$ are unknown an $c(t)$ is a control function (known or to be optimized). Further assume that we measure the function $f(t)$ via noisy measurements at discrete instants of time $t_1,t_2,\ldots,t_n$:
 %
 \begin{equation}
 \begin{split}
-  y_k &= f(t_k) + \epsilon_k,
+  y_k &= f(t_k) + \epsilon_k.
 \end{split}
 \end{equation}
 %
@@ -504,8 +504,7 @@ In addition to \eqref{eq:sde0}, other examples of problems of interest are spati
 \begin{split}
   \frac{\partial f(\mathbf{x},t)}{\partial t} &=
   D \, \nabla^2 \, f(\mathbf{x},t) - \lambda \, f(\mathbf{x},t)
-  %\\ &\qquad
-  + u(\mathbf{x},t) + c(\mathbf{x},t) \\
+  + u(\mathbf{x},t) + c(\mathbf{x},t), \\
   y_k &= f(\mathbf{x}_k,t_k) + \epsilon_k,
 \end{split}
 \label{eq:spde0}
@@ -520,7 +519,7 @@ A different kind of example of a problem studied in this article is the Poisson 
 %
 \begin{equation}
 \begin{split}
-  \nabla^2 f(\mathbf{x}) &= u(\mathbf{x}) \\
+  \nabla^2 f(\mathbf{x}) &= u(\mathbf{x}), \\
   y_k &= f(\mathbf{x}_k) + \epsilon_k,
 \end{split}
 \label{eq:poisson0}
@@ -554,14 +553,14 @@ The models considered in this article can be seen to belong to the following thr
 \label{eq:Lfuc1}
 \end{equation}
 %
-where the linear operator is typically $\mathcal{L}\equiv a_n \, \frac{d}{dt^{n}} + \cdots + a_1 \, \frac{d}{dt} + a_0$ for some fixed constants $a_i, i=0,\ldots,n$. This kind of models can often be rewritten in 
+where the linear operator is typically $\mathcal{L}\equiv a_m \, \frac{d^m}{dt^{m}} + \cdots + a_1 \, \frac{d}{dt} + a_0$ for some fixed constants $a_i, i=0,\ldots,m$. This kind of models can often be rewritten in 
 \emph{state-space form}
 %
 \begin{equation}
   \frac{d\mathbf{f}(t)}{dt} = \mathbf{A}_f \, \mathbf{f}(t) + \mathbf{B}_f \, \mathbf{u}(t) + \mathbf{M}_f \, \mathbf{c}(t),
 \end{equation}
 %
-which is not only equivalent to the representation above, but strictly more general model formulation that \eqref{eq:Lfuc1}; the control $\mathbf{c}$ can be a vector and it does not need to enter the system via the same route as the latent force, and the operator $\mathcal{L}$ can also be an integro-differential operator.
+which is not only equivalent to the representation above, but strictly more general model formulation that \eqref{eq:Lfuc1}; the control $\mathbf{c}(t)$ can be vector-valued and it does not need to enter the system via the same route as the latent force, and the operator $\mathcal{L}$ can also be an integro-differential operator.
 
 \item We also consider are dynamic partial and pseudo differential equation (PDE) based models that can generally be written in form
 %
@@ -570,14 +569,14 @@ which is not only equivalent to the representation above, but strictly more gene
 \label{eq:Lfuc2}
 \end{equation}
 %
-where $\mathcal{L}$ is a linear operator in space and time. The input Gaussian process $u(\mathbf{x},t)$ and control input $c(\mathbf{x},t)$ are also space-time processes. Typically, the operator as the form
+where $\mathcal{L}$ is a linear operator in space and time. The input Gaussian process $u(\mathbf{x},t)$ and control input $c(\mathbf{x},t)$ are also space-time processes. Typically, the operator has the form
 %
 \begin{equation}
-  \mathcal{L}\equiv \mathcal{A}_n \, \frac{d}{dt^{n}} + \cdots + \mathcal{A}_1 \, \frac{d}{dt} + \mathcal{A}_0,
+  \mathcal{L}\equiv \mathcal{A}_m \, \frac{d^m}{dt^{m}} + \cdots + \mathcal{A}_1 \, \frac{d}{dt} + \mathcal{A}_0,
 \label{eq:Lfuc2}
 \end{equation}
 %
-where $\mathcal{A}_0,\ldots,\mathcal{A}_n$ are some spatial partial differential or pseudo-differential operators. This kind of models can often be also written in form of \emph{spatio-temporal state-space models}
+where $\mathcal{A}_0,\ldots,\mathcal{A}_m$ are some spatial partial differential or pseudo-differential operators. This kind of models can often be also written in form of \emph{spatio-temporal state-space models}
 %
 \begin{equation}
 \begin{split}
@@ -685,7 +684,7 @@ function $k(t,t')$, also known as hyperparameters. However, the GP regression fo
   = \mathcal{N}(\mathbf{y} \mid \mathbf{0}, \mathbf{K}(\mathbf{t}, \mathbf{t};\theta) + \sigma^2 \mathbf{I}).
 \end{equation}
 %
-Given the likelihood there are different ways in which the hyperparameters can be estimated, including maximization of the log-marginal likelihood \cite{Rasmussen+Williams:2006}, maximum a posteriori \cite{Murphy:2012:MLP}, and Markov chain Monte Carlo \cite{FilipponeML13}. 
+Given the likelihood there are different ways in which the hyperparameters can be estimated, including maximization of the log-marginal likelihood \cite{Rasmussen+Williams:2006}, maximum a posteriori \cite{Murphy:2012:MLP}, and Markov chain Monte Carlo \cite{FilipponeML13} methods. 
 
 \subsection{GP regression solution to basic LFM Inference}\label{sec:gp:regression:lfm}
 %
@@ -695,7 +694,7 @@ Let us now consider the inclusion of a differential equation model to the Gaussi
 %
 \begin{eqnarray}
   &u(t) \sim \mathcal{GP}(0,k(t - t')), \label{eq:lgp1} \\
-  &a_n \, \frac{df^{n}(t)}{dt^{n}} + \cdots
+  &a_m \, \frac{df^{m}(t)}{dt^{m}} + \cdots
   + a_1 \, \frac{df(t)}{dt} + a_0 = u(t), \label{eq:difeq1} \\
   &y_k = f(t_k) + \epsilon_k, \label{eq:meas1}
 \end{eqnarray}
@@ -703,7 +702,7 @@ Let us now consider the inclusion of a differential equation model to the Gaussi
 which contains three parts: a Gaussian process part \eqref{eq:lgp1}, a differential equation part \eqref{eq:difeq1}, and a measurement model \eqref{eq:meas1}. 
 
 Equation \eqref{eq:difeq1} can written as $\mathcal{L} \, f(t)=u(t)$, where $\mathcal{L}$ is a linear
-differential operator of the form $\mathcal{L}\equiv a_n \, \frac{d}{dt^{n}} + \cdots
+differential operator of the form $\mathcal{L}\equiv a_m \, \frac{d^m}{dt^{m}} + \cdots
   + a_1 \, \frac{d}{dt} + a_0$. The differential operator $\mathcal{L}$ can be related to a so called Green's function or
 impulse response $h(t)$.
 %\simo{What should we actually put here?}
@@ -765,7 +764,7 @@ Posterior distribution for $u^*$ given $\mathbf{y}$ follows a Gaussian distribut
 variance $\sigma^2_{u^* \mid \mathbf{y}}$,
 \begin{align*}
 \mu_{u^* \mid \mathbf{y}} & = \mathbf{k}_{f,u}^{\top}(t^*, \mathbf{t})\left[\mathbf{K}_{f,f}(\mathbf{t}, \mathbf{t})
-+ \sigma^2\mathbf{I}\right]^{-1}\mathbf{y}\\
++ \sigma^2\mathbf{I}\right]^{-1}\mathbf{y}, \\
 \sigma^2_{u^* \mid \mathbf{y}} & =  k(t^*, t^*) - \mathbf{k}_{f,u}^{\top}(\mathbf{t}, t^*)\left[\mathbf{K}_{f,f}(\mathbf{t}, \mathbf{t})
 + \sigma^2\mathbf{I}\right]^{-1}\mathbf{k}_{f,u}(\mathbf{t}, t^*).
 \end{align*}
@@ -781,7 +780,7 @@ easy. Otherwise numerical computations are needed.
 
 \subsection{State-space ODE LFMs} \label{sec:ss_de_lfms}
 %
-A convenient way to compute the impulse responses required for the GP inference on LFMs is to rewrite the differential equation in state-space form, which allows us to express the impulse response in terms of matrix exponential function. We can rewrite the basic LFM differential equation \eqref{eq:difeq1} in state-space form \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012} by defining a state vector $\mathbf{f} = (f, df/dt,\ldots,d^{n-1}f/dt^{n-1})$ and writing
+A convenient way to compute the impulse responses required for the GP inference on LFMs is to rewrite the differential equation in state-space form, which allows us to express the impulse response in terms of matrix exponential function. We can rewrite the basic LFM differential equation \eqref{eq:difeq1} in state-space form \cite{Hartikainen+Sarkka:2011,Hartikainen+Seppanen+Sarkka:2012} by defining a state vector $\mathbf{f} = (f, df/dt,\ldots,d^{m-1}f/dt^{m-1})$ and writing
 %
 \begin{equation}
 \begin{split}
@@ -790,18 +789,18 @@ A convenient way to compute the impulse responses required for the GP inference 
        0             & 1      &        &       \\
                      & \ddots & \ddots &       \\
                      &         &  0    &     1 \\
-   -a_0 & -a_1 & \hdots &  -a_{n-1}
+   -a_0 & -a_1 & \hdots &  -a_{m-1}
   \end{pmatrix}}_{\mathbf{A}_f} \, \mathbf{f}(t)
   + \underbrace{\begin{pmatrix}
       0 \\
       \vdots \\
       0 \\
-      \frac{1}{a_n}
+      \frac{1}{a_m}
   \end{pmatrix}}_{\mathbf{B}_f} \,
-   u(t) \\
+   u(t), \\
    f(t) &= \underbrace{\begin{pmatrix}
      1 & 0 & \cdots & 0
-   \end{pmatrix}}_{\mathbf{C}_f} \, \mathbf{f}(t)
+   \end{pmatrix}}_{\mathbf{C}_f} \, \mathbf{f}(t).
 \end{split}
 \label{eq:ss1}
 \end{equation}
@@ -811,7 +810,7 @@ This gives the following state-space representation for $f(t)$:
 \begin{equation}
 \begin{split}
   \frac{d\mathbf{f}(t)}{dt}
-  &= \mathbf{A}_f \, \mathbf{f}(t) + \mathbf{B}_f \, u(t) \\
+  &= \mathbf{A}_f \, \mathbf{f}(t) + \mathbf{B}_f \, u(t), \\
   f(t) &= \mathbf{C}_f \, \mathbf{f}(t).
 \end{split}
 \label{eq:ssgen}
@@ -836,7 +835,7 @@ and we can pick up the covariance function of $f(t)$ from the matrix via
 \begin{equation}
 \begin{split}
   k_f(t,t') &=
-  \mathbf{C}_f \, \mathbf{K}_\mathbf{f}(t - t') \, \mathbf{C}_f^{\top}
+  \mathbf{C}_f \, \mathbf{K}_\mathbf{f}(t - t') \, \mathbf{C}_f^{\top}.
 \end{split}
 \label{eq:fcov2}
 \end{equation}
@@ -880,7 +879,7 @@ For example, the Poisson equation is given as
   \nabla^2 f(\mathbf{x}) = u(\mathbf{x}).
 \end{align*}
 %
-The solution for $f(\mathbf{x},t)$ has the form
+The solution for $f(\mathbf{x})$ has the form
 \begin{align*}
 f(\mathbf{x}) & = \int_{\mathcal{X}} H(\mathbf{x}, \mathbf{z})\,
                 u(\mathbf{z})\,d\mathbf{z} + g(\mathbf{x}),
@@ -945,12 +944,12 @@ The covariance functions of the process can now be expressed in terms of the Gre
   H(\mathbf{x}, t; \mathbf{z}, s) \,
   H(\mathbf{x}', t'; \mathbf{z}', s') \\ 
    &\qquad \qquad \qquad \times
-  k(\mathbf{z}, s; \mathbf{z}', s') \, d\mathbf{z} \, ds \, d\mathbf{z}' \, ds' \\
+  k(\mathbf{z}, s; \mathbf{z}', s') \, d\mathbf{z} \, ds \, d\mathbf{z}' \, ds', \\
   &k_{f,u}(\mathbf{x}, t; \mathbf{x}', t') \\
   &=
   \int_{t_0}^{t}  \int_{\mathcal{X}} 
   H(\mathbf{x}, t; \mathbf{z}, s) \,
-  k(\mathbf{z}, s; \mathbf{x}', t') \, d\mathbf{z} \, ds 
+  k(\mathbf{z}, s; \mathbf{x}', t') \, d\mathbf{z} \, ds.
 \end{split}
 \notag
 \end{equation}
@@ -1028,13 +1027,13 @@ As shown in \cite{Hartikainen+Sarkka:2010,Sarkka+Solin+Hartikainen:2013,Sarkka+P
 \end{equation}
 %
 can be equivalently or approximately expressed in state-space form by defining a state vector such as $\mathbf{u} = (u,
-du/dt,\ldots,d^{p-1}u/dt^{p-1})$---note that depending on parameterization the state vector might not contain exactly
+du/dt,\ldots,d^{s-1}u/dt^{s-1})$---note that depending on parameterization the state vector might not contain exactly
 the derivatives, but a linear transformation of them---leading to a state-space model
 %
 \begin{equation}
 \begin{split}
   \frac{d\mathbf{u}(t)}{dt}
-  &= \mathbf{A}_u \, \mathbf{u}(t) + \mathbf{B}_u \, w(t) \\
+  &= \mathbf{A}_u \, \mathbf{u}(t) + \mathbf{B}_u \, w(t), \\
   u(t) &= \mathbf{C}_u \, \mathbf{u}(t),
 \end{split}
 \label{eq:ssu}
@@ -1079,7 +1078,7 @@ The conversion of a spatio-temporal covariance function into state-space form le
 \begin{equation}
 \begin{split}
   \frac{\partial\mathbf{u}(\mathbf{x},t)}{\partial t} &= \mathbf{\mathcal{A}}_u \, \mathbf{u}(\mathbf{x},t)
-  + \mathbf{B}_u \, w(\mathbf{x},t) \\
+  + \mathbf{B}_u \, w(\mathbf{x},t), \\
    u(\mathbf{x},t) &= \mathbf{C}_u \, \mathbf{u}(\mathbf{x},t),
 \end{split}
 \label{eq:ssu2}
@@ -1118,7 +1117,7 @@ For example, the spatio-temporal Mat\'ern covariance function with a suitable pa
 \label{2dmatern_ss}
 \end{equation}
 %
-where $\nabla^2 = \partial^2 / \partial x_1^2 + \cdots + \partial^2 / \partial x_p^2$ and $\sqrt{\cdot}$ in the matrix $\mathbf{\mathcal{A}}_u$ denotes an operator square root.
+where $\nabla^2 = \partial^2 / \partial x_1^2 + \cdots + \partial^2 / \partial x_{d-1}^2$ and $\sqrt{\cdot}$ in the matrix $\mathbf{\mathcal{A}}_u$ denotes an operator square root.
 
 State-space realizations of spatio-temporal oscillating fields have been discussed in \cite{Solin+Sarkka:2013}. The implementation of divergence-free covariance functions for magnetic field modeling have been recently presented in \cite{Solin:2017}. It is worth noting that fixing the GP to be realized as its causal version via the spectral factorization can also cause problems when the GP is combined with a suitable non-causal PDE. This is discussed in Section~\ref{sec:poisson-problem}.
 
@@ -1133,9 +1132,9 @@ We can now combine the  state-space ODE \eqref{eq:ssgen} with the state-space re
 \begin{split}
   \frac{d\mathbf{f}(t)}{dt}
   &= \mathbf{A}_f \, \mathbf{f}(t)
-  + \mathbf{B}_f \, \mathbf{C}_u \, \mathbf{u}(t) \\
+  + \mathbf{B}_f \, \mathbf{C}_u \, \mathbf{u}(t), \\
   \frac{d\mathbf{u}(t)}{dt}
-  &= \mathbf{A}_u \, \mathbf{u}(t) + \mathbf{B}_u \, w(t) \\
+  &= \mathbf{A}_u \, \mathbf{u}(t) + \mathbf{B}_u \, w(t), \\
   f(t) &= \mathbf{C}_f \, \mathbf{f}(t).
 \end{split}
 \label{eq:comb}
@@ -1152,7 +1151,7 @@ If we now define
   = \begin{pmatrix}
 	\mathbf{A}_f & \mathbf{\mathbf{B}_f \, \mathbf{C}_u} \\
 	0 & \mathbf{A}_u
-  \end{pmatrix} \\
+  \end{pmatrix}, \\
   \mathbf{B}
   &= \begin{pmatrix}
 	0 & \mathbf{B}_u
@@ -1160,7 +1159,7 @@ If we now define
   \mathbf{C}
   = \begin{pmatrix}
 	\mathbf{C}_f & 0
-  \end{pmatrix}
+  \end{pmatrix},
 \end{split}
 \label{eq:ssaugmats}
 \end{equation}
@@ -1171,7 +1170,7 @@ then the model can be written as a white-noise driven state-space model
 \begin{split}
   \frac{d\mathbf{g}(t)}{dt}
   &= \mathbf{A} \, \mathbf{g}(t)
-  + \mathbf{B} \, w(t) \\
+  + \mathbf{B} \, w(t), \\
   f(t) &= \mathbf{C} \, \mathbf{g}(t).
 \end{split}
 \label{eq:ssaug}
@@ -1195,8 +1194,8 @@ discretization of the model as
 \begin{split}
   \mathbf{g}_k
   &= \mathbf{U}(\Delta t_k) \, \mathbf{g}_{k-1}
-  + \mathbf{q}_k \\
-  y_k &= \mathbf{C} \, \mathbf{g}_k + \epsilon_k.
+  + \mathbf{q}_k, \\
+  y_k &= \mathbf{C} \, \mathbf{g}_k + \epsilon_k,
 \end{split}
 \label{eq:dssaug}
 \end{equation}
@@ -1222,7 +1221,7 @@ Another benefit of the representation \eqref{eq:comb} is that we can compute the
 \begin{split}
   \mathbf{K}_{\mathbf{g}}(t,t') = \begin{cases}
     \mathbf{P}_\infty \, \exp(( t - t') \, \mathbf{A})^{\top}, &
-    \text{ if } t \ge t' \\
+    \text{ if } t \ge t', \\
     \exp((t' - t) \, \mathbf{A}) \, \mathbf{P}_\infty, &
     \text{ if } t < t',
   \end{cases}
@@ -1260,7 +1259,7 @@ Partial differential equation models driven by Gaussian processes can also be of
 \begin{equation}
 \begin{split}
   \frac{\partial f(\mathbf{x},t)}{\partial t} &=
-  D \, \nabla^2 \, f(\mathbf{x},t) - \lambda \, f(\mathbf{x},t) + u(\mathbf{x},t) \\
+  D \, \nabla^2 \, f(\mathbf{x},t) - \lambda \, f(\mathbf{x},t) + u(\mathbf{x},t). \\
 \end{split}
 \end{equation}
 %
@@ -1269,9 +1268,9 @@ Let us now assume that we are have a state-space representation of the unknown f
 \begin{equation}
 \begin{split}
   \frac{\partial f(\mathbf{x},t)}{\partial t} &=
-  \underbrace{\left( D \, \nabla^2 - \lambda \right)}_{\mathbf{\mathcal{A}}_f} \, f(\mathbf{x},t) + \mathbf{C}_u \, \mathbf{u}(\mathbf{x},t) \\
+  \underbrace{\left( D \, \nabla^2 - \lambda \right)}_{\mathbf{\mathcal{A}}_f} \, f(\mathbf{x},t) + \mathbf{C}_u \, \mathbf{u}(\mathbf{x},t), \\
   \frac{\partial\mathbf{u}(\mathbf{x},t)}{\partial t} &= \mathbf{\mathcal{A}}_u \, \mathbf{u}(\mathbf{x},t)
-  + \mathbf{B}_u \, w(\mathbf{x},t) \\
+  + \mathbf{B}_u \, w(\mathbf{x},t), \\
 \end{split}
 \end{equation}
 %
@@ -1288,7 +1287,7 @@ In order to obtain a single augmented model, analogously to the previous section
   = \begin{pmatrix}
 	\mathbf{\mathcal{A}}_f & \mathbf{B}_f \, \mathbf{C}_u \\
 	0 & \mathbf{\mathcal{A}}_u
-  \end{pmatrix} \\
+  \end{pmatrix}, \\
   \mathbf{B}
   &= \begin{pmatrix}
 	0 & \mathbf{B}_u
@@ -1296,7 +1295,7 @@ In order to obtain a single augmented model, analogously to the previous section
   \mathbf{C}
   = \begin{pmatrix}
 	1 & 0
-  \end{pmatrix}
+  \end{pmatrix},
 \end{split}
 \end{equation}
 %
@@ -1306,7 +1305,7 @@ which leads to a model of the form
 \begin{split}
   \frac{\partial \mathbf{g}(\mathbf{x},t)}{\partial t}
   &= \mathbf{\mathcal{A}} \, \mathbf{g}(\mathbf{x},t)
-  + \mathbf{B} \, w(\mathbf{x},t) \\
+  + \mathbf{B} \, w(\mathbf{x},t), \\
   y_k &= \mathbf{C} \, \mathbf{g}(t_k) + \epsilon_k.
 \end{split}
 \label{eq:ssaug2}
@@ -1343,7 +1342,7 @@ Sometimes we are interested in partial differential equations without time-depen
 %
 \begin{equation}
 \begin{split}
-  \nabla^2 f(\mathbf{x}) = u(\mathbf{x})
+  \nabla^2 f(\mathbf{x}) = u(\mathbf{x}).
 \end{split}
 \end{equation}
 %
@@ -1351,7 +1350,7 @@ Although there is no time-variable, we can redefine one of the spatial variables
 %
 \begin{equation}
 \begin{split}
-  \frac{\partial^2 f(\mathbf{x},t)}{\partial t^2} + \nabla^2 f(\mathbf{x},t) = u(\mathbf{x},t)
+  \frac{\partial^2 f(\mathbf{x},t)}{\partial t^2} + \nabla^2 f(\mathbf{x},t) = u(\mathbf{x},t).
 \end{split}
 \label{ipoisson}
 \end{equation}
@@ -1381,35 +1380,35 @@ However, this is not a valid state-space model, because it is not causal. This c
 %
 \begin{equation}
 \begin{split}
-%  \frac{\partial^2 \tilde{u}(i \boldmath{\omega}_x,t)}{\partial t^2}
-%  = \| \boldmath{\omega}_x \|^2 \tilde{u}(i \boldmath{\omega}_x,t) + \tilde{u}(i \boldmath{\omega}_x,t)
-  \frac{\partial \tilde{\mathbf{f}}(i \boldmath{\omega}_\mathbf{x},t)}{\partial t} &= 
+%  \frac{\partial^2 \tilde{u}(i \boldsymbol{\omega}_x,t)}{\partial t^2}
+%  = \| \boldsymbol{\omega}_x \|^2 \tilde{u}(i \boldsymbol{\omega}_x,t) + \tilde{u}(i \boldsymbol{\omega}_x,t)
+  \frac{\partial \tilde{\mathbf{f}}(i \boldsymbol{\omega}_\mathbf{x},t)}{\partial t} &= 
        \begin{pmatrix} 
         0 & 1 \\ 
-        \| \boldmath{\omega}_{\mathbf{x}} \|^2 & 0
-      \end{pmatrix} \, \tilde{\mathbf{f}}(i \boldmath{\omega}_\mathbf{x},t)
-      + \begin{pmatrix} 0 \\ 1 \end{pmatrix} \, \tilde{u}(i \boldmath{\omega}_\mathbf{x},t).
+        \| \boldsymbol{\omega}_{\mathbf{x}} \|^2 & 0
+      \end{pmatrix} \, \tilde{\mathbf{f}}(i \boldsymbol{\omega}_\mathbf{x},t)
+      + \begin{pmatrix} 0 \\ 1 \end{pmatrix} \, \tilde{u}(i \boldsymbol{\omega}_\mathbf{x},t).
 \end{split}
 \end{equation}
 %
-which can be seen to correspond to a unstable system, because the transition matrix has the positive eigenvalue $\| \boldmath{\omega}_{\mathbf{x}} \|$, which implies a diverging solution.
+which can be seen to correspond to a unstable system, because the transition matrix has the positive eigenvalue $\| \boldsymbol{\omega}_{\mathbf{x}} \|$, which implies a diverging solution.
 
 In order to form a valid state-space model, let us take time-space Fourier transform of \eqref{ipoisson} which gives
 %
 \begin{equation}
 \begin{split}
-  (i \omega_t)^2 \, F(i \boldmath{\omega}_x,i \omega_t)
-  + \| i \boldmath{\omega}_x \|^2 F(i \boldmath{\omega}_x,i \omega_t)= U(i \boldmath{\omega}_x,i \omega_t)
+  (i \omega_t)^2 \, F(i \boldsymbol{\omega}_x,i \omega_t)
+  + \| i \boldsymbol{\omega}_x \|^2 F(i \boldsymbol{\omega}_x,i \omega_t)= U(i \boldsymbol{\omega}_x,i \omega_t),
 \end{split}
 \end{equation}
 %
 %
-which implies that the spectral density of $f$ has the form
+implying that the spectral density of $f$ has the form
 %
 \begin{equation}
 \begin{split}
-  S_f(\boldmath{\omega}_x,\omega_t)
-  &= \frac{S_u(\boldmath{\omega}_x,\omega_t)}{\left( (\omega_t)^2 \ + \| \boldmath{\omega}_x \|^2 \right)^2}
+  S_f(\boldsymbol{\omega}_x,\omega_t)
+  &= \frac{S_u(\boldsymbol{\omega}_x,\omega_t)}{\left( (\omega_t)^2 \ + \| \boldsymbol{\omega}_x \|^2 \right)^2}
 \end{split}
 \end{equation}
 %
@@ -1452,7 +1451,7 @@ That is, we assume that we have a latent force model which has the following sta
 \begin{split}
   \frac{d\mathbf{g}(t)}{dt}
   &= \mathbf{A} \, \mathbf{g}(t)
-  + \mathbf{B} \, w(t) \\
+  + \mathbf{B} \, w(t), \\
   y_k &= \mathbf{C} \, \mathbf{g}(t_k) + \epsilon_k,
 \end{split}
 \label{eq:detss}
@@ -1492,7 +1491,7 @@ We first discretize the system at arbitrary time points. The discretized system 
 %
 \begin{equation}
 \begin{split}
-   \mathbf{g}_k &= \mathbf{U}(\Delta t_k) \, \mathbf{g}_{k-1} +  \mathbf{q}_k \\
+   \mathbf{g}_k &= \mathbf{U}(\Delta t_k) \, \mathbf{g}_{k-1} +  \mathbf{q}_k, \\
   y_k &=  \mathbf{C} \,  \mathbf{g}_k + \epsilon_k,
 \end{split}
 \end{equation}
@@ -1502,8 +1501,8 @@ which will be detectable provided that there exists a bounded gain sequence $\ma
 \begin{equation}
 \begin{split}
   \tilde{\mathbf{f}}_k &= \exp(\mathbf{A}_f \, \Delta t_k) \, \tilde{\mathbf{f}}_{k-1}
-  + \Gamma_k \, \tilde{\mathbf{u}}_{k-1} - \mathbf{K}_k \, \mathbf{C}_f \, \tilde{\mathbf{f}}_{k-1} \\
-  \tilde{\mathbf{u}}_k &= \exp(\mathbf{A}_u \, \Delta t_k) \, \tilde{\mathbf{u}}_{k-1} 
+  + \Gamma_k \, \tilde{\mathbf{u}}_{k-1} - \mathbf{K}_k \, \mathbf{C}_f \, \tilde{\mathbf{f}}_{k-1}, \\
+  \tilde{\mathbf{u}}_k &= \exp(\mathbf{A}_u \, \Delta t_k) \, \tilde{\mathbf{u}}_{k-1}.
 \end{split}
 \end{equation}
 %
@@ -1541,8 +1540,8 @@ In practical terms it is thus easiest to use, for example, the classical rank-co
     \mathbf{C} \\
     \mathbf{C} \, \mathbf{A} \\
     \vdots \\
-    \mathbf{C} \, \mathbf{A}^{n-1} \\    
-  \end{pmatrix}
+    \mathbf{C} \, \mathbf{A}^{m+s-1}    
+  \end{pmatrix},
 \end{equation}
 %
 and then ensure that sampling is non-critical \cite{Ding:2009}.
@@ -1557,7 +1556,7 @@ Let us consider a controlled version of the state-space model with a Gaussian pr
 \begin{equation}
 \begin{split}
   \frac{d\mathbf{f}(t)}{dt}
-  &= \mathbf{A}_f \, \mathbf{f}(t) + \mathbf{B}_f \, u(t) + \mathbf{M}_f \, \mathbf{c}(t) \\
+  &= \mathbf{A}_f \, \mathbf{f}(t) + \mathbf{B}_f \, u(t) + \mathbf{M}_f \, \mathbf{c}(t).
 \end{split}
 \end{equation}
 %
@@ -1608,10 +1607,10 @@ where
 \begin{split}
  \boldsymbol{\Phi}_g &= \begin{pmatrix}
    \boldsymbol{\Phi} & 0 \\ 0 & 0
- \end{pmatrix} \\
- \mathbf{X}_g(t) &= \begin{pmatrix}
+ \end{pmatrix}, \qquad
+ \mathbf{X}_g(t) = \begin{pmatrix}
    \mathbf{X}(t) & 0 \\ 0 & 0
- \end{pmatrix} \\
+ \end{pmatrix}.
 \end{split}
 \end{equation}
 %
@@ -1631,7 +1630,7 @@ where $\hat{\mathbf{g}}(t)$ is the Kalman filter estimate of $\mathbf{g}(t)$ and
   \frac{d\mathbf{K}(t)}{dt} &=
     -\mathbf{A}^{\top} \, \mathbf{K}(t) - \mathbf{K}(t) \, \mathbf{A} \\
   &+  \mathbf{K}(t) \, \mathbf{M} \, \mathbf{U}^{-1}(t) \,
-   \mathbf{M}^{\top} \, \mathbf{K}(t) - \mathbf{X}_g(t).
+   \mathbf{M}^{\top} \, \mathbf{K}(t) - \mathbf{X}_g(t)
 \end{split}
 \end{equation}
 %
@@ -1658,16 +1657,16 @@ where $\mathbf{K}_{f}(t) \triangleq \mathbf{K}_{11}(t)$ is the Riccati equation 
   &= -\mathbf{A}_f^{\top} \, \mathbf{K}_{11} - \mathbf{K}_{11} \, \mathbf{A}_f
   \\
   &\qquad
-  + \mathbf{K}_{11} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^{\top} \, \mathbf{K}_{11} - \mathbf{X}(t) \\
+  + \mathbf{K}_{11} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^{\top} \, \mathbf{K}_{11} - \mathbf{X}(t), \\
   \frac{d\mathbf{K}_{12}(t)}{dt}
   &= -\mathbf{A}_f^{\top} \, \mathbf{K}_{12} - \mathbf{K}_{11} \, \mathbf{B}_f \, \mathbf{C}_u - \mathbf{K}_{12} \, \mathbf{A}_u
   \\
-  &\qquad + \mathbf{K}_{11} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^{\top} \, \mathbf{K}_{12} \\
+  &\qquad + \mathbf{K}_{11} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^{\top} \, \mathbf{K}_{12}, \\
   \frac{d\mathbf{K}_{22}(t)}{dt}
   &= -\mathbf{C}_u^{\top} \, \mathbf{B}_f^{\top} \, \mathbf{K}_{12} - \mathbf{A}_u^{\top} \, \mathbf{K}_{22}
   - \mathbf{K}_{21} \, \mathbf{B}_f \, \mathbf{C}_u \\
   &\qquad  - \mathbf{K}_{22} \, \mathbf{A}_u
-  + \mathbf{K}_{12}^{\top} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^{\top} \, \mathbf{K}_{12},
+  + \mathbf{K}_{12}^{\top} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^{\top} \, \mathbf{K}_{12}.
 \end{split}
 \end{equation}
 \end{theorem}
@@ -1696,7 +1695,7 @@ In the LFM case, namely because we have restricted our consideration to time-inv
 \begin{split}
   \mathcal{J}[\mathbf{c}] &= \int_0^\infty
    (\mathbf{f}^{\top}(t) \, \mathbf{X} \, \mathbf{f}(t)
-  + \mathbf{c}^{\top}(t) \, \mathbf{U} \, \mathbf{c}(t)) \, dt \Big],
+  + \mathbf{c}^{\top}(t) \, \mathbf{U} \, \mathbf{c}(t)) \, dt \Big].
 \end{split}
 \end{equation}
 %
@@ -1716,11 +1715,20 @@ where the matrix $\mathbf{K}$ is the solution to the algebraic Riccati equation 
   0 &=
     -\mathbf{A}^{\top} \, \mathbf{K} - \mathbf{K} \, \mathbf{A} 
   +  \mathbf{K} \, \mathbf{M} \, \mathbf{U}^{-1} \,
-   \mathbf{M}^{\top} \, \mathbf{K} - \mathbf{X}_g.
+   \mathbf{M}^{\top} \, \mathbf{K} - \mathbf{X}_g,
 \end{split}
 \label{eq:joint_are}
 \end{equation}
 %
+where 
+%
+%\begin{equation}
+ $\mathbf{X}_g = \begin{pmatrix}
+   \mathbf{X} & 0 \\ 0 & 0
+ \end{pmatrix}$.
+%\end{equation}
+%
+
 By solving the control law from these equations, we get a controller which is function of both the estimate of the function $\mathrm{f}$ as well the latent force $\mathbf{u}$, and is hence able to utilize both the estimate of the function as well the learned Gaussian latent force model.
 
 It is also possible to express the solution to the LFM control problem above in terms of the corresponding control solution to the non-forced problem similarly to the time-varying case considered in the previous section. This result is summarized in the following theorem which can be derived by setting the time derivatives in Theorem~\ref{the:control1} to zero.
@@ -1744,7 +1752,7 @@ where $\mathbf{U}^{-1} \, \mathbf{M}_f^{\top} \, \mathbf{K}_{f}$ is just the non
 \begin{split}
   \left( \mathbf{K}_{f} \, \mathbf{M}_f \, \mathbf{U}^{-1} \, \mathbf{M}_f^{\top} 
          - \mathbf{A}_f^{\top} \right) \, \mathbf{K}_{12}  - \mathbf{K}_{12} \, \mathbf{A}_u
-    = \mathbf{K}_{f} \, \mathbf{B}_f \, \mathbf{C}_u \\
+    = \mathbf{K}_{f} \, \mathbf{B}_f \, \mathbf{C}_u.
 \end{split}
 \end{equation}
 \end{theorem}
@@ -1795,8 +1803,8 @@ The system is stabilizable if there exist a finite gain $\mathbf{K}_c$ such that
 \begin{equation}
 \begin{split}
   \frac{d\tilde{\mathbf{f}}}{dt} &= (\mathbf{A}_f + \mathbf{M}_f \, \mathbf{K}_f) \, \tilde{\mathbf{f}}
-  + (\mathbf{B}_f \, \mathbf{C}_u + \mathbf{M}_f \, \mathbf{K}_u) \, \tilde{\mathbf{u}} \\
-  \frac{d\tilde{\mathbf{u}}}{dt} &= \mathbf{A}_u \, \tilde{\mathbf{u}}
+  + (\mathbf{B}_f \, \mathbf{C}_u + \mathbf{M}_f \, \mathbf{K}_u) \, \tilde{\mathbf{u}}, \\
+  \frac{d\tilde{\mathbf{u}}}{dt} &= \mathbf{A}_u \, \tilde{\mathbf{u}},
 \end{split}
 \end{equation}
 %
@@ -1833,7 +1841,7 @@ As a conclusion, for all practical purposes a (time-invariant) latent force mode
 %
 \begin{equation}
   \mathcal{C} = \begin{pmatrix}
-  	\mathbf{M}_f & \mathbf{A}_f \, \mathbf{M}_f & \hdots & \mathbf{A}_f^{n-1} \, \mathbf{M}_f
+  	\mathbf{M}_f & \mathbf{A}_f \, \mathbf{M}_f & \hdots & \mathbf{A}_f^{m-1} \, \mathbf{M}_f
   \end{pmatrix}.
 \end{equation}
 
@@ -1845,7 +1853,7 @@ In the case of PDE LFMs we get models of the form
 \begin{split}
   \frac{\partial \mathbf{g}(\mathbf{x},t)}{\partial t}
   &= \mathbf{\mathcal{A}} \, \mathbf{g}(\mathbf{x},t)
-  + \mathbf{B} \, w(\mathbf{x},t) + \mathbf{M}_f \, c(\mathbf{x},t) \\
+  + \mathbf{B} \, w(\mathbf{x},t) + \mathbf{M}_f \, c(\mathbf{x},t), \\
   y_k &= \mathbf{C} \, \mathbf{g}(t_k) + \epsilon_k,
 \end{split}
 \end{equation}
@@ -1886,13 +1894,13 @@ necessary to resort to approximations in order to compute the posterior distribu
 \subsection{Switching LFMs}
 
 In the basic LFM, the input process $u(t)$ is a continuous process. An important extension in different applied scenarios
-is to allow the input force $u(t)$ to be discontinuous. Equally important is to allow the coefficients $\{a_i\}_{i=0}^n$ that
+is to allow the input force $u(t)$ to be discontinuous. Equally important is to allow the coefficients $\{a_i\}_{i=0}^m$ that
 define the differential operator $L$, to take discrete values as function of $t$. The setup now includes a sequential
 series of basic LFMs $\{L_jf(t) = u_j(t)\}_{j=1}^J$, each of them applied in a particular time interval
 $\{[T_{j-1}, T_j]\}_{j=1}^J$, where $J$ is the maximum number of time intervals considered, $L_j$ is a differential operator
-with coefficients $\{a_i^j\}_{i=0,j=1}^{n, J}$, and $\{u_j(t)\}_{j=1}^J$ are GPs with covariance functions $k_j(t,t')$.
+with coefficients $\{a_i^j\}_{i=0,j=1}^{m, J}$, and $\{u_j(t)\}_{j=1}^J$ are GPs with covariance functions $k_j(t,t')$.
 Continuity in the output $f(t)$ is ensured by forcing the initial conditions for the $j$th ODE to take the same value
-than the output $f(t)$ and its derivatives, at the last input point for the $j-1$th time interval. This kind of models have been considered in \cite{Alvarez:switched11,Hartikainen+Sarkka:2011}.
+than the output $f(t)$ and its derivatives, at the last input point for the $(j-1)$th time interval. This kind of models have been considered in \cite{Alvarez:switched11,Hartikainen+Sarkka:2011}.
 
 \subsection{Operators and non-linearities in measurement model}
 
@@ -1908,11 +1916,11 @@ We can also consider non-linear transformations in the measurement model which a
 
 \subsection{Numerical methods for PDEs}
 
-One commonly used method for approximate solution of partial differential equations (PDEs) is the Galerkin's method which approximates the solution on a finite-dimensional space spanned by sets of basis functions $\{ \phi_i(\mathbf{x})~i=1,2,\ldots,N \}$ and $\{ \varphi_j(\mathbf{x})~j=1,2,\ldots,N \}$. With a suitable selection of basis functions it (in its weak formulation) leads to widely-used methods such as finite element method (FEM). We can then approximate $\mathbf{g}$ via the series expansion
+One commonly used method for approximate solution of partial differential equations (PDEs) is the Galerkin's method which approximates the solution on a finite-dimensional space spanned by sets of the basis functions $\{ \phi_i(\mathbf{x})~i=1,2,\ldots,N \}$. With a suitable selection of basis functions it (in its weak formulation) leads to widely-used methods such as finite element method (FEM). We can then approximate $\mathbf{g}$ via the series expansion
 %
 \begin{equation}
 \begin{split}
-   \mathbf{g}(\mathbf{x},t) &= \sum_{i=1}^N \mathbf{g}_i(t) \, \phi_i(\mathbf{x}) \\
+   \mathbf{g}(\mathbf{x},t) &= \sum_{i=1}^N \mathbf{g}_i(t) \, \phi_i(\mathbf{x}),
 \end{split}
 \end{equation}
 %
