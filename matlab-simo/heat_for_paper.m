@@ -36,7 +36,7 @@
     hold on;
     plot3(meas_x1,meas_x2,YYT(:,k),'o');
 
-    print -depsc heat_open_x;
+    print -dpng heat_open_x;
     
     %%
     clf
@@ -46,7 +46,7 @@
     colormap('hot')
     colorbar;
     
-    print -depsc heat_open_u;
+    print -dpng heat_open_u;
 
     %%
     clf
@@ -56,7 +56,7 @@
     colormap('hot')
     colorbar;
     
-    print -depsc heat_lq_x;
+    print -dpng heat_lq_x;
     
     %%
     clf
@@ -68,7 +68,7 @@
 %    hold on;
 %    plot3(meas_x1,meas_x2,YYT(:,k),'o');
 
-    print -depsc heat_lfm_lq_x;
+    print -dpng heat_lfm_lq_x;
 
     %%
     clf
@@ -78,7 +78,7 @@
     colormap('jet')
     colorbar;
 
-    print -depsc heat_lfm_lq_c;
+    print -dpng heat_lfm_lq_c;
     
     %%
     clf;
